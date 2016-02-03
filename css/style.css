@@ -1,0 +1,215 @@
+body {
+    padding-top: 40px;
+    padding-bottom: 40px;
+}
+
+.panel {
+    border-radius: 0px;
+}
+
+
+/*nav bar*/
+
+.navbar {
+    border-radius: 0px;
+}
+
+.navbar-header {
+    height: 80px;
+    background-image: url("../img/header.jpg");
+    background-repeat: no-repeat;
+    width: 100%;
+    border-radius: 0px;
+    color: #E7E4CE;
+}
+
+.navbar-image {
+    margin-bottom: 0px;
+    /*    background: #59595C;*/
+}
+
+.navbar-links {
+    border-radius: 0px;
+    /*    margin-bottom: 0px;*/
+    /*    background: #7E7E84;*/
+}
+
+
+/*
+.navbar-links .navbar-nav>li>a {
+    color: #F37A49;
+    background-color: #464646;
+}
+*/
+
+.navbar {
+    border: 0px;
+}
+
+
+/*login*/
+
+.form-signin {
+    max-width: 330px;
+    padding: 15px;
+    margin: 0 auto;
+}
+
+.form-signin .form-signin-heading,
+.form-signin .checkbox {
+    margin-bottom: 10px;
+}
+
+.form-signin .checkbox {
+    font-weight: normal;
+}
+
+.form-signin .form-control {
+    position: relative;
+    height: auto;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    padding: 10px;
+    font-size: 16px;
+}
+
+.form-signin .form-control:focus {
+    z-index: 2;
+}
+
+.form-signin input[type="email"] {
+    margin-bottom: -1px;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+.form-signin input[type="password"] {
+    margin-bottom: 10px;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+
+
+/*parts*/
+
+.parts h2 {
+    margin-top: 5px;
+}
+
+.parts .modal-dialog {
+    display: inline-block;
+    text-align: left;
+    vertical-align: middle;
+}
+
+
+/*utilit classes*/
+
+.padding {
+    padding: 10px;
+}
+
+
+/*map*/
+
+.angular-leaflet-map {
+    border: 1px solid #dfdfdf;
+}
+
+
+/*map filters*/
+
+#filters .panel-heading {
+    background-color: #59595C;
+    color: #ffffff;
+}
+
+#filters .panel-heading:hover {
+    text-decoration: none;
+}
+
+#filters {
+    position: absolute;
+    top: 100px;
+    right: 25px;
+    z-index: 10;
+    font-size: 12px;
+}
+
+.filter {
+    width: 150px;
+}
+
+.filter select {
+    max-width: 150px;
+}
+
+.filter .form-control {
+    height: auto;
+    padding: 5px;
+    font-size: 12px;
+}
+
+
+/*pula details*/
+
+.pulaDetails .table-condensed,
+.pulaDetails .species {
+    font-size: 12px;
+}
+
+.pulaDetails h2 {
+    margin-top: 0px;
+}
+
+
+/*loading on map*/
+
+.loading {
+    opacity: .5;
+}
+
+.center.glyphicon-refresh {
+    position: absolute;
+    top: 50%;
+    left: 50%;    
+    font-size: 25px;
+}
+
+.glyphicon-refresh {    
+    -webkit-animation: spin 1000ms infinite linear;
+    animation: spin 1000ms infinite linear;
+    z-index: 100;
+    color: #59595C;
+}
+
+@-webkit-keyframes spin {
+    0% {
+        -webkit-transform: rotate(0deg);
+        transform: rotate(0deg);
+    }
+    100% {
+        -webkit-transform: rotate(359deg);
+        transform: rotate(359deg);
+    }
+}
+
+@keyframes spin {
+    0% {
+        -webkit-transform: rotate(0deg);
+        transform: rotate(0deg);
+    }
+    100% {
+        -webkit-transform: rotate(359deg);
+        transform: rotate(359deg);
+    }
+}
+
+
+/*product filter*/
+
+.dropdown-menu {
+    height: 200px;
+    overflow: scroll;
+}

@@ -1,0 +1,202 @@
+<!--
+<script>
+    function GetEventID() {
+        var eID = $("#eventID").val();
+        return eID;
+    }
+</script>
+-->
+<div>
+    <div class="container">
+        <span class="glyphicon center glyphicon-refresh" ng-show="showPULALoading"></span>
+        <div class="row" ng-class="{ 'loading': showPULALoading }">
+            <div class="col-md-6">
+                <span class="glyphicon center glyphicon-refresh" ng-show="showLoading"></span>
+                <leaflet center="center" layers="layers" markers="markers" constrol="controls" width="100%" height="550px" ng-class="{ 'loading': showLoading }">
+                </leaflet>
+                <div id="filters">
+                    <uib-accordion close-others="true">
+                        <uib-accordion-group is-open="status.isDateOpen" panel-class="panel-danger">
+                            <uib-accordion-heading>
+                                Date Filter <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': status.isDateOpen, 'glyphicon-chevron-right': !status.isDateOpen}"></i>
+                            </uib-accordion-heading>
+                            <!--date filter-->
+                            <div id="date" class="filter">
+                                <form ng-hide="filter.showDatePicker">
+                                    <div>
+                                        <input value="{{date.month}} {{date.year}}" ng-click="filter.showDatePicker=!filter.showDatePicker" />
+                                    </div>
+                                    <br/>
+                                    <div>
+                                        <button type="submit" class="btn btn-default btn-sm" ng-click="filterShapes()">Submit</button>
+                                    </div>
+                                </form>
+                                <div ng-show="filter.showDatePicker">
+                                    <form class="form-inline">
+                                        <div class="form-group">
+                                            <select ng-model="seclectedDate.month" class="form-control" ng-options="m for m in months"></select>
+                                        </div>
+                                        <div class="form-group">
+                                            <select ng-model="seclectedDate.year" class="form-control" ng-options="y for y in years"></select>
+                                        </div>
+                                    </form>
+                                    <br/>
+                                    <form class="form-inline">
+                                        <button type="submit" class="btn btn-default btn-sm" ng-click="setDateToToday()">Today</button>
+                                        <button type="submit" class="btn btn-default btn-sm pull-right" ng-click="setDateToSelected()">Done</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </uib-accordion-group>
+                        <uib-accordion-group heading="PULA Filter" is-open="status.isPulaOpen">
+                            <uib-accordion-heading>
+                                PULA Filter <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': status.isPulaOpen, 'glyphicon-chevron-right': !status.isPulaOpen}"></i>
+                            </uib-accordion-heading>
+                            <!--pula filter-->
+                            <div id="pula" class="filter">
+                                <div class="form-group">
+                                    <label>Event </label>
+                                    <select ng-model="filter.event" class="form-control">
+                                        <option value="All" selected>All</option>
+                                        <option ng-repeat="ev in events" value="{{ev.EVENT_ID}}">{{ev.NAME}}</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>AI </label>
+                                    <br>
+                                    <select ng-model="filter.ai" class="form-control">
+                                        <option value=""></option>
+                                        <option ng-repeat="a in activeIngredients" value="{{a.ACTIVE_INGREDIENT_ID}}">{{a.INGREDIENT_NAME.substring(0,30)}}</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Product </label>
+                                    <input type="text" ng-model="filter.product" uib-typeahead="products for products in getProducts($viewValue)" typeahead-loading="loadingProducts" typeahead-no-results="noResults" class="form-control">
+                                    <i ng-show="loadingProducts" class="glyphicon glyphicon-refresh"></i>
+                                    <div ng-show="noResults">
+                                        <i class="glyphicon glyphicon-remove"></i> No Results Found
+                                    </div>
+                                </div>
+                                <!--
+                                <div>
+                                    <button type="submit" class="btn btn-default btn-sm" ng-click="filterShapes()">Submit</button>
+                                </div>
+-->
+                                <form class="form-inline">
+                                    <button type="submit" class="btn btn-default btn-sm " ng-click="clearPULAFilter()">Clear</button>
+                                    <button type="submit" class="btn btn-default btn-sm pull-right" ng-click="filterShapes()">Submit</button>
+                                </form>
+                            </div>
+                        </uib-accordion-group>
+                        <uib-accordion-group heading="Map Layers" is-open="status.isMapLayerOpen">
+                            <uib-accordion-heading>
+                                Map Layers <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': status.isMapLayerOpen, 'glyphicon-chevron-right': !status.isMapLayerOpen}"></i>
+                            </uib-accordion-heading>
+                            <!--Map Layers-->
+                            <div id="map-layers" class="filter">
+                                <form action="#" id="form">
+                                    <input type="checkbox" name="mapLayer" ng-model="mapLayers.pending" ng-change="filterLayers()"> <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAAXNSR0IB2cksfwAAAAlwSFlzAAAOxAAADsQBlSsOGwAAAEVJREFUOI1jYaAyYKGZgXPnzv1PqWHJycmMKC5MSlIk27B58+4zMDDQ0sujBo4aOGrgqIE4DYQVQeSA5ORkRhQDYQKUAgDMZQvAisHAhgAAAABJRU5ErkJggg==" border="0" style="opacity:0.5"> Pending
+                                    <br>
+                                    <input type="checkbox" name="mapLayer" ng-model="mapLayers.created" ng-change="filterLayers()"> <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAAXNSR0IB2cksfwAAAAlwSFlzAAAOxAAADsQBlSsOGwAAADlJREFUOI1jYaAyYKGlgf+pYB4jqgvzKTBzIiMDAwONvTxq4KiBowaOGojDQGgRRCZgRDeQItNgAACOoQPlkCSSYAAAAABJRU5ErkJggg==" border="0" style="opacity:0.5"> Created
+                                    <br>
+                                    <input type="checkbox" name="mapLayer" ng-model="mapLayers.published" ng-change="filterLayers()"> <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAAXNSR0IB2cksfwAAAAlwSFlzAAAOxAAADsQBlSsOGwAAADpJREFUOI1jYaAyYKGlgf+pYB4jigt9n5Fv0mYpCE1TL48aOGrgqIGjBmI3EFYEkQkY0Q1kpMg4KAAApZ0EINfsMPIAAAAASUVORK5CYII=" border="0" style="opacity:0.5"> Published
+                                    <br>
+                                    <input type="checkbox" name="mapLayer" ng-model="mapLayers.effective" ng-change="filterLayers()"> <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAAXNSR0IB2cksfwAAAAlwSFlzAAAOxAAADsQBlSsOGwAAADxJREFUOI1jYaAyYKGlgf+pYB4jigv/79tHvklOTgwMDDT28qiBowaOGjhqIHYDYUUQmYAR3UBGSkyDAQDeNATYJrVEMwAAAABJRU5ErkJggg==" border="0" style="opacity:0.5"> Effective
+                                    <br>
+                                    <input type="checkbox" name="mapLayer" ng-model="mapLayers.expired" ng-change="filterLayers()"> <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAAXNSR0IB2cksfwAAAAlwSFlzAAAOxAAADsQBlSsOGwAAAD1JREFUOI1jYaAyYKGlgf+pYB4jigvPnj1LtknGxsYMDAw09vKogaMGjho4aiB2A2FFEJmAEd1ARkpMgwEA5VUE7JWyiNwAAAAASUVORK5CYII=" border="0" style="opacity:0.5"> Expired
+                                    <br>
+                                </form>
+                            </div>
+                        </uib-accordion-group>
+                    </uib-accordion>
+                </div>
+            </div>
+            <div class="col-md-6">
+                
+                <div class="alert alert-warning" role="alert" ng-show="noPULAs">No PULAs matching this filter were returned</div>
+                <div ng-show="!pulaDetails">Choose a PULA shape to get started.</div>
+                <div ng-show="pulaDetails" class="pulaDetails">
+                    <h2>Details</h2>
+                    <h4>General Information</h4>
+                    <table class="table table-condensed">
+                        <tr>
+                            <td>Event:</td>
+                            <td>{{pulaDetails.event}}</td>
+                        </tr>
+                        <tr>
+                            <td>Effective Date:</td>
+                            <td>{{pulaDetails.effectiveDate}}</td>
+                        </tr>
+                        <tr>
+                            <td>Creation Date:</td>
+                            <td>{{pulaDetails.creationDate}}</td>
+                        </tr>
+                        <tr>
+                            <td>Created By:</td>
+                            <td>{{pulaDetails.creator}}</td>
+                        </tr>
+                        <tr>
+                            <td>Published Date:</td>
+                            <td>{{pulaDetails.publishedDate}}</td>
+                        </tr>
+                        <tr>
+                            <td>Published By:</td>
+                            <td>{{pulaDetails.publisher}}</td>
+                        </tr>
+                        <tr>
+                            <td>Expiration Date:</td>
+                            <td>{{pulaDetails.expirationDate}}</td>
+                        </tr>
+                    </table>
+                    <h4>PULA Justification</h4>
+                    <table class="table table-condensed">
+                        <tr>
+                            <td>Litigation, Biological Opinion:</td>
+                            <td>{{pulaDetails.biologicalOpinion}}</td>
+                        </tr>
+                        <tr>
+                            <td>Base Data:</td>
+                            <td>{{pulaDetails.baseData}}</td>
+                        </tr>
+                        <tr>
+                            <td>Base Data Modifiers:</td>
+                            <td>{{pulaDetails.baseDataModifiers}}</td>
+                        </tr>
+                        <tr>
+                            <td>Additional Information:</td>
+                            <td>{{pulaDetails.additionalInfo}}</td>
+                        </tr>
+                    </table>
+                    <h4>Limitations</h4>
+                    <table class="table table-striped  table-condensed">
+                        <thead>
+                            <tr>
+                                <th scope="col">AI/Product</th>
+                                <th scope="col">Use</th>
+                                <th scope="col"> App Method</th>
+                                <th scope="col">Formulation</th>
+                                <th scope="col">Code</th>
+                            </tr>
+                        </thead>
+                        <tr ng-repeat="limit in pulaDetails.mapperLimits|orderBy:NAME">
+                            <td>{{limit.NAME}}</td>
+                            <td>{{limit.USE}}</td>
+                            <td>{{limit.APPMETHOD}}</td>
+                            <td>{{limit.FORM}}</td>
+                            <td>{{limit.LIMIT.CODE}}</td>
+                        </tr>
+                    </table>
+                    <h4>Species</h4>
+                    <ul class="species">
+                        <li ng-repeat="species in pulaDetails.species">{{species.COMNAME}} | {{species.SCINAME}} <a href="http://ecos.fws.gov/speciesProfile/profile/speciesProfile?spcode={{species.SPCODE}}">(Link to Species Profile page)</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/ng-template" id="loading.cshtml">
+    <br/>
+    <h1 style="text-align:center;">Loading...</h1>
+    <br/>
+</script>

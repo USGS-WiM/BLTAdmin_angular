@@ -1,0 +1,96 @@
+<div class="modal-header">
+    <h3 class="modal-title">{{editForm.title}} </h3>
+</div>
+<div class="modal-body">
+    <form name="partForm">
+
+
+        <!--AI Name-->
+        <div class="row form-group">
+            <label class="col-sm-3 control-label">AI Name </label>
+            <div class="col-sm-9">
+                <input type="text" name="INGREDIENT_NAME" class="form-control" ng-model="part.INGREDIENT_NAME" ng-required="false">
+            </div>
+        </div>
+        <!--PC Code-->
+        <div class="row form-group">
+            <label class="col-sm-3 control-label">PC Code * </label>
+            <div class="col-sm-9">
+                <input type="text" name="PC_CODE" class="form-control" ng-model="part.INGREDIENT_NAME" ng-required="true">
+                <p ng-show="editForm.submited && partForm.PC_CODE.$invalid " class="text-danger">* PC Code is required.</p>
+            </div>
+        </div>
+
+        <!--CAS Number-->
+        <div class="row form-group">
+            <label class="col-sm-3 control-label">CAS Number </label>
+            <div class="col-sm-9">
+                <input type="text" name="CAS_NUMBER" class="form-control" ng-model="part.CAS_NUMBER" ng-required="false">
+            </div>
+        </div>
+
+        <!--AI Class-->
+        <div class="row form-group">
+            <label class="col-sm-3 control-label">AI Class </label>
+            <div class="col-sm-9">
+                <div class="form-inline">
+                    <div class="form-group">
+                        <select class="form-control" ng-model="activeAIClass" ng-options="option.AI_CLASS_NAME for option in aiClasses">
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <button class="btn" ng-click="addClassToAI(activeAIClass.AI_CLASS_NAME,activeAIClass)">Add</button>
+                    </div>
+                </div>
+                <p>(Choose AI Class, Click Add. Can add one to many.)</p>
+                <div class="panel panel-default panel-table">
+                    <table class="table table-striped">
+                        <tr ng-repeat="item in part.classList">
+                            <td>{{item.AI_CLASS_NAME}}</td>
+                            <td><a class="text-danger"><span class="glyphicon glyphicon-remove" ng-click="removeClass(item.AI_CLASS_NAME)"></a>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!--Product-->
+        <div class="row form-group">
+            <label class="col-sm-3 control-label">Product</label>
+            <div class="col-sm-9">
+                <div class="form-inline">
+                    <div class="form-group">
+                        <input type="text" ng-model="activeProduct" uib-typeahead="products for products in searchProduct($viewValue)" typeahead-loading="loadingProducts" typeahead-no-results="noResults" class="form-control" placeholder="Type first 3 letters of Product to begin search">
+                        <i ng-show="loadingProducts" class="glyphicon glyphicon-refresh"></i>
+                        <div ng-show="noResults">
+                            <i class="glyphicon glyphicon-remove"></i> No Results Found
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <button class="btn" ng-click="addProductToAI(activeProduct,productSearchResults[activeProduct])">Add</button>
+                    </div>
+                </div>
+                <p>(Choose Product, Click Add. Can add one to many.)</p>
+                <div class="panel panel-default panel-table">
+                    <table class="table table-striped">
+                        <tr ng-repeat="item in part.productList">
+                            <td>{{item.PRODUCT_NAME}}</td>
+                            <td>
+                                <a class="text-danger">
+                                    <span class="glyphicon glyphicon-remove" ng-click="removeProduct(item.PRODUCT_NAME)">
+                                </a>                                    
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+
+    </form>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-primary" type="submit" ng-click="save(partForm.$valid)">OK</button>
+    <button class="btn btn-default" type="button" ng-click="cancel()">Cancel</button>
+</div>

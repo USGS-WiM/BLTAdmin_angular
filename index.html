@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <!--bootstrap-->
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+
+    <!--leaflet-->
+    <link rel="stylesheet" href="lib/leaflet/leaflet.css" />
+    <link rel="stylesheet" href="lib/esri-leaflet-geocoder/esri-leaflet-geocoder.css">
+    <!--app stylesheet-->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body ng-app="bltApp">
+
+    <!-- MAIN CONTENT -->
+    <div>
+        <div ng-include="'templates/header.cshtml'"></div>
+        <div ui-view></div>
+
+    </div>
+
+
+    <!-- load Angular -->
+    <script src="lib/angular.min.js"></script>
+    <script src="lib/angular-ui-router.min.js"></script>
+    <script src="lib/angular-cookies.min.js"></script>
+    <script src="lib/angular-resource.min.js"></script>
+    <script src="lib/dirPagination.js"></script>
+
+    <!--bootstrap-->
+    <script src="lib/ui-bootstrap-tpls-0.14.3.min.js"></script>
+
+    <!--leaflet-->
+    <script src="lib/leaflet/angular-simple-logger.min.js"></script>
+    <script src="lib/leaflet/leaflet.js"></script>
+
+    <!-- Esri Leaflet -->
+    <script src="lib/leaflet/esri-leaflet.js"></script>
+    <script src="lib/leaflet/angular-leaflet-directive.min.js"></script>
+
+    <!-- Esri Leaflet Geocoder -->
+    <script src="lib/esri-leaflet-geocoder/esri-leaflet-geocoder.js"></script>
+
+    <!--underscore js-->
+    <script src="lib/underscore-min.js"></script>
+
+    <!--moment.js-->
+    <script src="lib/moment.min.js"></script>
+
+    <!--app-->
+    <script src="js/util.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/services.js"></script>
+    <script src="js/controller.js"></script>
+</body>
+
+</html>

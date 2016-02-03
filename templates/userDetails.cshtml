@@ -1,0 +1,141 @@
+<div class="page">
+    <div ng-include="'templates/header.cshtml'"></div>
+    <div id="main">
+
+
+        <div class="partsTitle" style="padding-bottom:0">
+            <div style="float:left">
+                <a href="#/users">All Users</a> | User: {{user[0].FNAME}} {{user[0].LNAME}}&nbsp;&nbsp;</div>
+            <div>
+                <a class="BLTButton blue" href="" ng-click="delete()">Delete</a>
+            </div>
+        </div>
+        <br clear="all">
+
+        <hr class="headerUnderline">
+
+        <div id="content">
+            <form data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#content" id="form0" method="post" ng-hide="isEditing">
+                <div><a id="editButton" ng-click="editUser()" class="BLTButton icon blue"><span class="editIcon">Edit User</span></a></div>
+                <br clear="all">
+            </form>
+            <!--display-->
+            <div class="siteColumn" ng-hide="isEditing">
+
+                <div>
+                    <span class="bold ui-label-a"><label for="First_Name:">First Name:</label></span>
+                    <label class="inline">{{user[0].FNAME}}</label>
+                </div>
+
+                <div>
+                    <span class="bold ui-label-a"><label for="Last_Name:">Last Name:</label></span>
+                    <label class="inline">{{user[0].LNAME}}</label>
+                </div>
+
+                <div>
+                    <span class="bold ui-label-a"><label for="User_Name:">User Name:</label></span>
+                    <label class="inline">{{user[0].USERNAME}}</label>
+                </div>
+
+                <div>
+                    <span class="bold ui-label-a"><label for="Organization:">Organization:</label></span>
+                    <label class="inline">{{organizations[user[0].ORGANIZATION_ID].NAME}}</label>
+                </div>
+
+                <div>
+                    <span class="bold ui-label-a"><label for="Division:">Division:</label></span>
+                    <label class="inline"></label>
+                </div>
+
+                <div>
+                    <span class="bold ui-label-a"><label for="Role:">Role:</label></span>
+                    <label class="inline">{{roles[user[0].ROLE_ID].ROLE_NAME}}</label>
+                </div>
+
+                <div>
+                    <span class="bold ui-label-a"><label for="Phone:">Phone:</label></span>
+                    <label class="inline">{{user[0].PHONE}}</label>
+                </div>
+
+                <div>
+                    <span class="bold ui-label-a"><label for="Email:">Email:</label></span>
+                    <label class="inline">{{user[0].EMAIL}}</label>
+                </div>
+
+            </div>
+            <!--edit-->
+            <div class="siteColumn" ng-show="isEditing">
+
+                <div data-role="fieldcontain">
+                    <span class="bold ui-label-a"><label for="First_Name:">First Name:</label></span>
+                    <input type="text" class="margin" name="FNAME" data-mini="true" ng-model="user[0].FNAME">
+                </div>
+
+                <div data-role="fieldcontain">
+                    <span class="bold ui-label-a"><label for="Last_Name:">Last Name:</label></span>
+                    <input type="text" class="margin" name="LNAME" data-mini="true" ng-model="user[0].LNAME">
+                </div>
+
+                <div data-role="fieldcontain">
+                    <span class="bold ui-label-a"><label for="User_Name:">User Name:</label></span>
+                    <input type="text" class="margin" name="USERNAME" data-mini="true" ng-model="user[0].USERNAME">
+                </div>
+
+                <div data-role="fieldcontain">
+                    <span class="bold ui-label-a"><label for="Organization:">Organization:</label></span>
+                    <select id="selectAgencyId" class="margin" name="ORGANIZATION_ID" data-native-menu="false" data-mini="true" ng-model="organizations[user[0].ORGANIZATION_ID]">
+                        <option ng-repeat="org in organizations" value="{{org.ORGANIZATION_ID}}">{{org.NAME}}</option>
+                    </select>
+                    <br>
+                </div>
+                <div data-role="fieldcontain">
+                    <span class="bold ui-label-a"><label for="Division:">Division:</label></span>
+                    <select id="selectRoleId" class="margin" name="DIVISION_ID" data-native-menu="false" data-mini="true">
+                        <option value="0"></option>
+                    </select>
+                    <br>
+                </div>
+                <div data-role="fieldcontain">
+                    <span class="bold ui-label-a"><label for="Role:">Role:</label></span>
+                    <select id="selectDivId" class="margin" name="ROLE_ID" data-native-menu="false" data-mini="true" ng-model="roles[user[0].ROLE_ID]">
+                        <option ng-repeat="role in roles" value="{{role.ROLE_ID}}">{{role.ROLE_NAME}}</option>
+                    </select>
+                    <br>
+                </div>
+
+
+                <div data-role="fieldcontain">
+                    <span class="bold ui-label-a"><label for="Phone:">Phone:</label></span>
+                    <input type="text" class="margin" name="PHONE" data-mini="true" value="" ng-model="user[0].PHONE">
+                </div>
+
+                <div data-role="fieldcontain">
+                    <span class="bold ui-label-a"><label for="Email:">Email:</label></span>
+                    <input type="text" class="margin" name="EMAIL" data-mini="true" ng-model="user[0].EMAIL">
+                </div>
+
+            </div>
+        </div>
+
+        <br clear="all">
+        <br>
+        <div id="formSubmitDiv" class="formSection" ng-show="isEditing">
+            <div class="leftSideSubmit">
+                <div class="submitDiv">
+                    <div class="darkButtonBorder">
+                        <input type="submit" class="submit" value="Save">
+                    </div>
+                </div>
+                <div class="cancelDiv">
+                    <div class="lightButtonBorder">
+                        <input id="resetButton" type="reset" class="cancel" value="Cancel" onclick="cancelClick();">
+                    </div>
+                </div>
+
+                <button id="SaveSiteButton">Save
+                    <button>
+            </div>
+
+        </div>
+    </div>
+</div>

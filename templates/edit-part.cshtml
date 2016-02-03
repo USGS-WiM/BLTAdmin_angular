@@ -1,0 +1,18 @@
+<div class="modal-header">
+    <h3 class="modal-title">{{editForm.title}} </h3>
+</div>
+<div class="modal-body">
+    <form class="form-horizontal" name="partForm">
+        <div class="form-group" ng-repeat="col in selectedPart.edit.columns">
+            <label class="col-sm-3 control-label">{{col.label}} <span ng-if="col.required">*</span></label>
+            <div class="col-sm-9">
+                <input type="text" name="{{col.name}}" class="form-control" ng-model="part[col.name]" ng-required="col.required">
+                <p ng-show="editForm.submited && partForm[col.name].$invalid " class="text-danger">* {{col.name}} is required.</p>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-primary" type="submit" ng-click="save(partForm.$valid)">OK</button>
+    <button class="btn btn-default" type="button" ng-click="cancel()">Cancel</button>
+</div>

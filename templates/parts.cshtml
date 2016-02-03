@@ -1,0 +1,117 @@
+<script src="js/parts.js"></script>
+<div class="parts">
+    <div class="container">
+        
+        <span class="glyphicon center glyphicon-refresh" ng-show="showLoading"></span>
+        <div class="row" ng-class="{ 'loading': showLoading }">
+            <div class="col-md-3">
+                <ul class="nav nav-pills nav-stacked">
+                    <li ng-repeat="(key,part) in config.parts" ng-class="{ active: part.active }">
+                        <a ng-click="showPart(key)">
+                            {{part.heading}}          
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <div class="col-md-9" ng-hide="showLoading">
+                <h2>{{selectedPart.heading}}</h2>
+                <!--product-->
+                <div ng-if="selectedPart.search">
+                    <div class="row">
+                        <div class="col-md-10">
+                            <form class="form-inline">
+                                <div class="form-group">
+                                    <label>Product </label>
+                                    <input type="text" ng-model="activeProduct" uib-typeahead="products for products in searchProduct($viewValue)" typeahead-loading="loadingProducts" typeahead-no-results="noResults" class="form-control">
+                                    <i ng-show="loadingProducts" class="glyphicon glyphicon-refresh"></i>
+                                    <div ng-show="noResults">
+                                        <i class="glyphicon glyphicon-remove"></i> No Results Found
+                                    </div>
+                                </div>
+                                <button class="btn btn-primary btn-xs" ng-disabled="!activeProduct" ng-if="role.ROLE_NAME == 'ADMIN' || role.ROLE_NAME == 'PUBLISH'"><span class="glyphicon glyphicon-pencil" ng-click="editProduct($index,part)" ></span></button>
+                                <button class="btn btn-danger btn-xs" ng-disabled="!activeProduct" ng-click="deletePart(part)" ng-if="role.ROLE_NAME == 'ADMIN' || role.ROLE_NAME == 'PUBLISH'"><span class="glyphicon glyphicon-trash"></span></button>
+                                <button class="btn btn-link" ng-click="activeProduct=''">Clear</button>
+                            </form>
+                        </div>
+                        <div class="col-md-2">
+                            <button class="btn btn-primary pull-right" ng-click="editPart(-1)"><span class="glyphicon glyphicon-plus"></span> New</button>
+                        </div>
+                    </div>
+                </div>
+                <!--other parts-->
+                <div ng-if="!selectedPart.search">
+                    <div class="row">
+                        <div class="col-md-10">
+                            <form class="form-inline">
+                                <div class="form-group">
+                                    <input type="text" ng-model="search" class="form-control" placeholder="Search">
+                                </div>
+                                <button class="btn btn-link" ng-click="search=''">Clear</button>
+                            </form>
+                        </div>
+                        <div class="col-md-2">
+                            <button class="btn btn-primary pull-right" ng-click="editPart(-1)"><span class="glyphicon glyphicon-plus"></span> New</button>
+                        </div>
+                    </div>
+                    <br/>
+                    <div class="panel panel-default panel-table">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th scope="col" ng-repeat="col in selectedPart.display.columns">{{col.heading}}</th>
+                                    <th ng-if="role.ROLE_NAME == 'ADMIN' || role.ROLE_NAME == 'PUBLISH'">Edit</th>
+                                    <th ng-if="selectedPart.copy">Copy</th>
+                                    <th ng-if="role.ROLE_NAME == 'ADMIN' || role.ROLE_NAME == 'PUBLISH'">Delete</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr dir-paginate="part in parts|orderBy:selectedPart.display.orderBy|filter:search|itemsPerPage:10" current-page="currentPage">
+                                    <td ng-repeat="col in selectedPart.display.columns">{{part[col.name]}}</td>
+                                    <td ng-if="role.ROLE_NAME == 'ADMIN' || role.ROLE_NAME == 'PUBLISH'">
+                                        <button class="btn btn-primary btn-xs"><span class="glyphicon glyphicon-pencil" ng-click="editPart($index,part)"></span></button>
+
+                                    </td>
+                                    <td ng-if="selectedPart.copy">
+                                        <button class="btn btn-success btn-xs"><span class="glyphicon glyphicon glyphicon-copy" ng-click="editPart(-1,part,true)"></span></button>
+
+                                    </td>
+                                    <td ng-if="role.ROLE_NAME == 'ADMIN'">
+                                        <button class="btn btn-danger btn-xs" ng-click="deletePart($index,part)"><span class="glyphicon glyphicon-trash"></span></button>
+
+                                    </td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+                        <dir-pagination-controls max-size="10" direction-links="true" boundary-links="true">
+                        </dir-pagination-controls>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<!--templates-->
+<div>
+    <!--edit template-->
+<!--    <div ng-include="templates/edit-part.cshtml"></div>-->
+
+    <!--    <script type="text/ng-template" id="part.cshtml" ng-include="templates/edit-part.html"> -->
+
+    <!--delete templates-->
+    <script type="text/ng-template" id="delete.cshtml">
+        <div class="modal-header">
+            <h3 class="modal-title">Are you sure you want to delete '{{part[selectedPart.display.columns[0].name]}}'?</h3>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" type="button" ng-click="delete()">Yes</button>
+            <button class="btn btn-default" type="button" ng-click="cancelDelete()">Cancel</button>
+        </div>
+    </script>
+    <script type="text/ng-template" id="loading.cshtml">
+        <br/>
+        <h1 style="text-align:center;">Loading...</h1>
+        <br/>
+    </script>
+</div>

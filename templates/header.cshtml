@@ -1,0 +1,27 @@
+<div ng-controller="HeaderCtrl" class="container" ng-hide="hideHeader" >
+    <nav class="navbar navbar-default navbar-image navbar-inverse">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#"></a>
+            <ul class="pull-right padding">
+                Welcome <strong>{{user.name}}</strong>! [ <a href="" ng-click="logOff()">Log Off</a> ]
+            </ul>
+        </div>
+    </nav>
+    <nav class="navbar navbar-default navbar-links  navbar-inverse">
+        <div class="container-fluid">
+
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav">
+
+                    <li><a href="#/home">HOME</a></li>
+                    <li><a href="#/parts">PARTS</a></li>
+                    <li><a href="#/users" class="active">USERS</a></li>
+                </ul>
+            </div>
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container-fluid -->
+    </nav>
+</div>
