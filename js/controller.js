@@ -528,6 +528,7 @@ bltApp.controller('PartsController', function ($scope, $rootScope, $modal, RoleS
             $scope.editForm.title = "Add New " + $scope.selectedPart.heading;
         } else {
             var part = angular.copy(part);
+            delete part.VERSION_ID;//don't send the version id
             $scope.part = part;
             $scope.editForm.title = "Edit";
         }
@@ -567,6 +568,7 @@ bltApp.controller('PartsController', function ($scope, $rootScope, $modal, RoleS
 
                 });
             } else {
+                //console.log($scope.part);
                 //edit
                 PartsService.update({
                     url: $scope.selectedPart.url + "/" + $scope.part[$scope.selectedPart.primaryKey]

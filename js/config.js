@@ -33,7 +33,7 @@ config.parts = {
     db: {
         "ACTIVE INGREDIENT": {
             heading: "ACTIVE INGREDIENT",
-            url: "/ActiveIngredients",
+            url: "ActiveIngredients",
             includeCopy: true,
             primaryKey: "ID",
             copy: true,
@@ -73,7 +73,7 @@ config.parts = {
         },
         "AI CLASS": {
             heading: "AI CLASS",
-            url: "/AIClasses",
+            url: "AIClasses",
             includeCopy: false,
             primaryKey: "ID",
             display: {
@@ -93,7 +93,7 @@ config.parts = {
         },
         "APPLICATION METHOD": {
             heading: "APPLICATION METHOD",
-            url: "/ApplicationMethods",
+            url: "ApplicationMethods",
             includeCopy: false,
             primaryKey: "ID",
             display: {
@@ -113,7 +113,7 @@ config.parts = {
         },
         "CROP USE": {
             heading: "CROP USE",
-            url: "/CropUses",
+            url: "CropUses",
             includeCopy: false,
             primaryKey: "ID",
             display: {
@@ -141,7 +141,7 @@ config.parts = {
         //    }, 
         "EVENT": {
             heading: "EVENT",
-            url: "/Events",
+            url: "Events",
             includeCopy: false,
             primaryKey: "EVENT_ID",
             display: {
@@ -161,7 +161,7 @@ config.parts = {
         },
         "FORMULATION": {
             heading: "FORMULATION",
-            url: "/Formulations",
+            url: "Formulations",
             includeCopy: false,
             primaryKey: "ID",
             display: {
@@ -181,7 +181,7 @@ config.parts = {
         },
         "LIMITATION": {
             heading: "LIMITATION",
-            url: "/Limitations",
+            url: "Limitations",
             includeCopy: false,
             primaryKey: "ID",
             copy: true,
@@ -209,7 +209,7 @@ config.parts = {
         },
         "ORGANIZATION": {
             heading: "ORGANIZATION",
-            url: "/Organizations",
+            url: "Organizations",
             primaryKey: "ORGANIZATION_ID",
             includeCopy: false,
             display: {
@@ -229,7 +229,7 @@ config.parts = {
         },
         "PRODUCT": {
             heading: "PRODUCT",
-            url: "/Products",
+            url: "Products",
             includeCopy: false,
             search: true,
             primaryKey: "ID",
