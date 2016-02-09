@@ -234,7 +234,7 @@ bltApp.factory('AIClassService', function ($http) {
     
 //Parts
 bltApp.factory('PartsService', ['$resource', function ($resource) {
-    return $resource(config.rootURL + '/:url', {}, {
+    return $resource(config.rootURL + '/:url'+ "?publishedDate=", {}, {
         query: {
             isArray: true
         },
