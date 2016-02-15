@@ -152,13 +152,18 @@ bltApp.factory('EventService', ['$resource', function ($resource) {
 }]); //end of EventService
 
 //AIService
-bltApp.factory('AIService', ['$resource', function ($resource) {
-    return $resource(config.rootURL + '/ActiveIngredients', {}, {
-        get: {
-            method: 'GET',
-            isArray: true
+bltApp.factory('AIService', ['$http', function ($http) {
+    return {
+        get: function () {
+            return $http.get(config.rootURL + "/ActiveIngredients");
+        },
+        getClasses: function (id) {
+            return $http.get(config.rootURL + "/ActiveIngredients/" + id + "/aiClass");
+        },
+        getProducts: function (id) {
+            return $http.get(config.rootURL + "/ActiveIngredients/" + id + "/product");
         }
-    });
+    };
 }]); //end of AIService
 
 //PULAService
@@ -170,14 +175,6 @@ bltApp.factory('PULAService', ['$resource', function ($resource) {
     });
 }]); //end of PULAService
 
-//ProductService
-bltApp.factory('ProductService', function ($http) {
-    return {
-        get: function (date, term) {
-            return $http.get(config.rootURL + "/Products?publishedDate=" + date + "&term=" + term);
-        }
-    };
-}); //end of ProductService
 
 //PULAPOIService
 bltApp.factory('PULAPOIService', function ($http) {
@@ -215,26 +212,107 @@ bltApp.factory('LimitationsService', function ($http) {
     };
 }); //end of LimitationsService
 
-bltApp.factory('AIClassService', function ($http) {
+bltApp.factory('AIClassService', function ($http, $q) {
     return {
         get: function () {
             return $http.get(config.rootURL + "/AIClasses?publishedDate=");
+        },
+        addToAI: function (aiClassId, ai) {
+            ///Products/{entityID}/AddProductToAI
+            return $http.post(config.rootURL + "/AIClasses/" + aiClassId + "/AddAIClass", ai);
+        },
+        removeFromAI: function (aiClassId, ai) {
+            return $http.delete(config.rootURL + "/AIClasses/" + aiClassId + "/RemoveAIClassFromAI?activeIngredientID="+ai.ID, ai);
+        },
+        addMultipleToAI: function (aiClassList, ai, success) {
+            var addToAI = this.addToAI;
+            var promises = [];
+            if (!aiClassList || aiClassList.length == 0) {
+                success();
+            }
+            angular.forEach(aiClassList, function (aiClass) {
+                if (aiClass.status != "delete") {
+                    promises.push(addToAI(aiClass.ID, ai));
+                }
+            });
+            $q.all(promises).then(function (results) {
+                success();
+            });
+        },
+        addRemoveMultipleAI: function (aiClassList, ai, success) {
+            var addToAI = this.addToAI;
+            var removeFromAI = this.removeFromAI;
+            var promises = [];
+            if (!aiClassList || aiClassList.length == 0) {
+                success();
+            }
+            angular.forEach(aiClassList, function (aiClass) {
+                if (aiClass.status == "delete") {
+                    promises.push(removeFromAI(aiClass.ID, ai));                   
+                } else if (aiClass.status == "new") {
+                     promises.push(addToAI(aiClass.ID, ai));
+                }
+            });
+            $q.all(promises).then(function (results) {
+                success();
+            });
         }
     };
 });
 
-//bltApp.factory('PartsService', function ($http) {
-//    return {
-//        get: function (part) {
-//            return $http.get(config.rootURL + part.url + "?publishedDate=");
-//        },
-//        post: 
-//    };
-//});
-    
+//ProductService
+bltApp.factory('ProductService', function ($http, $q) {
+    return {
+        get: function (date,term) {
+             return $http.get(config.rootURL + "/Products?publishedDate=" + date + "&term=" + term);
+        },
+        addToAI: function (prodID, ai) {
+            ///Products/{entityID}/AddProductToAI
+            return $http.post(config.rootURL + "/Products/" + prodID + "/AddProductToAI", ai);
+        },
+        removeFromAI: function (prodID, ai) {
+            return $http.delete(config.rootURL + "/Products/" + prodID + "/RemoveProductFromAI?activeIngredientID="+ai.ID);
+        },
+        addMultipleToAI: function (aiProductList, ai, success) {
+            var addToAI = this.addToAI;
+            var promises = [];
+            if (!aiProductList || aiProductList.length == 0) {
+                success();
+            }
+            angular.forEach(aiProductList, function (aiProduct) {
+                if (aiProduct.status != "delete") {
+                    promises.push(addToAI(aiProduct.PRODUCT_ID, ai));
+                }
+            });
+            $q.all(promises).then(function (results) {
+                success();
+            });
+        },
+        addRemoveMultipleAI: function (aiProductList, ai, success) {
+            var addToAI = this.addToAI;
+            var removeFromAI = this.removeFromAI;
+            var promises = [];
+            if (!aiProductList || aiProductList.length == 0) {
+                success();
+            }
+            angular.forEach(aiProductList, function (aiProduct) {
+                if (aiProduct.status == "delete") {
+                    promises.push(removeFromAI(aiProduct.PRODUCT_ID, ai));                   
+                } else if (aiProduct.status == "new") {
+                     promises.push(addToAI(aiProduct.PRODUCT_ID, ai));
+                }
+            });
+            $q.all(promises).then(function (results) {
+                success();
+            });
+        }
+    };
+});
+//end of ProductService
+
 //Parts
 bltApp.factory('PartsService', ['$resource', function ($resource) {
-    return $resource(config.rootURL + '/:url'+ "?publishedDate=", {}, {
+    return $resource(config.rootURL + '/:url' + "?publishedDate=", {}, {
         query: {
             isArray: true
         },

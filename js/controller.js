@@ -471,7 +471,7 @@ bltApp.controller('UserController', function ($scope, organizations, roles, user
 });
 
 //A general controller for all of the parts 
-bltApp.controller('PartsController', function ($scope, $rootScope, $modal, RoleService, AuthService, AIClassService, PartsService) {
+bltApp.controller('PartsController', function ($scope, $rootScope, $modal, RoleService, AuthService, AIClassService, PartsService, ProductService, AIService) {
     RoleService.getAll({}, function (roles) {
         $scope.role = roles[AuthService.getRoleId()];
     });
@@ -528,9 +528,20 @@ bltApp.controller('PartsController', function ($scope, $rootScope, $modal, RoleS
             $scope.editForm.title = "Add New " + $scope.selectedPart.heading;
         } else {
             var part = angular.copy(part);
-            delete part.VERSION_ID;//don't send the version id
+            delete part.VERSION_ID; //don't send the version id
             $scope.part = part;
             $scope.editForm.title = "Edit";
+            if ($scope.selectedPart.name == "ACTIVE INGREDIENT") {
+                //get classes associated with the active ingredient
+                AIService.getClasses(part.ACTIVE_INGREDIENT_ID).success(function (response) {
+                    $scope.classList = _.indexBy(response, "AI_CLASS_NAME");
+                });
+                //get products associated with the active ingredient
+                AIService.getProducts(part.ACTIVE_INGREDIENT_ID).success(function (response) {
+                    $scope.productList = _.indexBy(response, "PRODUCT_NAME");
+                });
+            }
+
         }
         var templateUrl = $scope.selectedPart.name == "ACTIVE INGREDIENT" ? "edit-part-ai.cshtml" : "edit-part.cshtml"
         $scope.modalInstance = $modal.open({
@@ -539,11 +550,13 @@ bltApp.controller('PartsController', function ($scope, $rootScope, $modal, RoleS
             templateUrl: 'templates/' + templateUrl
         });
 
-        //get ai class
-        AIClassService.get()
-            .success(function (response) {
+        if ($scope.selectedPart.name == "ACTIVE INGREDIENT") {
+            //get ai class
+            AIClassService.get().success(function (response) {
                 $scope.aiClasses = response;
             });
+
+        }
 
     };
 
@@ -561,21 +574,39 @@ bltApp.controller('PartsController', function ($scope, $rootScope, $modal, RoleS
             if ($scope.index == -1) {
                 PartsService.create({
                     url: $scope.selectedPart.url
-                }, $scope.part, function () {
-                    //$scope.parts.push($scope.part);
-                    $scope.modalInstance.dismiss('cancel');
-                    $scope.refresh();
-
+                }, $scope.part, function (newAI) {
+                    //add any classes and products if any for an active ingredient
+                    if ($scope.selectedPart.name == "ACTIVE INGREDIENT") {
+                        //add classes
+                        AIClassService.addMultipleToAI($scope.classList, newAI, function () {
+                            //add products
+                            ProductService.addMultipleToAI($scope.productList, newAI, function () {
+                                $scope.modalInstance.dismiss('cancel');
+                                $scope.refresh();
+                            });
+                        });
+                    } else {
+                        $scope.modalInstance.dismiss('cancel');
+                        $scope.refresh();
+                    }
                 });
             } else {
                 //console.log($scope.part);
                 //edit
+                var ai = angular.copy($scope.part);
                 PartsService.update({
                     url: $scope.selectedPart.url + "/" + $scope.part[$scope.selectedPart.primaryKey]
                 }, $scope.part, function () {
-                    //$scope.parts[$scope.index] = $scope.part;
-                    $scope.modalInstance.dismiss('cancel');
-                    $scope.refresh();
+
+                    //add or remove classes
+                    AIClassService.addRemoveMultipleAI($scope.classList, ai, function () {
+                        //add products
+                        ProductService.addRemoveMultipleAI($scope.productList, ai, function () {
+                            $scope.modalInstance.dismiss('cancel');
+                            $scope.refresh();
+                        });
+                    });
+
                 });
             }
 
@@ -626,27 +657,31 @@ bltApp.controller('PartsController', function ($scope, $rootScope, $modal, RoleS
         }
     };
 
-    //add active ingredient or product to AI class
-    $scope.addClassToAI = function (key, item) {
-        if (!$scope.part.classList) {
-            $scope.part.classList = {}
+    //add AI class to active ingredient 
+    $scope.addClassToAI = function (aiClass) {
+        aiClass.status = "new";
+        if (!$scope.classList) {
+            $scope.classList = {}
         }
-        $scope.part.classList[key] = item;
+        $scope.classList[aiClass.AI_CLASS_NAME] = aiClass;
     }
 
     $scope.removeClass = function (index) {
-        delete $scope.part.classList[index];
+        $scope.classList[index].status = "delete";
     }
 
-    $scope.addProductToAI = function (key, item) {
-        if (!$scope.part.productList) {
-            $scope.part.productList = {}
+    //add product to active ingredient 
+    $scope.addProductToAI = function (product) {
+        product.status = "new";
+        //delete item.status;
+        if (!$scope.productList) {
+            $scope.productList = {}
         }
-        $scope.part.productList[key] = item;
+        $scope.productList[product.PRODUCT_NAME] = product;
     }
 
     $scope.removeProduct = function (index) {
-        delete $scope.part.productList[index];
+        $scope.productList[index].status = "delete";
     }
 
 });
