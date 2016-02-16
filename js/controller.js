@@ -404,6 +404,33 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
         link.click();
     }
 
+    //generate contributor password
+    $scope.showContributorPassword = function () {
+        var contributor = {};
+        //login
+        contributor.login = "guest";
+        //generate password
+        var n = 4;
+        var text = '';
+        var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        for (var i = 0; i < n; i++) {
+            text += possible.charAt(Math.floor(Math.random() * possible.length));
+        }
+        contributor.password = "AbEv" + $scope.pulaDetails.EVENT_ID + "$BLTDefau1t" + text;
+        $scope.contributor = contributor;
+        $scope.contributorModalInstance = $modal.open({
+            scope: $scope,
+            animation: true,
+            size: 'md',
+            templateUrl: 'contributorPassword.cshtml'
+        });
+
+    }
+
+    $scope.closeContributorPasswordModal = function () {
+        $scope.contributorModalInstance.dismiss('cancel');
+    }
+
 });
 
 bltApp.controller('UserController', function ($scope, organizations, roles, users, divisions, UserService, AuthService, $modal, RoleService) {

@@ -209,6 +209,14 @@
                         </table>
                         <button class="btn btn-primary" ng-click="exportCommentsAsCSV()">Export Comments to CSV</button>
                     </div>
+                    <!--Generate Contributor Password-->
+                    <div ng-show="pulaDetails.isPublished == 0" class="panel">
+                        <div class="panel-body">
+                            <div ng-show="pulaDetails.EVENT_ID != null &&pulaDetails.EVENT_ID >= 1">
+                                <button class="btn btn-primary" ng-click="showContributorPassword()">Generate Contributor Password</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -218,4 +226,23 @@
     <br/>
     <h1 style="text-align:center;">Loading...</h1>
     <br/>
+</script>
+
+<!--contributor password-->
+<script type="text/ng-template" id="contributorPassword.cshtml">
+    <div>
+        <!--
+        <div class="modal-header">
+            <h3 class="modal-title">{{editForm.title}} </h3>
+        </div>
+-->
+        <div class="modal-body">
+            <h3>Provide the following information to contributors:</h3>
+            <div><b>Login</b>: {{contributor.login}}</div>
+            <div><b>Password</b>: {{contributor.password}}</div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-default" type="button" ng-click="closeContributorPasswordModal()">Close</button>
+        </div>
+    </div>
 </script>
