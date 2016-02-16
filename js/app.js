@@ -84,6 +84,9 @@ bltApp.config(function ($stateProvider, $urlRouterProvider, $httpProvider) {
             },
             activeIngredients: function (AIService) {
                 return AIService.get();
+            },
+            roles: function (AuthService, RoleService) {
+                return RoleService.getAll();
             }
         }
     })

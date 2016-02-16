@@ -191,7 +191,7 @@
                         <li ng-repeat="species in pulaDetails.species">{{species.COMNAME}} | {{species.SCINAME}} <a href="http://ecos.fws.gov/speciesProfile/profile/speciesProfile?spcode={{species.SPCODE}}">(Link to Species Profile page)</a></li>
                     </ul>
                     <!--comments-->
-                    <div ng-if="pulaDetails.comments && pulaDetails.comments.length > 0">
+                    <div ng-if="role.ROLE_NAME == 'ADMIN' && pulaDetails.comments && pulaDetails.comments.length > 0">
                         <h4>Contributor Comments</h4>
                         <table class="table table-striped  table-condensed">
                             <thead>

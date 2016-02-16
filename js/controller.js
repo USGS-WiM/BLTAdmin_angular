@@ -42,8 +42,10 @@ bltApp.controller('HeaderCtrl', function ($scope, $location, AuthService) {
     }
 });
 
-bltApp.controller('HomeController', function ($scope, $location, AuthService, leafletData, $modal, PULAService, activeIngredients, limitToFilter, UserService, EventService, ProductService, PULAPOIService, VersionService, SpeciesService, LimitationsService) {
-
+bltApp.controller('HomeController', function ($scope, $location, AuthService, leafletData, $modal, PULAService, activeIngredients, limitToFilter, UserService, EventService, ProductService, PULAPOIService, VersionService, SpeciesService, LimitationsService, roles) {
+    //get user role
+    $scope.role = roles[AuthService.getRoleId()];
+    
     $scope.noPULAs = false;
     $scope.showPULALoading = true;
     $scope.filter = {};
@@ -162,19 +164,21 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
                     $scope.pulaDetails.effectiveDate = response.EFFECTIVE_DATE ? moment(response.EFFECTIVE_DATE).format("MM/DD/YYYY") : "";
                     //comments
                     var commentList = [];
-                    var comments = response.COMMENTS.split("]");
-                    var commentSections;
-                    comments.forEach(function (comment) {
-                        comment = comment.replace("[", "");
-                        if (comment && comment != "") {
-                            commentSections = comment.split("|");
-                            commentList.push({
-                                name: commentSections[0],
-                                org: commentSections[1],
-                                text: commentSections[2]
-                            });
-                        }
-                    });
+                    if (response.COMMENTS) {
+                        var comments = response.COMMENTS.split("]");
+                        var commentSections;
+                        comments.forEach(function (comment) {
+                            comment = comment.replace("[", "");
+                            if (comment && comment != "") {
+                                commentSections = comment.split("|");
+                                commentList.push({
+                                    name: commentSections[0],
+                                    org: commentSections[1],
+                                    text: commentSections[2]
+                                });
+                            }
+                        });
+                    }
                     $scope.pulaDetails.comments = commentList;
 
                     //event
