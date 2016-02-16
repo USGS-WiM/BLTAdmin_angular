@@ -45,7 +45,7 @@ bltApp.controller('HeaderCtrl', function ($scope, $location, AuthService) {
 bltApp.controller('HomeController', function ($scope, $location, AuthService, leafletData, $modal, PULAService, activeIngredients, limitToFilter, UserService, EventService, ProductService, PULAPOIService, VersionService, SpeciesService, LimitationsService, roles) {
     //get user role
     $scope.role = roles[AuthService.getRoleId()];
-    
+
     $scope.noPULAs = false;
     $scope.showPULALoading = true;
     $scope.filter = {};
@@ -156,42 +156,44 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
                 //"/PULAs/POI/{shapeId}?publishedDate={date}";
                 PULAPOIService.get(feature, $scope.seclectedDate).success(function (response) {
                     $scope.pulaDetails = {};
-                    //pula id
-                    $scope.pulaDetails.id = response.PULA_ID;
-                    $scope.pulaDetails.isPublished = response.IS_PUBLISHED;
+                    if (response && response != "") {
+                        //pula id
+                        $scope.pulaDetails.id = response.PULA_ID;
+                        $scope.pulaDetails.isPublished = response.IS_PUBLISHED;
 
-                    //effective date
-                    $scope.pulaDetails.effectiveDate = response.EFFECTIVE_DATE ? moment(response.EFFECTIVE_DATE).format("MM/DD/YYYY") : "";
-                    //comments
-                    var commentList = [];
-                    if (response.COMMENTS) {
-                        var comments = response.COMMENTS.split("]");
-                        var commentSections;
-                        comments.forEach(function (comment) {
-                            comment = comment.replace("[", "");
-                            if (comment && comment != "") {
-                                commentSections = comment.split("|");
-                                commentList.push({
-                                    name: commentSections[0],
-                                    org: commentSections[1],
-                                    text: commentSections[2]
-                                });
-                            }
-                        });
+                        //effective date
+                        $scope.pulaDetails.effectiveDate = response.EFFECTIVE_DATE ? moment(response.EFFECTIVE_DATE).format("MM/DD/YYYY") : "";
+                        //comments
+                        var commentList = [];
+                        if (response.COMMENTS) {
+                            var comments = response.COMMENTS.split("]");
+                            var commentSections;
+                            comments.forEach(function (comment) {
+                                comment = comment.replace("[", "");
+                                if (comment && comment != "") {
+                                    commentSections = comment.split("|");
+                                    commentList.push({
+                                        name: commentSections[0],
+                                        org: commentSections[1],
+                                        text: commentSections[2]
+                                    });
+                                }
+                            });
+                        }
+                        $scope.pulaDetails.comments = commentList;
+
+                        //event
+                        var eventID = response.EVENT_ID;
+                        $scope.pulaDetails.event = $scope.events[eventID].NAME;
+                        //version
+                        var versionId = response.VERSION_ID;
+
+                        //justification information
+                        $scope.pulaDetails.baseData = response.BASE_DATA;
+                        $scope.pulaDetails.baseDataModifiers = response.BASE_DATA_MODIFIERS;
+                        $scope.pulaDetails.biologicalOpinion = response.BIOLOGICAL_OPINION_LIT;
+                        $scope.pulaDetails.additionalInfo = response.ADDITIONAL_INFORMATION;
                     }
-                    $scope.pulaDetails.comments = commentList;
-
-                    //event
-                    var eventID = response.EVENT_ID;
-                    $scope.pulaDetails.event = $scope.events[eventID].NAME;
-                    //version
-                    var versionId = response.VERSION_ID;
-
-                    //justification information
-                    $scope.pulaDetails.baseData = response.BASE_DATA;
-                    $scope.pulaDetails.baseDataModifiers = response.BASE_DATA_MODIFIERS;
-                    $scope.pulaDetails.biologicalOpinion = response.BIOLOGICAL_OPINION_LIT;
-                    $scope.pulaDetails.additionalInfo = response.ADDITIONAL_INFORMATION;
 
                     VersionService.get(versionId).success(function (response) {
                         var version = response;
