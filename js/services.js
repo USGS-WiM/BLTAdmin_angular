@@ -184,6 +184,9 @@ bltApp.factory('PULAPOIService', function ($http) {
         },
         expire: function (id, date) {
             return $http.get(config.rootURL + "/PULAs/" + id + "/updateStatus?status=EXPIRED&statusDate=" + date.month + "/01/" + date.year);
+        },
+        publish: function (id, date) {
+            return $http.get(config.rootURL + "/PULAs/" + id + "/updateStatus?status=PUBLISHED");
         }
     };
 }); //end of PULAPOIService

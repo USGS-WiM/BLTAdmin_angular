@@ -223,11 +223,16 @@
                         </table>
                         <button class="btn btn-primary" ng-click="exportCommentsAsCSV()">Export Comments to CSV</button>
                     </div>
-                    <!--Generate Contributor Password-->
+                    <!-- Edit PULA,Contributor Password, Publish PULA-->
                     <div ng-show="pulaDetails.isPublished == 0" class="panel">
                         <div class="panel-body">
+                            <!--Generate Contributor Password-->
                             <div ng-show="pulaDetails.EVENT_ID != null &&pulaDetails.EVENT_ID >= 1">
                                 <button class="btn btn-primary" ng-click="showContributorPassword()">Generate Contributor Password</button>
+                            </div>
+                            <!--Publish PULA-->
+                            <div ng-show="role.ROLE_ID <= 2">
+                                <button class="btn btn-primary" ng-click="publishPULA()">Publish PULA</button>
                             </div>
                         </div>
                     </div>

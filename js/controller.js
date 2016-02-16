@@ -153,103 +153,105 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
                 }).addTo(map);
 
                 //get the effective date, comments, event, entity id
-                //"/PULAs/POI/{shapeId}?publishedDate={date}";
-                PULAPOIService.get(feature, $scope.seclectedDate).success(function (response) {
-                    $scope.pulaDetails = {};
-                    if (response && response != "") {
-                        //pula id
-                        $scope.pulaDetails.id = response.ID;
-                        $scope.pulaDetails.pulaId = response.PULA_ID;
-                        $scope.pulaDetails.isPublished = response.IS_PUBLISHED;
+                if (feature.PULA_ID != "Null" && feature.PULA_SHAPE_ID != "Null") {
+                    PULAPOIService.get(feature, $scope.seclectedDate).success(function (response) {
+                        $scope.pulaDetails = {};
+                        if (response && response != "") {
+                            //pula id
+                            $scope.pulaDetails.id = response.ID;
+                            $scope.pulaDetails.pulaId = response.PULA_ID;
+                            $scope.pulaDetails.isPublished = response.IS_PUBLISHED;
 
-                        //effective date
-                        $scope.pulaDetails.effectiveDate = response.EFFECTIVE_DATE ? moment(response.EFFECTIVE_DATE).format("MM/DD/YYYY") : "";
-                        //comments
-                        var commentList = [];
-                        if (response.COMMENTS) {
-                            var comments = response.COMMENTS.split("]");
-                            var commentSections;
-                            comments.forEach(function (comment) {
-                                comment = comment.replace("[", "");
-                                if (comment && comment != "") {
-                                    commentSections = comment.split("|");
-                                    commentList.push({
-                                        name: commentSections[0],
-                                        org: commentSections[1],
-                                        text: commentSections[2]
-                                    });
-                                }
-                            });
+                            //effective date
+                            $scope.pulaDetails.effectiveDate = response.EFFECTIVE_DATE ? moment(response.EFFECTIVE_DATE).format("MM/DD/YYYY") : "";
+                            //comments
+                            var commentList = [];
+                            if (response.COMMENTS) {
+                                var comments = response.COMMENTS.split("]");
+                                var commentSections;
+                                comments.forEach(function (comment) {
+                                    comment = comment.replace("[", "");
+                                    if (comment && comment != "") {
+                                        commentSections = comment.split("|");
+                                        commentList.push({
+                                            name: commentSections[0],
+                                            org: commentSections[1],
+                                            text: commentSections[2]
+                                        });
+                                    }
+                                });
+                            }
+                            $scope.pulaDetails.comments = commentList;
+
+                            //event
+                            var eventID = response.EVENT_ID;
+                            $scope.pulaDetails.event = $scope.events[eventID].NAME;
+                            //version
+                            var versionId = response.VERSION_ID;
+
+                            //justification information
+                            $scope.pulaDetails.baseData = response.BASE_DATA;
+                            $scope.pulaDetails.baseDataModifiers = response.BASE_DATA_MODIFIERS;
+                            $scope.pulaDetails.biologicalOpinion = response.BIOLOGICAL_OPINION_LIT;
+                            $scope.pulaDetails.additionalInfo = response.ADDITIONAL_INFORMATION;
                         }
-                        $scope.pulaDetails.comments = commentList;
 
-                        //event
-                        var eventID = response.EVENT_ID;
-                        $scope.pulaDetails.event = $scope.events[eventID].NAME;
-                        //version
-                        var versionId = response.VERSION_ID;
-
-                        //justification information
-                        $scope.pulaDetails.baseData = response.BASE_DATA;
-                        $scope.pulaDetails.baseDataModifiers = response.BASE_DATA_MODIFIERS;
-                        $scope.pulaDetails.biologicalOpinion = response.BIOLOGICAL_OPINION_LIT;
-                        $scope.pulaDetails.additionalInfo = response.ADDITIONAL_INFORMATION;
-                    }
-
-                    VersionService.get(versionId).success(function (response) {
-                        var version = response;
-                        $scope.pulaDetails.version = version;
-                        $scope.pulaDetails.creationDate = version.CREATED_TIME_STAMP ? moment(version.CREATED_TIME_STAMP).format("MM/DD/YYYY") : "";
-                        $scope.pulaDetails.publishedDate = version.PUBLISHED_TIME_STAMP ? moment(version.PUBLISHED_TIME_STAMP).format("MM/DD/YYYY") : "";
-                        $scope.pulaDetails.expirationDate = version.EXPIRED_TIME_STAMP ? moment(version.EXPIRED_TIME_STAMP).format("MM/DD/YYYY") : "";
-                        //get users
-                        //creator
-                        if (version.CREATOR_ID) {
-                            UserService.query({
-                                id: version.CREATOR_ID
-                            }, function (response) {
-                                var creator = response.length == 1 ? response[0] : response;
-                                $scope.pulaDetails.creator = creator.FNAME + " " + creator.LNAME;
-                            });
-                        }
-                        //publisher
-                        if (version.PUBLISHER_ID) {
-                            UserService.query({
-                                id: version.PUBLISHER_ID
-                            }, function (response) {
-                                var publisher = response.length == 1 ? response[0] : response;
-                                $scope.pulaDetails.publisher = publisher.FNAME + " " + publisher.LNAME;
-                            });
-                        }
-                        //expirer
-                        if (version.EXPIRER_ID) {
-                            UserService.query({
-                                id: version.EXPIRER_ID
-                            }, function (response) {
-                                var expirer = response.length == 1 ? response[0] : response;
-                                $scope.pulaDetails.expirer = expirer.FNAME + " " + expirer.LNAME;
-                            });
-                        }
-                        //console.log($scope.pulaDetails);
-                    });
-
-                    //get the species
-                    ///ActiveIngredientPULA/{activeIngredientPULAID}/Species
-                    SpeciesService.get($scope.pulaDetails)
-                        .success(function (response) {
-                            $scope.pulaDetails.species = response.SPECIES;
+                        VersionService.get(versionId).success(function (response) {
+                            var version = response;
+                            $scope.pulaDetails.version = version;
+                            $scope.pulaDetails.creationDate = version.CREATED_TIME_STAMP ? moment(version.CREATED_TIME_STAMP).format("MM/DD/YYYY") : "";
+                            $scope.pulaDetails.publishedDate = version.PUBLISHED_TIME_STAMP ? moment(version.PUBLISHED_TIME_STAMP).format("MM/DD/YYYY") : "";
+                            $scope.pulaDetails.expirationDate = version.EXPIRED_TIME_STAMP ? moment(version.EXPIRED_TIME_STAMP).format("MM/DD/YYYY") : "";
+                            //get users
+                            //creator
+                            if (version.CREATOR_ID) {
+                                UserService.query({
+                                    id: version.CREATOR_ID
+                                }, function (response) {
+                                    var creator = response.length == 1 ? response[0] : response;
+                                    $scope.pulaDetails.creator = creator.FNAME + " " + creator.LNAME;
+                                });
+                            }
+                            //publisher
+                            if (version.PUBLISHER_ID) {
+                                UserService.query({
+                                    id: version.PUBLISHER_ID
+                                }, function (response) {
+                                    var publisher = response.length == 1 ? response[0] : response;
+                                    $scope.pulaDetails.publisher = publisher.FNAME + " " + publisher.LNAME;
+                                });
+                            }
+                            //expirer
+                            if (version.EXPIRER_ID) {
+                                UserService.query({
+                                    id: version.EXPIRER_ID
+                                }, function (response) {
+                                    var expirer = response.length == 1 ? response[0] : response;
+                                    $scope.pulaDetails.expirer = expirer.FNAME + " " + expirer.LNAME;
+                                });
+                            }
+                            //console.log($scope.pulaDetails);
                         });
-                });
 
-
-                //get the limitations
-                LimitationsService.get(feature, $scope.seclectedDate)
-                    .success(function (response) {
-                        $scope.pulaDetails.mapperLimits = response.MapperLimits;
-                        //                        $scope.showLoading = false;
-                        $scope.showPULALoading = false;
-                        //                        $scope.modalLoading.dismiss('cancel');
+                        //get the species
+                        ///ActiveIngredientPULA/{activeIngredientPULAID}/Species
+                        SpeciesService.get($scope.pulaDetails)
+                            .success(function (response) {
+                                $scope.pulaDetails.species = response.SPECIES;
+                            });
                     });
+
+
+                    //get the limitations
+
+                    LimitationsService.get(feature, $scope.seclectedDate)
+                        .success(function (response) {
+                            $scope.pulaDetails.mapperLimits = response.MapperLimits;
+                            $scope.showPULALoading = false;
+                        });
+                } else {
+                    $scope.showPULALoading = false;
+                }
             }
         });
     }
@@ -439,6 +441,15 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
         date.month = $scope.months.indexOf(date.month) + 1;
         PULAPOIService.expire($scope.pulaDetails.id, date).success(function () {
             $scope.pulaDetails.expirationDate = date.month + "/01/" + date.year;
+        });
+    }
+
+    //publish PULA
+    $scope.publishPULA = function () {
+        var date = $scope.expirationDate;
+        date.month = $scope.months.indexOf(date.month) + 1;
+        PULAPOIService.publish($scope.pulaDetails.id).success(function () {
+            $scope.pulaDetails.isPublished = 1; //double check
         });
     }
 });
