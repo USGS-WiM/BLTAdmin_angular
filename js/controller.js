@@ -161,7 +161,22 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
                     //effective date
                     $scope.pulaDetails.effectiveDate = response.EFFECTIVE_DATE ? moment(response.EFFECTIVE_DATE).format("MM/DD/YYYY") : "";
                     //comments
-                    $scope.pulaDetails.comments = response.COMMENTS;
+                    var commentList = [];
+                    var comments = response.COMMENTS.split("]");
+                    var commentSections;
+                    comments.forEach(function (comment) {
+                        comment = comment.replace("[", "");
+                        if (comment && comment != "") {
+                            commentSections = comment.split("|");
+                            commentList.push({
+                                name: commentSections[0],
+                                org: commentSections[1],
+                                text: commentSections[2]
+                            });
+                        }
+                    });
+                    $scope.pulaDetails.comments = commentList;
+
                     //event
                     var eventID = response.EVENT_ID;
                     $scope.pulaDetails.event = $scope.events[eventID].NAME;
@@ -358,6 +373,29 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
             $scope.pula.setLayerDefs(layers);
             $scope.showLoading = false;
         });
+    }
+
+    //export comments
+    $scope.exportCommentsAsCSV = function () {
+        var date = moment().format("MM-DD-YYYY");
+        var fileName = "PULAComments_" + date + ".csv";
+
+        //generate content
+        var csv = "Contributor Comments\n";
+        csv = csv + "Name,Organization,Comment\n";
+        var comments = $scope.pulaDetails.comments;
+        comments.forEach(function (comment) {
+            csv = csv + comment.name + "," + comment.org + "," + comment.text + "\n";
+        });
+
+        //create csv
+        var link = document.createElement('a');
+        link.href = 'data:attachment/csv,' + encodeURIComponent(csv);
+        link.target = '_blank';
+        link.download = fileName;
+
+        document.body.appendChild(link);
+        link.click();
     }
 
 });
