@@ -181,6 +181,9 @@ bltApp.factory('PULAPOIService', function ($http) {
     return {
         get: function (feature, date) {
             return $http.get(config.rootURL + "/PULAs/POI/" + feature.PULA_SHAPE_ID + "/?publishedDate=" + date.month + "/01/" + date.year);
+        },
+        expire: function (id, date) {
+            return $http.get(config.rootURL + "/PULAs/" + id + "/updateStatus?status=EXPIRED&statusDate=" + date.month + "/01/" + date.year);
         }
     };
 }); //end of PULAPOIService
@@ -198,7 +201,7 @@ bltApp.factory('VersionService', function ($http) {
 bltApp.factory('SpeciesService', function ($http) {
     return {
         get: function (pulaDetails) {
-            return $http.get(config.rootURL + "/ActiveIngredientPULA/" + pulaDetails.id + "/Species");
+            return $http.get(config.rootURL + "/ActiveIngredientPULA/" + pulaDetails.pulaId + "/Species");
         }
     };
 }); //end of SpeciesService
@@ -222,7 +225,7 @@ bltApp.factory('AIClassService', function ($http, $q) {
             return $http.post(config.rootURL + "/AIClasses/" + aiClassId + "/AddAIClass", ai);
         },
         removeFromAI: function (aiClassId, ai) {
-            return $http.delete(config.rootURL + "/AIClasses/" + aiClassId + "/RemoveAIClassFromAI?activeIngredientID="+ai.ID, ai);
+            return $http.delete(config.rootURL + "/AIClasses/" + aiClassId + "/RemoveAIClassFromAI?activeIngredientID=" + ai.ID, ai);
         },
         addMultipleToAI: function (aiClassList, ai, success) {
             var addToAI = this.addToAI;
@@ -248,9 +251,9 @@ bltApp.factory('AIClassService', function ($http, $q) {
             }
             angular.forEach(aiClassList, function (aiClass) {
                 if (aiClass.status == "delete") {
-                    promises.push(removeFromAI(aiClass.ID, ai));                   
+                    promises.push(removeFromAI(aiClass.ID, ai));
                 } else if (aiClass.status == "new") {
-                     promises.push(addToAI(aiClass.ID, ai));
+                    promises.push(addToAI(aiClass.ID, ai));
                 }
             });
             $q.all(promises).then(function (results) {
@@ -263,15 +266,15 @@ bltApp.factory('AIClassService', function ($http, $q) {
 //ProductService
 bltApp.factory('ProductService', function ($http, $q) {
     return {
-        get: function (date,term) {
-             return $http.get(config.rootURL + "/Products?publishedDate=" + date + "&term=" + term);
+        get: function (date, term) {
+            return $http.get(config.rootURL + "/Products?publishedDate=" + date + "&term=" + term);
         },
         addToAI: function (prodID, ai) {
             ///Products/{entityID}/AddProductToAI
             return $http.post(config.rootURL + "/Products/" + prodID + "/AddProductToAI", ai);
         },
         removeFromAI: function (prodID, ai) {
-            return $http.delete(config.rootURL + "/Products/" + prodID + "/RemoveProductFromAI?activeIngredientID="+ai.ID);
+            return $http.delete(config.rootURL + "/Products/" + prodID + "/RemoveProductFromAI?activeIngredientID=" + ai.ID);
         },
         addMultipleToAI: function (aiProductList, ai, success) {
             var addToAI = this.addToAI;
@@ -297,9 +300,9 @@ bltApp.factory('ProductService', function ($http, $q) {
             }
             angular.forEach(aiProductList, function (aiProduct) {
                 if (aiProduct.status == "delete") {
-                    promises.push(removeFromAI(aiProduct.PRODUCT_ID, ai));                   
+                    promises.push(removeFromAI(aiProduct.PRODUCT_ID, ai));
                 } else if (aiProduct.status == "new") {
-                     promises.push(addToAI(aiProduct.PRODUCT_ID, ai));
+                    promises.push(addToAI(aiProduct.PRODUCT_ID, ai));
                 }
             });
             $q.all(promises).then(function (results) {

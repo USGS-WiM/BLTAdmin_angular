@@ -145,7 +145,21 @@
                         </tr>
                         <tr>
                             <td>Expiration Date:</td>
-                            <td>{{pulaDetails.expirationDate}}</td>
+                            <td ng-show="pulaDetails.expirationDate != ''">{{pulaDetails.expirationDate}}</td>
+                            <td ng-show=" pulaDetails.expirationDate == ''">
+                                <form class="form-inline">
+                                    <div class="form-group">
+                                        <select ng-model="expirationDate.month" class="form-control" ng-options="m for m in months"></select>
+                                    </div>
+                                    <div class="form-group">
+                                        <select ng-model="expirationDate.year" class="form-control" ng-options="y for y in expirationYears"></select>
+                                    </div>
+                                    <div class="form-group">
+                                        <button class="btn btn-primary" ng-disabled="!expirationDate.month || !expirationDate.year" ng-click="addExpirationDate()">Add Expiration Date</button>
+                                    </div>
+                                </form>
+
+                            </td>
                         </tr>
                     </table>
                     <h4>PULA Justification</h4>

@@ -158,7 +158,8 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
                     $scope.pulaDetails = {};
                     if (response && response != "") {
                         //pula id
-                        $scope.pulaDetails.id = response.PULA_ID;
+                        $scope.pulaDetails.id = response.ID;
+                        $scope.pulaDetails.pulaId = response.PULA_ID;
                         $scope.pulaDetails.isPublished = response.IS_PUBLISHED;
 
                         //effective date
@@ -431,6 +432,15 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
         $scope.contributorModalInstance.dismiss('cancel');
     }
 
+    //expire pulas
+    $scope.expirationYears = getYears(5);
+    $scope.addExpirationDate = function () {
+        var date = $scope.expirationDate;
+        date.month = $scope.months.indexOf(date.month) + 1;
+        PULAPOIService.expire($scope.pulaDetails.id, date).success(function () {
+            $scope.pulaDetails.expirationDate = date.month + "/01/" + date.year;
+        });
+    }
 });
 
 bltApp.controller('UserController', function ($scope, organizations, roles, users, divisions, UserService, AuthService, $modal, RoleService) {
