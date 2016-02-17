@@ -269,7 +269,15 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
                     LimitationsService.get(feature, $scope.seclectedDate)
                         .success(function (response) {
                             $scope.pulaDetails.mapperLimits = response.MapperLimits;
-                            $scope.showPULALoading = false;
+                            if (isGuest) {
+                                //limitation codes
+                                LimitationsService.getCodes(response.MapperLimits, $scope.seclectedDate, function (response) {
+                                    $scope.limitaionCodes = response;
+                                    $scope.showPULALoading = false;
+                                });
+                            } else {
+                                $scope.showPULALoading = false;
+                            }
                         });
                 } else {
                     $scope.showPULALoading = false;

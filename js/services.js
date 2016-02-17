@@ -214,10 +214,28 @@ bltApp.factory('SpeciesService', function ($http) {
 }); //end of SpeciesService
 
 //LimitationsService
-bltApp.factory('LimitationsService', function ($http) {
+bltApp.factory('LimitationsService', function ($http, $q) {
     return {
         get: function (feature, date) {
             return $http.get(config.rootURL + "/PULAs/" + feature.PULA_ID + "/LimitationsForMapper.json?ShapeID=" + feature.PULA_SHAPE_ID + "&EffectDate=" + date.month + "/01/" + date.year);
+        },
+        getCodes: function (limitationList, date, success) {
+            var getCode = function (limitation) {
+                return $http.get(config.rootURL + "/Limitations/" + limitation.LIMIT.LIMITATION_ID + "?publishedDate=" + date.month + "/01/" + date.year);
+            };
+            var promises = [];
+            var processedLimitations = {};
+            var id;
+            limitationList.forEach(function (limitation) {
+                id = limitation.LIMIT.LIMITATION_ID;
+                if (!processedLimitations[id]) {
+                    processedLimitations[id] = true;
+                    promises.push(getCode(limitation));
+                }
+            });
+            $q.all(promises).then(function (results) {
+                success(results);
+            });
         }
     };
 }); //end of LimitationsService
