@@ -14,7 +14,7 @@
                 <span class="glyphicon center glyphicon-refresh" ng-show="showLoading"></span>
                 <leaflet center="center" layers="layers" markers="markers" constrol="controls" width="100%" height="550px" ng-class="{ 'loading': showLoading }">
                 </leaflet>
-                <div id="filters">
+                <div id="filters" ng-hide="hideFilters">
                     <uib-accordion close-others="true">
                         <uib-accordion-group is-open="status.isDateOpen" panel-class="panel-danger">
                             <uib-accordion-heading>

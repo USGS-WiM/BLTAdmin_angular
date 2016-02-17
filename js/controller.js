@@ -5,6 +5,16 @@ bltApp.controller('LoginController', function ($scope, LoginService, AuthService
     //login
     $scope.login = function () {
         AuthService.setCredentials($scope.credentials);
+        //check if it's a guest user
+        var password = $scope.credentials.password;
+        if (password.substring(0, 4) == "AbEv") {
+            //parse it apart to get the event and the pula, and then go ahead and validateUser, then pass
+            var indexOfend = password.indexOf("$");
+            var x = indexOfend == 4 ? 1 : indexOfend - 4; //eventId is only 1 digit
+            $scope.credentials.eventId = password.substring(4, x + 4);
+            //This will be 'BLTDefau1t'
+            $scope.credentials.password = password.substring(password.indexOf("$") + 1, password.indexOf("$") + 11);
+        }
         LoginService.login({},
             function success(response) {
                 var user = response;
@@ -24,36 +34,37 @@ bltApp.controller('LoginController', function ($scope, LoginService, AuthService
                 AuthService.removeCredentials();
                 //TODO: show error message
             });
+
     }
 
 });
 
 
-bltApp.controller('HeaderCtrl', function ($scope, $location, AuthService) {
-    $scope.user = {};
-    $scope.user.name = AuthService.getUsername();
-    $scope.$on("userLoggedIn", function (event) {
-        $scope.user.name = AuthService.getUsername();
-    });
-    $scope.logOff = function () {
-        //remove credentials
-        AuthService.removeCredentials();
-        $location.path("/path");
-    }
-});
 
-bltApp.controller('HomeController', function ($scope, $location, AuthService, leafletData, $modal, PULAService, activeIngredients, limitToFilter, UserService, EventService, ProductService, PULAPOIService, VersionService, SpeciesService, LimitationsService, roles) {
+
+bltApp.controller('HomeController', function ($scope, $location, AuthService, leafletData, $modal, PULAService, activeIngredients, limitToFilter, UserService, EventService, ProductService, PULAPOIService, VersionService, SpeciesService, LimitationsService, roles, EventPULAService) {
+    //guest
+    //get event id
+    if (AuthService.getEventId()) {
+        var isGuest = true;
+        $scope.eventId = AuthService.getEventId();
+        $scope.hideFilters = true;
+        $scope.hideMenu = true;
+    } else {
+
+        EventService.get({}, function (events) {
+            $scope.events = _.indexBy(events, "EVENT_ID");
+            $scope.showPULALoading = false;
+        });
+    }
+
     //get user role
     $scope.role = roles[AuthService.getRoleId()];
 
     $scope.noPULAs = false;
-    $scope.showPULALoading = true;
+    //$scope.showPULALoading = true;
     $scope.filter = {};
     $scope.filter.event = "All";
-    EventService.get({}, function (events) {
-        $scope.events = _.indexBy(events, "EVENT_ID");
-        $scope.showPULALoading = false;
-    });
 
     $scope.activeIngredients = activeIngredients;
 
@@ -98,8 +109,7 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
                 url: config.BLTMapServerURL,
                 opacity: 0.5,
                 layers: [0, 1, 2, 3, 4],
-                visible: true,
-                layerDefs: getLayerDefs()
+                visible: true
             }).addTo(map);
             $scope.pula = pula;
             //add the address seach bar
@@ -117,13 +127,23 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
 
 
     var getLayerDefs = function () {
-        return {
-            0: "PULA_SHAPE_ID IS NULL",
-            1: "CREATED_TIME_STAMP <= timestamp '" + formatDate + "' AND (PUBLISHED_TIME_STAMP IS NULL AND EXPIRED_TIME_STAMP IS NULL)",
-            2: "PUBLISHED_TIME_STAMP <= timestamp '" + formatDate + "' AND ((EFFECTIVE_DATE > timestamp '" + formatDate + "') OR (EFFECTIVE_DATE IS NULL)) AND EXPIRED_TIME_STAMP IS NULL",
-            3: "EFFECTIVE_DATE <= timestamp '" + formatDate + "' AND PUBLISHED_TIME_STAMP <= timestamp '" + formatDate + "' AND ((EXPIRED_TIME_STAMP >= timestamp '" + monthYear + "') OR (EXPIRED_TIME_STAMP IS NULL))",
-            4: "(EXPIRED_TIME_STAMP <= timestamp '" + monthYear + "')"
+        if (!isGuest) {
+            return {
+                0: "PULA_SHAPE_ID IS NULL",
+                1: "CREATED_TIME_STAMP <= timestamp '" + formatDate + "' AND (PUBLISHED_TIME_STAMP IS NULL AND EXPIRED_TIME_STAMP IS NULL)",
+                2: "PUBLISHED_TIME_STAMP <= timestamp '" + formatDate + "' AND ((EFFECTIVE_DATE > timestamp '" + formatDate + "') OR (EFFECTIVE_DATE IS NULL)) AND EXPIRED_TIME_STAMP IS NULL",
+                3: "EFFECTIVE_DATE <= timestamp '" + formatDate + "' AND PUBLISHED_TIME_STAMP <= timestamp '" + formatDate + "' AND ((EXPIRED_TIME_STAMP >= timestamp '" + monthYear + "') OR (EXPIRED_TIME_STAMP IS NULL))",
+                4: "(EXPIRED_TIME_STAMP <= timestamp '" + monthYear + "')"
 
+            }
+        } else {
+            return {
+                0: "1=0",
+                1: "1=0",
+                2: "1=0",
+                3: "1=0",
+                4: "1=0"
+            }
         }
     }
 
@@ -451,6 +471,47 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
         PULAPOIService.publish($scope.pulaDetails.id).success(function () {
             $scope.pulaDetails.isPublished = 1; //double check
         });
+    }
+
+
+    //if guest show the event based PULAs
+    if (isGuest) {
+        $scope.showLoading = true;
+        EventPULAService.get($scope.eventId).success(function (response) {
+            var createdPulaShapes = [];
+            var pulaList = response.PULA;
+            if (pulaList.length == 0) {
+                $scope.showLoading = false;
+                $scope.noPULAs = true;
+            }
+            for (var i = 0; i < pulaList.length; i++) {
+                pula = pulaList[i];
+                createdPulaShapes.push(pula.ShapeID);
+            }
+            var layers = {
+                0: "1=0",
+                1: createdPulaShapes.length == 0 ? "1=0" : "PULA_SHAPE_ID = " + createdPulaShapes.join(" or PULA_SHAPE_ID = "),
+                2: "1=0",
+                3: "1=0",
+                4: "1=0"
+            }
+            $scope.pula.setLayerDefs(layers);
+            $scope.showLoading = false;
+        });
+
+    }
+});
+
+bltApp.controller('HeaderCtrl', function ($scope, $location, AuthService) {
+    $scope.user = {};
+    $scope.user.name = AuthService.getUsername();
+    $scope.$on("userLoggedIn", function (event) {
+        $scope.user.name = AuthService.getUsername();
+    });
+    $scope.logOff = function () {
+        //remove credentials
+        AuthService.removeCredentials();
+        $location.path("/path");
     }
 });
 

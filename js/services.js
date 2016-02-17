@@ -16,6 +16,7 @@ bltApp.factory('AuthService', function ($cookies) {
             $cookies.put('username', credentials.username);
             $cookies.put('password', credentials.password);
             $cookies.put('roleId', credentials.roleId);
+            $cookies.put('eventId', credentials.eventId);
         },
         removeCredentials: function () {
             $cookies.remove('username');
@@ -27,6 +28,9 @@ bltApp.factory('AuthService', function ($cookies) {
         },
         getUsername: function () {
             return $cookies.get('username');
+        },
+        getEventId: function () {
+            return $cookies.get('eventId');
         },
         getRoleId: function () {
             return $cookies.get('roleId');
@@ -344,3 +348,12 @@ bltApp.factory('PartsService', ['$resource', function ($resource) {
         }
     });
 }]); //end of PartsService
+
+//EventPULA
+bltApp.factory('EventPULAService', function ($http) {
+    return {
+        get: function (eventId) {
+            return $http.get(config.rootURL + "/Events/" + eventId + "/PULAs");
+        }
+    };
+}); //end of EventPULA

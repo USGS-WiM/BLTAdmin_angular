@@ -79,14 +79,19 @@ bltApp.config(function ($stateProvider, $urlRouterProvider, $httpProvider) {
             isLoginRequired: true
         },
         resolve: {
-            events: function (EventService) {
-                return EventService.get();
-            },
-            activeIngredients: function (AIService) {
-                return AIService.get();
+            activeIngredients: function (AIService, AuthService) {
+                if (AuthService.getEventId()) {
+                    return [];
+                } else {
+                    return AIService.get();
+                }
             },
             roles: function (AuthService, RoleService) {
-                return RoleService.getAll();
+                if (AuthService.getEventId()) {
+                    return [];
+                } else {
+                    return RoleService.getAll();
+                }
             }
         }
     })
