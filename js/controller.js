@@ -4,7 +4,6 @@ bltApp.controller('LoginController', function ($scope, LoginService, AuthService
     $scope.credentials = {};
     //login
     $scope.login = function () {
-        AuthService.setCredentials($scope.credentials);
         //check if it's a guest user
         var password = $scope.credentials.password;
         if (password.substring(0, 4) == "AbEv") {
@@ -14,6 +13,9 @@ bltApp.controller('LoginController', function ($scope, LoginService, AuthService
             $scope.credentials.eventId = password.substring(4, x + 4);
             //This will be 'BLTDefau1t'
             $scope.credentials.password = password.substring(password.indexOf("$") + 1, password.indexOf("$") + 11);
+            AuthService.setCredentials($scope.credentials);
+        } else {
+            AuthService.setCredentials($scope.credentials);
         }
         LoginService.login({},
             function success(response) {
