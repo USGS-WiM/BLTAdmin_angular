@@ -10,6 +10,9 @@ bltApp.factory('httpInterceptor', ['$rootScope', '$q', '$cookies', '$location', 
             config.headers = config.headers || {};
             config.headers['Authorization'] = 'Basic ' + btoa($cookies.get('username') + ":" + $cookies.get('password'));
             config.headers['Accept'] = 'application/json';
+            if (config.method == "DELETE") {
+                 config.headers['Accept'] = 'text/html';
+            }
             return config;
         },
         responseError: function (response) {
