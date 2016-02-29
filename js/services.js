@@ -191,6 +191,12 @@ bltApp.factory('PULAPOIService', function ($http) {
         },
         publish: function (id, date) {
             return $http.get(config.rootURL + "/PULAs/" + id + "/updateStatus?status=PUBLISHED");
+        },
+        addComment: function (pula, comment) {
+            var comment = "[" + comment.name + "|" + comment.org + "|" + comment.text + "]";
+            delete pula.comments;
+            pula.COMMENTS = comment;
+            return $http.put(config.rootURL + "/PULAs/" + pula.id + "/AddComments.json", {COMMENTS: comment});
         }
     };
 }); //end of PULAPOIService

@@ -114,7 +114,7 @@
             <div class="col-md-6">
 
                 <div class="alert alert-warning" role="alert" ng-show="noPULAs">No PULAs matching this filter were returned</div>
-                <div ng-show="!pulaDetails">Choose a PULA shape to get started.</div>
+                <div ng-show="!pulaDetails">Choose a PULA shape to get started. </div>
                 <div ng-show="pulaDetails" class="pulaDetails">
                     <h2>Details</h2>
                     <h4>General Information</h4>
@@ -216,6 +216,7 @@
                             </tr>
                         </table>
                     </div>
+
                     <h4>Species</h4>
                     <ul class="species">
                         <li ng-repeat="species in pulaDetails.species">{{species.COMNAME}} | {{species.SCINAME}} <a href="http://ecos.fws.gov/speciesProfile/profile/speciesProfile?spcode={{species.SPCODE}}">(Link to Species Profile page)</a></li>
@@ -239,6 +240,38 @@
                         </table>
                         <button class="btn btn-primary" ng-click="exportCommentsAsCSV()">Export Comments to CSV</button>
                     </div>
+                    <!--add comments-->
+                    <div ng-if="isGuest">
+                        <h4>Comments</h4>
+                        <form ng-hide="isCommentSubmitted">
+                            <!--Name-->
+                            <div class="row form-group">
+                                <label class="col-sm-2 control-label">Name </label>
+                                <div class="col-sm-10">
+                                    <input type="text" name="commentName" class="form-control" ng-model="comment.name" ng-required="true">
+                                </div>
+                            </div>
+                            <!--Org-->
+                            <div class="row form-group">
+                                <label class="col-sm-2 control-label">Organization </label>
+                                <div class="col-sm-10">
+                                    <input type="text" name="commentOrg" class="form-control" ng-model="comment.org" ng-required="true">
+                                </div>
+                            </div>
+                            <!--Name-->
+                            <div class="row form-group">
+                                <label class="col-sm-2 control-label">Comment </label>
+                                <div class="col-sm-10">
+                                    <textarea type="text" name="commentText" class="form-control" ng-model="comment.text" ng-required="true"></textarea>
+                                </div>
+                            </div>
+
+                            <button class="btn btn-primary" ng-click="addComment()" ng-disabled="!comment.name ||!comment.org|| !comment.text">Submit</button>
+                        </form>
+                        <div ng-show="isCommentSubmitted" class="alert alert-success" role="alert" ng-show="noPULAs">Thank you for your comments</div>
+
+                    </div>
+
                     <!-- Edit PULA,Contributor Password, Publish PULA-->
                     <div ng-show="pulaDetails.isPublished == 0" class="panel">
                         <div class="panel-body">

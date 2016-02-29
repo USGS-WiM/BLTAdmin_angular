@@ -48,17 +48,18 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
     //guest
     //get event id
     if (AuthService.getEventId()) {
-        var isGuest = true;
+        $scope.isGuest = true;
         $scope.eventId = AuthService.getEventId();
         $scope.hideFilters = true;
         $scope.hideMenu = true;
-    } else {
+    }
+    //else {
 
         EventService.get({}, function (events) {
             $scope.events = _.indexBy(events, "EVENT_ID");
             $scope.showPULALoading = false;
         });
-    }
+    //}
 
     //get user role
     $scope.role = roles[AuthService.getRoleId()];
@@ -129,7 +130,7 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
 
 
     var getLayerDefs = function () {
-        if (!isGuest) {
+        if (!$scope.isGuest) {
             return {
                 0: "PULA_SHAPE_ID IS NULL",
                 1: "CREATED_TIME_STAMP <= timestamp '" + formatDate + "' AND (PUBLISHED_TIME_STAMP IS NULL AND EXPIRED_TIME_STAMP IS NULL)",
@@ -269,7 +270,7 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
                     LimitationsService.get(feature, $scope.seclectedDate)
                         .success(function (response) {
                             $scope.pulaDetails.mapperLimits = response.MapperLimits;
-                            if (isGuest) {
+                            if ($scope.isGuest) {
                                 //limitation codes
                                 LimitationsService.getCodes(response.MapperLimits, $scope.seclectedDate, function (response) {
                                     $scope.limitaionCodes = response;
@@ -483,9 +484,21 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
         });
     }
 
+    //add comment
+    $scope.comment = {};
+    $scope.addComment = function () {
+        $scope.showLoading = true;
+        PULAPOIService.addComment($scope.pulaDetails, $scope.comment).success(function () {
+            $scope.showLoading = false;
+            $scope.comment = {};
+            $scope.isCommentSubmitted = true;
+        });
+
+    }
+
 
     //if guest show the event based PULAs
-    if (isGuest) {
+    if ($scope.isGuest) {
         $scope.showLoading = true;
         EventPULAService.get($scope.eventId).success(function (response) {
             var createdPulaShapes = [];
