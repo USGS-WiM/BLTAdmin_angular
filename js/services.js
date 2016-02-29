@@ -196,7 +196,9 @@ bltApp.factory('PULAPOIService', function ($http) {
             var comment = "[" + comment.name + "|" + comment.org + "|" + comment.text + "]";
             delete pula.comments;
             pula.COMMENTS = comment;
-            return $http.put(config.rootURL + "/PULAs/" + pula.id + "/AddComments.json", {COMMENTS: comment});
+            return $http.put(config.rootURL + "/PULAs/" + pula.id + "/AddComments.json", {
+                COMMENTS: comment
+            });
         }
     };
 }); //end of PULAPOIService
@@ -305,7 +307,7 @@ bltApp.factory('ProductService', function ($http, $q) {
             return $http.post(config.rootURL + "/Products/" + prodID + "/AddProductToAI", ai);
         },
         removeFromAI: function (prodID, ai) {
-            return $http.delete(config.rootURL + "/Products/" + prodID + "/RemoveProductFromAI?activeIngredientID=" + ai.ID);
+            return $http.delete(config.rootURL + "/Products/" + prodID + "/RemoveProductFromAI?activeIngredientID=" + ai.ACTIVE_INGREDIENT_ID);
         },
         addMultipleToAI: function (aiProductList, ai, success) {
             var addToAI = this.addToAI;
