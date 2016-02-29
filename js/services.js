@@ -346,13 +346,14 @@ bltApp.factory('ProductService', function ($http, $q) {
 
 //Parts
 bltApp.factory('PartsService', ['$resource', function ($resource) {
-    return $resource(config.rootURL + '/:url' + "?publishedDate=", {}, {
+    return $resource(config.rootURL + '/:url', {}, {
         query: {
             isArray: true
         },
         getAll: {
             method: 'GET',
             isArray: true,
+            url: config.rootURL + '/:url' + "?publishedDate=",
             cache: false
         },
         update: {
