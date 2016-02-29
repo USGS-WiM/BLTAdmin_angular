@@ -243,7 +243,7 @@ config.parts = {
             edit: {
                 columns: [{
                     name: "NAME",
-                    label: "ProductName",
+                    label: "Product Name",
                     required: true
             }]
             }
