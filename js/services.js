@@ -355,7 +355,7 @@ bltApp.factory('PartsService', ['$resource', function ($resource) {
         getAll: {
             method: 'GET',
             isArray: true,
-            url: config.rootURL + '/:url' + "?publishedDate=",
+            url: config.rootURL + '/:url' + "?publishedDate="+moment().format("MMMM YYYY"),
             cache: false
         },
         update: {

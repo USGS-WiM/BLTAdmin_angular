@@ -770,6 +770,7 @@ bltApp.controller('PartsController', function ($scope, $rootScope, $modal, RoleS
                 //console.log($scope.part);
                 //edit
                 var ai = angular.copy($scope.part);
+                //delete $scope.part.ID;
                 PartsService.update({
                     url: $scope.selectedPart.url + "/" + $scope.part[$scope.selectedPart.primaryKey]
                 }, $scope.part, function () {

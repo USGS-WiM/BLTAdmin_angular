@@ -235,14 +235,14 @@ config.parts = {
             primaryKey: "ID",
             display: {
                 columns: [{
-                    name: "NAME",
+                    name: "PRODUCT_NAME",
                     heading: "Name"
             }],
-                orderBy: "NAME"
+                orderBy: "PRODUCT_NAME"
             },
             edit: {
                 columns: [{
-                    name: "NAME",
+                    name: "PRODUCT_NAME",
                     label: "Product Name",
                     required: true
             }]
