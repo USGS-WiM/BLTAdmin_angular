@@ -64,13 +64,19 @@
                     </div>
                 </div>
                 <!--user name-->
-                <div class="form-group" ng-class="{ 'has-error' : editForm.submited && userForm.username.$invalid  }">
+                <div class="form-group" ng-class="{ 'has-error' : editForm.submited && userForm.username.$invalid  }" ng-hide="user.USERNAME">
                     <label for="inputPassword" class="col-sm-2 control-label">User Name*</label>
                     <div class="col-sm-10">
                         <input type="text" class="form-control" id="inputPassword" placeholder="User Name" name="username" ng-model="user.USERNAME" required="">
                         <p ng-show="submited && userForm.username.$invalid " class="help-block">Username is required.</p>
                     </div>
 
+                </div>
+                <div class="form-group" ng-show="user.USERNAME">
+                    <label for="inputPassword" class="col-sm-2 control-label">User Name</label>
+                    <div class="col-sm-10">
+                        <p>{{user.USERNAME}}</p>
+                    </div>
                 </div>
                 <!--organization-->
                 <div class="form-group">
@@ -91,13 +97,19 @@
                     </div>
                 </div>
                 <!--role-->
-                <div class="form-group" ng-class="{ 'has-error' : editForm.submited && userForm.role.$invalid }">
+                <div class="form-group" ng-class="{ 'has-error' : editForm.submited && userForm.role.$invalid }" ng-hide="user.ROLE_ID">
                     <label for="inputPassword" class="col-sm-2 control-label">Role*</label>
                     <div class="col-sm-10">
                         <select class="form-control" name="role" ng-model="data.role" ng-options="role.ROLE_NAME for role in roles" ng-change="user.ROLE_ID = role.ROLE_ID" required="">
                             <option value="">Select Role</option>
                         </select>
                         <p ng-show="submited && userForm.role.$invalid" class="help-block">Role is required.</p>
+                    </div>
+                </div>
+                <div class="form-group" ng-show="user.ROLE_ID">
+                    <label for="inputPassword" class="col-sm-2 control-label">Role</label>
+                    <div class="col-sm-10">
+                        <p>{{data.role.ROLE_NAME}}</p>
                     </div>
                 </div>
                 <!--phone-->
