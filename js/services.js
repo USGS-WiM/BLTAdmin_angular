@@ -160,7 +160,7 @@ bltApp.factory('EventService', ['$resource', function ($resource) {
 bltApp.factory('AIService', ['$http', function ($http) {
     return {
         get: function () {
-            return $http.get(config.rootURL + "/ActiveIngredients");
+            return $http.get(config.rootURL + "/ActiveIngredients?publishedDate=");
         },
         getClasses: function (id) {
             return $http.get(config.rootURL + "/ActiveIngredients/" + id + "/aiClass");
