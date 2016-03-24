@@ -90,6 +90,10 @@ body {
     border-top-right-radius: 0;
 }
 
+.form-signin .glyphicon-refresh {
+    color: #fff;
+}
+
 
 /*parts*/
 

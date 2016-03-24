@@ -2,8 +2,15 @@ bltApp.controller('LoginController', function ($scope, LoginService, AuthService
 
     $scope.hideHeader = true;
     $scope.credentials = {};
+    $scope.error = "";
     //login
     $scope.login = function () {
+
+        if (!$scope.credentials.username || !$scope.credentials.password) {
+            $scope.error = "Please enter username and password";
+            return;
+        }
+        $scope.showLoading = true;
         //check if it's a guest user
         var password = $scope.credentials.password;
         if (password.substring(0, 4) == "AbEv") {
@@ -27,14 +34,17 @@ bltApp.controller('LoginController', function ($scope, LoginService, AuthService
                     //after a successful login
                     $rootScope.$broadcast('userLoggedIn');
                     $location.path("/home");
+                    $scope.showLoading = false;
                 } else {
                     console.log("Login Failed");
+                    $scope.showLoading = false;
                 }
             },
             function error(errorResponse) {
+                $scope.showLoading = false;
                 //remove credentials
                 AuthService.removeCredentials();
-                //TODO: show error message
+                $scope.error = "We couldn't log in you in. Please try again.";
             });
 
     }

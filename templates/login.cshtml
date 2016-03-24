@@ -1,17 +1,21 @@
-<div class="container-fluid">
+<div class="container">
     <div class="jumbotron">
         <form class="form-signin">
             <h2 class="form-signin-heading">EPA Bulletins Live</h2>
+            <div class="alert alert-warning" ng-show="error">{{error}}</div>
             <label for="inputEmail" class="sr-only">User name</label>
             <input type="text" id="inputEmail" class="form-control" placeholder="User name" required="" autofocus="" ng-model="credentials.username">
+            <br>
             <label for="inputPassword" class="sr-only">Password</label>
             <input type="password" id="inputPassword" class="form-control" placeholder="Password" required="" ng-model="credentials.password">
+            <!--
             <div class="checkbox">
                 <label>
                     <input type="checkbox" value="remember-me"> Remember me
                 </label>
             </div>
-            <button class="btn btn-lg btn-primary btn-block" type="submit" ng-click="login()">Sign in</button>
+            -->
+            <button class="btn btn-lg btn-primary btn-block" type="submit" ng-click="login()">Sign in <span class="glyphicon glyphicon-refresh" ng-show="showLoading"></span></button>
         </form>
     </div>
 </div>
