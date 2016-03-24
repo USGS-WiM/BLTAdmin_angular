@@ -58,7 +58,7 @@
                                     <label>Event </label>
                                     <select ng-model="filter.event" class="form-control">
                                         <option value="All" selected>All</option>
-                                        <option ng-repeat="ev in events" value="{{ev.EVENT_ID}}">{{ev.NAME}}</option>
+                                        <option ng-repeat="ev in ui.events" value="{{ev.EVENT_ID}}">{{ev.NAME}}</option>
                                     </select>
                                 </div>
                                 <div class="form-group">
@@ -66,7 +66,7 @@
                                     <br>
                                     <select ng-model="filter.ai" class="form-control">
                                         <option value=""></option>
-                                        <option ng-repeat="a in activeIngredients" value="{{a.ACTIVE_INGREDIENT_ID}}">{{a.INGREDIENT_NAME.substring(0,30)}}</option>
+                                        <option ng-repeat="a in ui.aiList" value="{{a.ACTIVE_INGREDIENT_ID}}">{{a.INGREDIENT_NAME.substring(0,30)}}</option>
                                     </select>
                                 </div>
                                 <div class="form-group">
