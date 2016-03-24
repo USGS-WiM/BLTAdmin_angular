@@ -967,7 +967,7 @@ bltApp.controller('UserController', function ($scope, organizations, roles, user
         $scope.role = roles[AuthService.getRoleId()];
     });
 
-    $scope.selected = {};
+    $scope.data = {};
     $scope.editForm = {};
     $scope.organizations = organizations;
     $scope.roles = roles;

@@ -76,7 +76,7 @@
                 <div class="form-group">
                     <label for="inputPassword" class="col-sm-2 control-label">Organization</label>
                     <div class="col-sm-10">
-                        <select class="form-control" ng-model="selected.organization" ng-options="org.NAME for org in organizations" ng-change="user.ORGANIZATION_ID = org.ORGANIZATION_ID">
+                        <select class="form-control" ng-model="data.organization" ng-options="org.NAME for org in organizations" ng-change="user.ORGANIZATION_ID = org.ORGANIZATION_ID">
                             <option value="">Select Organization</option>
                         </select>
                     </div>
@@ -85,7 +85,7 @@
                 <div class="form-group">
                     <label for="inputPassword" class="col-sm-2 control-label">Division</label>
                     <div class="col-sm-10">
-                        <select class="form-control" ng-model="selected.division" ng-options="division.DIVISION_NAME for division in divisions" ng-change="user.DIVISION_ID = division.DIVISION_ID">
+                        <select class="form-control" ng-model="data.division" ng-options="division.DIVISION_NAME for division in divisions" ng-change="user.DIVISION_ID = division.DIVISION_ID">
                             <option value="">Select Division</option>
                         </select>
                     </div>
@@ -94,7 +94,7 @@
                 <div class="form-group" ng-class="{ 'has-error' : editForm.submited && userForm.role.$invalid }">
                     <label for="inputPassword" class="col-sm-2 control-label">Role*</label>
                     <div class="col-sm-10">
-                        <select class="form-control" name="role" ng-model="selected.role" ng-options="role.ROLE_NAME for role in roles" ng-change="user.ROLE_ID = role.ROLE_ID" required="">
+                        <select class="form-control" name="role" ng-model="data.role" ng-options="role.ROLE_NAME for role in roles" ng-change="user.ROLE_ID = role.ROLE_ID" required="">
                             <option value="">Select Role</option>
                         </select>
                         <p ng-show="submited && userForm.role.$invalid" class="help-block">Role is required.</p>
