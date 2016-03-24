@@ -164,6 +164,24 @@ body {
 }
 
 
+/*modief pula details*/
+
+.mPulaDetails textarea {
+    width: 400px;
+    height: 100px;
+}
+
+.mPulaDetails select {
+    max-width: 200px;
+    min-width: 100px;
+}
+
+table.table-borderless tbody td,
+table.table-borderless tbody th {
+    border: none;
+}
+
+
 /*loading on map*/
 
 .loading {
@@ -173,11 +191,11 @@ body {
 .center.glyphicon-refresh {
     position: absolute;
     top: 50%;
-    left: 50%;    
+    left: 50%;
     font-size: 25px;
 }
 
-.glyphicon-refresh {    
+.glyphicon-refresh {
     -webkit-animation: spin 1000ms infinite linear;
     animation: spin 1000ms infinite linear;
     z-index: 100;

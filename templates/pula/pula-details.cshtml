@@ -1,0 +1,171 @@
+<div ng-show="pulaDetails" class="pulaDetails">
+    <div ng-show="pulaDetails.data.message" class="alert alert-success" role="alert">{{pulaDetails.data.message}}</div>
+    <h2>Details<!-- Edit PULA,Contributor Password, Publish PULA-->
+    <div ng-show="pulaDetails.IS_PUBLISHED == 0" class="pull-right">
+        <div class="btn-group btn-group-sm">
+            <!--Edit PULA-->
+            <button class="btn btn-default" ng-click="editPULA()" ng-show="role.ROLE_ID <= 2">Edit PULA</button>
+            <!--Generate Contributor Password-->
+            <button class="btn btn-default" ng-click="showContributorPassword()" ng-show="pulaDetails.EVENT_ID != null &&pulaDetails.EVENT_ID >= 1">Generate Contributor Password</button>
+            <!--Publish PULA-->
+            <button class="btn btn-default" ng-click="publishPULA()" ng-show="role.ROLE_ID <= 2">Publish PULA</button>
+        </div>
+    </div>
+    </h2>
+
+    <h4>General Information</h4>
+    <table class="table table-condensed">
+        <tr>
+            <td>Event:</td>
+            <td>{{pulaDetails.data.event['NAME']}}</td>
+        </tr>
+        <tr>
+            <td>Effective Date:</td>
+            <td>{{pulaDetails.data.effectiveDateStr}}</td>
+        </tr>
+        <tr>
+            <td>Creation Date:</td>
+            <td>{{pulaDetails.data.creationDate}}</td>
+        </tr>
+        <tr>
+            <td>Created By:</td>
+            <td>{{pulaDetails.data.creator}}</td>
+        </tr>
+        <tr>
+            <td>Published Date:</td>
+            <td>{{pulaDetails.data.publishedDate}}</td>
+        </tr>
+        <tr>
+            <td>Published By:</td>
+            <td>{{pulaDetails.data.publisher}}</td>
+        </tr>
+        <tr>
+            <td>Expiration Date:</td>
+            <td ng-show="pulaDetails.data.expirationDateStr != ''">{{pulaDetails.data.expirationDateStr}}</td>
+            <td ng-show=" pulaDetails.data.expirationDateStr == ''">
+                <form class="form-inline">
+                    <div class="form-group">
+                        <select ng-model="expirationDate.month" class="form-control" ng-options="(months.indexOf(m)+1) as m for m in months"></select>
+                    </div>
+                    <div class="form-group">
+                        <select ng-model="expirationDate.year" class="form-control" ng-options="y for y in expirationYears"></select>
+                    </div>
+                    <div class="form-group">
+                        <button class="btn btn-primary btn-sm" ng-disabled="!expirationDate.month || !expirationDate.year" ng-click="addExpirationDate()">Add Expiration Date</button>
+                    </div>
+                </form>
+
+            </td>
+        </tr>
+    </table>
+    <h4>PULA Justification</h4>
+    <table class="table table-condensed">
+        <tr>
+            <td>{{pulaDetails.data.justificationLabel}}:</td>
+            <td>{{pulaDetails[pulaDetails.data.justificationType]}}</td>
+        </tr>
+        <tr>
+            <td>Base Data:</td>
+            <td>{{pulaDetails.BASE_DATA}}</td>
+        </tr>
+        <tr>
+            <td>Base Data Modifiers:</td>
+            <td>{{pulaDetails.BASE_DATA_MODIFIERS}}</td>
+        </tr>
+        <tr>
+            <td>Additional Information:</td>
+            <td>{{pulaDetails.ADDITIONAL_INFORMATION}}</td>
+        </tr>
+    </table>
+    <h4>Limitations</h4>
+    <table class="table table-striped  table-condensed">
+        <thead>
+            <tr>
+                <th scope="col">AI/Product</th>
+                <th scope="col">Use</th>
+                <th scope="col"> App Method</th>
+                <th scope="col">Formulation</th>
+                <th scope="col">Code</th>
+            </tr>
+        </thead>
+        <tr ng-repeat="limit in pulaDetails.data.mapperLimits|orderBy:NAME" ng-hide="limit.status=='delete'">
+            <td>{{limit.NAME}}</td>
+            <td>{{limit.USE}}</td>
+            <td>{{limit.APPMETHOD}}</td>
+            <td>{{limit.FORM}}</td>
+            <td>{{limit.CODE}}</td>
+        </tr>
+    </table>
+    <!--Limitation Codes-->
+    <div ng-show="limitationCodes && limitationCodes.length > 0">
+        <h4>Limitation Codes</h4>
+        <table class="table table-striped  table-condensed">
+            <thead>
+                <tr>
+                    <th scope="col">Code</th>
+                    <th scope="col">Limitation</th>
+                </tr>
+            </thead>
+            <tr ng-repeat="code in limitationCodes">
+                <td>{{code.data[0].CODE}}</td>
+                <td>{{code.data[0].LIMITATION1}}</td>
+            </tr>
+        </table>
+    </div>
+
+    <h4>Species</h4>
+    <ul class="species">
+        <li ng-repeat="species in pulaDetails.data.speciesList" ng-hide="species.status=='delete'">{{species.COMNAME}} | {{species.SCINAME}} <a href="http://ecos.fws.gov/speciesProfile/profile/speciesProfile?spcode={{species.SPCODE}}">(Link to Species Profile page)</a></li>
+    </ul>
+    <!--comments-->
+    <div ng-if="role.ROLE_NAME == 'ADMIN' && pulaDetails.data.comments && pulaDetails.data.comments.length > 0">
+        <h4>Contributor Comments</h4>
+        <table class="table table-striped  table-condensed">
+            <thead>
+                <tr>
+                    <th scope="col">Name</th>
+                    <th scope="col">Organization</th>
+                    <th scope="col">Comment</th>
+                </tr>
+            </thead>
+            <tr ng-repeat="comment in pulaDetails.data.comments|orderBy:name">
+                <td>{{comment.name}}</td>
+                <td>{{comment.org}}</td>
+                <td>{{comment.text}}</td>
+            </tr>
+        </table>
+        <button class="btn btn-primary" ng-click="exportCommentsAsCSV()">Export Comments to CSV</button>
+    </div>
+    <!--add comments-->
+    <div ng-if="isGuest">
+        <h4>Comments</h4>
+        <form ng-hide="isCommentSubmitted">
+            <!--Name-->
+            <div class="row form-group">
+                <label class="col-sm-2 control-label">Name </label>
+                <div class="col-sm-10">
+                    <input type="text" name="commentName" class="form-control" ng-model="comment.name" ng-required="true">
+                </div>
+            </div>
+            <!--Org-->
+            <div class="row form-group">
+                <label class="col-sm-2 control-label">Organization </label>
+                <div class="col-sm-10">
+                    <input type="text" name="commentOrg" class="form-control" ng-model="comment.org" ng-required="true">
+                </div>
+            </div>
+            <!--Name-->
+            <div class="row form-group">
+                <label class="col-sm-2 control-label">Comment </label>
+                <div class="col-sm-10">
+                    <textarea type="text" name="commentText" class="form-control" ng-model="comment.text" ng-required="true"></textarea>
+                </div>
+            </div>
+
+            <button class="btn btn-primary" ng-click="addComment()" ng-disabled="!comment.name ||!comment.org|| !comment.text">Submit</button>
+        </form>
+        <div ng-show="isCommentSubmitted" class="alert alert-success" role="alert" ng-show="noPULAs">Thank you for your comments</div>
+
+    </div>
+
+</div>

@@ -44,7 +44,7 @@ bltApp.controller('LoginController', function ($scope, LoginService, AuthService
 
 
 
-bltApp.controller('HomeController', function ($scope, $location, AuthService, leafletData, $modal, PULAService, activeIngredients, limitToFilter, UserService, EventService, ProductService, PULAPOIService, VersionService, SpeciesService, LimitationsService, roles, EventPULAService) {
+bltApp.controller('HomeController', function ($scope, $location, AuthService, leafletData, $modal, PULAService, activeIngredients, limitToFilter, UserService, EventService, ProductService, PULAPOIService, VersionService, SpeciesService, LimitationsService, roles, EventPULAService, AIService, PartsService, $q, AuthService) {
     //guest
     //get event id
     if (AuthService.getEventId()) {
@@ -55,10 +55,6 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
     }
     //else {
 
-        EventService.get({}, function (events) {
-            $scope.events = _.indexBy(events, "EVENT_ID");
-            $scope.showPULALoading = false;
-        });
     //}
 
     //get user role
@@ -150,8 +146,56 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
         }
     }
 
+    //get species, active ingredients, crop uses, application methods , formulations and limitation codes
+    var initialize = function () {
+        $scope.selected = {};
+        $scope.effectiveYears = getYearRange(6);
+        var species = SpeciesService.getAll();
+        var aiList = AIService.get();
+        var cropUseList = PartsService.getAll({
+            url: config.parts.db["CROP USE"].url
+        });
+        var applicationMethodList = PartsService.getAll({
+            url: config.parts.db["APPLICATION METHOD"].url
+        });
+        var formulationList = PartsService.getAll({
+            url: config.parts.db["FORMULATION"].url
+        });
+        var limitationCodeList = PartsService.getAll({
+            url: config.parts.db["LIMITATION"].url
+        });
+        var eventList = EventService.get({});
+        $scope.showPULALoading = true;
+        $q.all([species, aiList, cropUseList, applicationMethodList, formulationList, limitationCodeList, eventList]).then(function (results) {
+            $scope.species = results[0].data.SPECIES;
+            $scope.aiList = _.indexBy(results[1].data, "ACTIVE_INGREDIENT_ID");
+            $scope.cropUseList = _.indexBy(results[2], "CROP_USE_ID");
+            $scope.applicationMethodList = _.indexBy(results[3], "APPLICATION_METHOD_ID");
+            $scope.formulationList = _.indexBy(results[4], "FORMULATION_ID");
+            $scope.limitationCodeList = _.indexBy(results[5], "LIMITATION_ID");
+            $scope.events = _.indexBy(results[6], "EVENT_ID");
+
+            //need arrays for ui dropdowns
+            $scope.ui = {};
+            $scope.ui.aiList = results[1].data;
+            $scope.ui.cropUseList = results[2];
+            $scope.ui.applicationMethodList = results[3];
+            $scope.ui.formulationList = results[4];
+            $scope.ui.limitationCodeList = results[5];
+            $scope.ui.events = results[6];
+            console.log($scope.events);
+
+            $scope.showPULALoading = false;
+        });
+
+        $scope.justificationTypes = config.justificationTypes;
+    }
+
+    initialize();
+
     //get limitations
     var getPULADetails = function (e, map) {
+
         //show loading indicator
         $scope.showPULALoading = true;
         //        $scope.modalLoading = $modal.open({
@@ -178,15 +222,16 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
                 //get the effective date, comments, event, entity id
                 if (feature.PULA_ID != "Null" && feature.PULA_SHAPE_ID != "Null") {
                     PULAPOIService.get(feature, $scope.seclectedDate).success(function (response) {
-                        $scope.pulaDetails = {};
+                        $scope.pulaDetails = response;
+                        $scope.pulaDetails.data = {};
                         if (response && response != "") {
                             //pula id
-                            $scope.pulaDetails.id = response.ID;
-                            $scope.pulaDetails.pulaId = response.PULA_ID;
-                            $scope.pulaDetails.isPublished = response.IS_PUBLISHED;
+                            //                            $scope.pulaDetails.id = response.ID;
+                            //                            $scope.pulaDetails.pulaId = response.PULA_ID;
+                            //                            $scope.pulaDetails.isPublished = response.IS_PUBLISHED;
 
                             //effective date
-                            $scope.pulaDetails.effectiveDate = response.EFFECTIVE_DATE ? moment(response.EFFECTIVE_DATE).format("MM/DD/YYYY") : "";
+                            $scope.pulaDetails.data.effectiveDateStr = response.EFFECTIVE_DATE ? moment(response.EFFECTIVE_DATE).format("MM/DD/YYYY") : "";
                             //comments
                             var commentList = [];
                             if (response.COMMENTS) {
@@ -204,53 +249,63 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
                                     }
                                 });
                             }
-                            $scope.pulaDetails.comments = commentList;
+                            $scope.pulaDetails.data.comments = commentList;
 
                             //event
                             var eventID = response.EVENT_ID;
-                            $scope.pulaDetails.event = $scope.events[eventID].NAME;
+                            $scope.pulaDetails.data.event = $scope.events[eventID];
                             //version
                             var versionId = response.VERSION_ID;
 
                             //justification information
-                            $scope.pulaDetails.baseData = response.BASE_DATA;
-                            $scope.pulaDetails.baseDataModifiers = response.BASE_DATA_MODIFIERS;
-                            $scope.pulaDetails.biologicalOpinion = response.BIOLOGICAL_OPINION_LIT;
-                            $scope.pulaDetails.additionalInfo = response.ADDITIONAL_INFORMATION;
+                            //$scope.pulaDetails.baseData = response.BASE_DATA;
+                            //$scope.pulaDetails.baseDataModifiers = response.BASE_DATA_MODIFIERS;
+                            for (var header in config.justificationTypes) {
+                                var items = config.justificationTypes[header].items;
+                                for (var item in items) {
+                                    var type = items[item].value;
+                                    if (response[type]) {
+                                        $scope.pulaDetails[type] = response[type];
+                                        $scope.pulaDetails.data.justificationType = type;
+                                        $scope.pulaDetails.data.justificationLabel = config.justificationTypes[header].name + ", " + items[item].name
+                                    }
+                                }
+                            }
+                            //$scope.pulaDetails.additionalInfo = response.ADDITIONAL_INFORMATION;
                         }
 
                         VersionService.get(versionId).success(function (response) {
                             var version = response;
-                            $scope.pulaDetails.version = version;
-                            $scope.pulaDetails.creationDate = version.CREATED_TIME_STAMP ? moment(version.CREATED_TIME_STAMP).format("MM/DD/YYYY") : "";
-                            $scope.pulaDetails.publishedDate = version.PUBLISHED_TIME_STAMP ? moment(version.PUBLISHED_TIME_STAMP).format("MM/DD/YYYY") : "";
-                            $scope.pulaDetails.expirationDate = version.EXPIRED_TIME_STAMP ? moment(version.EXPIRED_TIME_STAMP).format("MM/DD/YYYY") : "";
+                            $scope.pulaDetails.data.version = version;
+                            $scope.pulaDetails.data.creationDate = version.CREATED_TIME_STAMP ? moment(version.CREATED_TIME_STAMP).format("MM/DD/YYYY") : "";
+                            $scope.pulaDetails.data.publishedDate = version.PUBLISHED_TIME_STAMP ? moment(version.PUBLISHED_TIME_STAMP).format("MM/DD/YYYY") : "";
+                            $scope.pulaDetails.data.expirationDateStr = version.EXPIRED_TIME_STAMP ? moment(version.EXPIRED_TIME_STAMP).format("MM/DD/YYYY") : "";
                             //get users
                             //creator
                             if (version.CREATOR_ID) {
-                                UserService.query({
+                                UserService.getAll({
                                     id: version.CREATOR_ID
                                 }, function (response) {
                                     var creator = response.length == 1 ? response[0] : response;
-                                    $scope.pulaDetails.creator = creator.FNAME + " " + creator.LNAME;
+                                    $scope.pulaDetails.data.creator = creator.FNAME + " " + creator.LNAME;
                                 });
                             }
                             //publisher
                             if (version.PUBLISHER_ID) {
-                                UserService.query({
+                                UserService.getAll({
                                     id: version.PUBLISHER_ID
                                 }, function (response) {
                                     var publisher = response.length == 1 ? response[0] : response;
-                                    $scope.pulaDetails.publisher = publisher.FNAME + " " + publisher.LNAME;
+                                    $scope.pulaDetails.data.publisher = publisher.FNAME + " " + publisher.LNAME;
                                 });
                             }
                             //expirer
                             if (version.EXPIRER_ID) {
-                                UserService.query({
+                                UserService.getAll({
                                     id: version.EXPIRER_ID
                                 }, function (response) {
                                     var expirer = response.length == 1 ? response[0] : response;
-                                    $scope.pulaDetails.expirer = expirer.FNAME + " " + expirer.LNAME;
+                                    $scope.pulaDetails.data.expirer = expirer.FNAME + " " + expirer.LNAME;
                                 });
                             }
                             //console.log($scope.pulaDetails);
@@ -258,30 +313,60 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
 
                         //get the species
                         ///ActiveIngredientPULA/{activeIngredientPULAID}/Species
+                        $scope.pulaDetails.data.speciesList = [];
+
                         SpeciesService.get($scope.pulaDetails)
                             .success(function (response) {
-                                $scope.pulaDetails.species = response.SPECIES;
+                                $scope.pulaDetails.data.speciesList = response.SPECIES;
                             });
-                    });
+
+                        //get the limitations
+
+                        LimitationsService.get(feature, $scope.seclectedDate, function (response) {
+                            $scope.pulaDetails.data.mapperLimits = response;
+
+                            //set limitation's extra information
+                            var limitaitons = response;
+                            var limit;
+                            for (var i = 0; i < limitaitons.length; i++) {
+                                limit = limitaitons[i];
+                                //name
+                                if (limit.ACTIVE_INGREDIENT_ID) {
+                                    limit.NAME = $scope.aiList[limit.ACTIVE_INGREDIENT_ID]["INGREDIENT_NAME"];
+                                } else if (limit.PRODUCT_ID) {
+                                    limit.NAME = limit.PRODUCT_NAME;
+                                }
+                                //application method
+                                limit.APPMETHOD = $scope.applicationMethodList[limit.APPLICATION_METHOD_ID]["METHOD"];
+                                //formulation
+                                limit.FORM = $scope.formulationList[limit.FORMULATION_ID]["FORM"];
+                                //crop use
+                                limit.USE = $scope.cropUseList[limit.CROP_USE_ID]["USE"];
+                                //limiations code
+                                limit.CODE = $scope.limitationCodeList[limit.LIMITATION_ID]["CODE"];
 
 
-                    //get the limitations
-
-                    LimitationsService.get(feature, $scope.seclectedDate)
-                        .success(function (response) {
-                            $scope.pulaDetails.mapperLimits = response.MapperLimits;
+                            }
+                            console.log(limitaitons);
                             if ($scope.isGuest) {
                                 //limitation codes
-                                LimitationsService.getCodes(response.MapperLimits, $scope.seclectedDate, function (response) {
-                                    $scope.limitaionCodes = response;
+                                LimitationsService.getCodes(response, $scope.seclectedDate, function (response) {
+                                    $scope.limitationCodes = response;
+                                    $scope.pulaSectionUrl = "templates/pula/pula-details.cshtml";
                                     $scope.showPULALoading = false;
                                 });
                             } else {
+                                $scope.pulaSectionUrl = "templates/pula/pula-details.cshtml";
                                 $scope.showPULALoading = false;
                             }
                         });
+                    });
+
+
+
+
                 } else {
-                    $scope.showPULALoading = false;
+                    $scope.newPULA();
                 }
             }
         });
@@ -423,7 +508,7 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
         //generate content
         var csv = "Contributor Comments\n";
         csv = csv + "Name,Organization,Comment\n";
-        var comments = $scope.pulaDetails.comments;
+        var comments = $scope.pulaDetails.data.comments;
         comments.forEach(function (comment) {
             csv = csv + comment.name + "," + comment.org + "," + comment.text + "\n";
         });
@@ -467,22 +552,338 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
 
     //expire pulas
     $scope.expirationYears = getYears(5);
-    $scope.addExpirationDate = function () {
-        var date = $scope.expirationDate;
-        date.month = $scope.months.indexOf(date.month) + 1;
-        PULAPOIService.expire($scope.pulaDetails.id, date).success(function () {
-            $scope.pulaDetails.expirationDate = date.month + "/01/" + date.year;
+    $scope.addExpirationDate = function (callback) {
+        var date = $scope.mPulaDetails.data.expirationDate;
+        PULAPOIService.updateStatus($scope.mPulaDetails.ID, date, "Expired").success(function () {
+            $scope.mPulaDetails.data.expirationDateStr = date.month + "/01/" + date.year;
+            callback();
         });
     }
+
+    //add effective date
+    $scope.addEffectiveDate = function () {
+        var date = $scope.effectiveDate;
+        date.month = $scope.months.indexOf(date.month) + 1;
+        PULAPOIService.updateStatus($scope.pulaDetails.ID, date, "Effective").success(function () {
+            $scope.pulaDetails.data.effectiveDateStr = _.indexOf($scope.months, date.month) + 1 + "/01/" + date.year;
+        });
+    }
+
 
     //publish PULA
     $scope.publishPULA = function () {
         var date = $scope.expirationDate;
         date.month = $scope.months.indexOf(date.month) + 1;
-        PULAPOIService.publish($scope.pulaDetails.id).success(function () {
-            $scope.pulaDetails.isPublished = 1; //double check
+        PULAPOIService.publish($scope.pulaDetails.ID).success(function () {
+            $scope.pulaDetails.IS_PUBLISHED = 1; //double check
         });
     }
+
+    $scope.newPULA = function () {
+        $scope.status = "new";
+        $scope.showPULALoading = true;
+        $scope.justificationTypes = config.justificationTypes;
+        $scope.mPulaDetails = {
+            data: {
+                isNew: true,
+                effectiveDate: {
+                    month: null,
+                    year: null
+                },
+                errors: [],
+                mapperLimits: [],
+                species: [],
+                speciesList: [],
+                creationDate: moment().format("MM/DD/YYYY"),
+            }
+        };
+
+        //get the user
+        UserService.query({
+            username: AuthService.getUsername()
+        }, function (response) {
+            var creator = response.length == 1 ? response[0] : response;
+            $scope.mPulaDetails.data.creator = creator.FNAME + " " + creator.LNAME;
+            $scope.pulaSectionUrl = "templates/pula/edit-pula.cshtml";
+            $scope.showPULALoading = false;
+        });
+    }
+
+    //edit PULA
+    $scope.editPULA = function () {
+        //initialize
+        $scope.showPULALoading = true;
+        $scope.status = "edit";
+        $scope.mPulaDetails = angular.copy($scope.pulaDetails);
+        //effective date
+        if ($scope.pulaDetails.data.effectiveDateStr) {
+            var effectiveDate = new moment($scope.pulaDetails.data.effectiveDateStr);
+            $scope.mPulaDetails.data.effectiveDate = {};
+            $scope.mPulaDetails.data.effectiveDate.month = effectiveDate.month() + 1;
+            $scope.mPulaDetails.data.effectiveDate.year = effectiveDate.year();
+        }
+        //expiration date
+        if ($scope.pulaDetails.data.expirationDateStr) {
+            var expirationDate = new moment($scope.pulaDetails.data.expirationDateStr);
+            $scope.mPulaDetails.data.expirationDate = {};
+            $scope.mPulaDetails.data.expirationDate.month = expirationDate.month() + 1;
+            $scope.mPulaDetails.data.expirationDate.year = expirationDate.year();
+        }
+
+        //number of limitations
+        $scope.mPulaDetails.data.numLimits = $scope.mPulaDetails.data.mapperLimits ? $scope.mPulaDetails.data.mapperLimits.length : 0;
+        //number of species
+        $scope.mPulaDetails.data.numSpecies = $scope.mPulaDetails.data.speciesList ? $scope.mPulaDetails.data.speciesList.length : 0;
+        //        $scope.data = {
+        //            events: $scope.events
+        //        };
+        $scope.mPulaDetails.data.event = $scope.events[$scope.mPulaDetails.EVENT_ID];
+        $scope.pulaSectionUrl = "templates/pula/edit-pula.cshtml";
+        $scope.showPULALoading = false;
+
+    }
+
+    $scope.onEditPULALoad = function () {}
+
+    //    $scope.setPULAEvent = function () {
+    //        $scope.mPulaDetails.event = $scope.mPulaDetails.data.event;
+    //    }
+
+    $scope.setPULAEffectiveDate = function () {
+        var date = $scope.mPulaDetails.data.effectiveDate;
+        if (date.month && date.year) {
+            $scope.mPulaDetails.EFFECTIVE_DATE = date.month + "/01/" + date.year;
+        } else {
+            $scope.mPulaDetails.EFFECTIVE_DATE = "";
+        }
+    }
+    $scope.addLimitation = function () {
+        $scope.errorMsg = "";
+        var mapperLimitNew = {};
+
+        //active ingredient
+        var activeIngredient = $scope.mPulaDetails.data.activeIngredient;
+        if (activeIngredient) {
+            mapperLimitNew.NAME = activeIngredient["INGREDIENT_NAME"];
+            mapperLimitNew.ACTIVE_INGREDIENT_ID = activeIngredient.ACTIVE_INGREDIENT_ID;
+        }
+        //product
+        var product = $scope.mPulaDetails.data.product;
+        if (product) {
+            mapperLimitNew.NAME = product.PRODUCT_NAME + " [" + product.PRODUCT_REGISTRATION_NUMBER + "]";
+            mapperLimitNew.PRODUCT_ID = product.PRODUCT_ID;
+            delete mapperLimitNew.ACTIVE_INGREDIENT_ID;
+        }
+        //crop use
+        var cropUse = $scope.mPulaDetails.data.cropUse;
+        mapperLimitNew.USE = cropUse.USE;
+        mapperLimitNew.CROP_USE_ID = cropUse.CROP_USE_ID;
+        //application method
+        var applicationMethod = $scope.mPulaDetails.data.applicationMethod;
+        mapperLimitNew.APPMETHOD = applicationMethod.METHOD;
+        mapperLimitNew.APPLICATION_METHOD_ID = applicationMethod.APPLICATION_METHOD_ID;
+        //formulation
+        var formulation = $scope.mPulaDetails.data.formulation;
+        mapperLimitNew.FORM = formulation.FORM;
+        mapperLimitNew.FORMULATION_ID = formulation.FORMULATION_ID;
+        //code
+        var limitation = $scope.mPulaDetails.data.limitation;
+        mapperLimitNew.CODE = limitation.CODE;
+        //limitation id
+        mapperLimitNew.LIMITATION_ID = limitation.LIMITATION_ID;
+
+
+        //check if duplicate
+        var matchIndex = -1;
+        for (var i = 0; i < $scope.mPulaDetails.data.mapperLimits.length; i++) {
+            limit = $scope.mPulaDetails.data.mapperLimits[i];
+            if (limit.NAME == mapperLimitNew.NAME && limit.USE == mapperLimitNew.USE && limit.APPMETHOD == mapperLimitNew.APPMETHOD && limit.FORM == mapperLimitNew.FORM && limit.LIMIT.CODE == mapperLimitNew.LIMIT.CODE) {
+                matchIndex = i;
+                break;
+            }
+        };
+
+        //no match was found
+        if (matchIndex == -1) {
+            mapperLimitNew.PULA_ID = $scope.mPulaDetails.PULA_ID;
+            $scope.mPulaDetails.data.mapperLimits.unshift(mapperLimitNew);
+            $scope.mPulaDetails.data.numLimits = $scope.mPulaDetails.data.numLimits + 1;
+            mapperLimitNew.status = "new";
+
+        } else {
+            //adding back a previously deleted item
+            if ($scope.mPulaDetails.data.mapperLimits[matchIndex].status == "delete") {
+                delete $scope.mPulaDetails.data.mapperLimits[matchIndex].status;
+                $scope.mPulaDetails.data.numLimits = $scope.mPulaDetails.data.numLimits + 1;
+            } else {
+                //adding a duplicate
+                $scope.errorMsg = "This limitation already exists";
+            }
+        }
+
+        console.log(mapperLimitNew);
+
+    }
+
+    $scope.addSpecies = function () {
+        var newSpecies = $scope.mPulaDetails.data.newSpecies;
+        var speciesList = $scope.mPulaDetails.data.speciesList;
+        var matchIndex = -1;
+        if (newSpecies.status == "delete") {
+            delete newSpecies.status;
+        } else {
+            //check for duplicate
+            for (var i = 0; i < speciesList.length; i++) {
+                if (speciesList[i].ENTITY_ID == newSpecies.ENTITY_ID) {
+                    matchIndex = i;
+                    break;
+                }
+            }
+
+            //no match was found
+            if (matchIndex == -1) {
+                speciesList.unshift(newSpecies);
+                $scope.mPulaDetails.data.numSpecies = $scope.mPulaDetails.data.numSpecies + 1;
+                newSpecies.status = "new";
+            } else {
+                //adding back a previously deleted item
+                if (speciesList.status == "delete") {
+                    delete speciesList[matchIndex].status;
+                    $scope.mPulaDetails.data.numSpecies = $scope.mPulaDetails.data.numSpecies + 1;
+                } else {
+                    //adding a duplicate
+                    $scope.errorMsg = "This species already exists";
+                }
+            }
+
+        }
+
+    }
+
+    $scope.removeSpecies = function (index) {
+        var speciesList = $scope.mPulaDetails.data.speciesList;
+        var species = speciesList[index];
+        if (species.status == "new") {
+            speciesList.splice(index, 1);
+        } else {
+            species.status = "delete";
+        }
+        $scope.mPulaDetails.data.numSpecies = $scope.mPulaDetails.data.numSpecies - 1;
+
+    }
+
+    $scope.cancelEditPULA = function () {
+        $scope.pulaSectionUrl = "templates/pula/pula-details.cshtml";
+    }
+
+    $scope.savePULA = function () {
+        $scope.showPULALoading = true;
+        var data = $scope.mPulaDetails.data;
+        data.errors = [];
+        //save expiration date, limitations and species
+
+        var saveLimitsAndSpecies = function (callback) {
+            //Limitations
+            var limitations = data.mapperLimits;
+            LimitationsService.addOrRemove(limitations).then(function (results) {
+                console.log(results);
+                //species
+                var species = data.speciesList;
+                SpeciesService.addOrRemove($scope.mPulaDetails.PULA_ID, species).then(function (results) {
+                    console.log(results);
+                    callback();
+                });
+            });
+        }
+        var saveAdditionalInfo = function (callback) {
+            //expiration date
+            var date = data.expirationDate
+            if (date && date.month && date.year) {
+                $scope.addExpirationDate(function () {
+                    saveLimitsAndSpecies(callback);
+                });
+            } else {
+                saveLimitsAndSpecies(callback);
+            }
+        }
+
+        //VALIDATION
+        //effective date: make sure that both month and year for effective date are chosen if either is chose
+        var date = data.effectiveDate;
+        if (date && (!date.month || !date.year)) {
+            data.errors.push("Please choose both month and year for Effective Date in the 'General Information section'");
+        }
+        //expiration date
+        date = data.expirationDate
+        if (date && (!date.month || !date.year)) {
+            data.errors.push("Please choose both month and year for Expiration Date in the 'General Information section'");
+        } else {
+            console.log($scope.expirationDate);
+        }
+
+        //stop processing if there are any errors
+        if (data.errors.length > 0) {
+            $scope.showPULALoading = false;
+            return;
+        }
+        console.log($scope.mPulaDetails.data);
+
+        //set event id
+        $scope.mPulaDetails.EVENT_ID = data.event.EVENT_ID;
+        //set effective date
+        $scope.setPULAEffectiveDate();
+
+        //        console.log($scope.mPulaDetails);
+        //
+        //        for (var i = 0; i < data.mapperLimits.length; i++) {
+        //            var l = data.mapperLimits[i];
+        //            if (l.status) {
+        //                console.log(l);
+        //            }
+        //        }
+        //        for (var i = 0; i < data.speciesList.length; i++) {
+        //            var l = data.speciesList[i];
+        //            if (l.status) {
+        //                console.log(l);
+        //            }
+        //        }
+        var isNew = data.isNew;
+        if (isNew) {
+            //create the PULA first
+            PULAPOIService.post($scope.mPulaDetails).success(function (response) {
+                $scope.mPulaDetails.PULA_ID = response.PULA_ID;
+                $scope.mPulaDetails.VERSION_ID = response.VERSION_ID;
+                saveAdditionalInfo(function () {
+                    $scope.pulaDetails = angular.copy($scope.mPulaDetails);
+                    $scope.pulaDetails.data.message = "The PULA has been saved";
+                    $scope.pulaSectionUrl = "templates/pula/pula-details.cshtml";
+                    $scope.showPULALoading = false;
+                });
+            });
+        } else {
+            PULAPOIService.update($scope.mPulaDetails).success(function () {
+                saveAdditionalInfo(function () {
+                    $scope.pulaDetails = angular.copy($scope.mPulaDetails);
+                    $scope.pulaDetails.data.message = "The PULA has been saved";
+                    $scope.pulaSectionUrl = "templates/pula/pula-details.cshtml";
+                    $scope.showPULALoading = false;
+                });
+            });
+        }
+
+
+    }
+
+
+
+
+    $scope.getProductList = function () {
+        var activeIngredient = $scope.mPulaDetails.data.activeIngredient;
+        //get products associated with the active ingredient
+        AIService.getProducts(activeIngredient["ACTIVE_INGREDIENT_ID"]).success(function (response) {
+            $scope.productList = response;
+        });
+    };
 
     //add comment
     $scope.comment = {};
@@ -495,6 +896,18 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
         });
 
     }
+
+    $scope.removeMapperLimit = function (index) {
+        var limitation = $scope.mPulaDetails.data.mapperLimits[index];
+        if (limitation.status == "new") {
+            $scope.mPulaDetails.data.mapperLimits.splice(index, 1);
+        } else {
+            limitation.status = "delete";
+        }
+        $scope.mPulaDetails.data.numLimits = $scope.mPulaDetails.data.numLimits - 1;
+    }
+
+
 
 
     //if guest show the event based PULAs
@@ -560,9 +973,9 @@ bltApp.controller('UserController', function ($scope, organizations, roles, user
             $scope.editForm.title = "Add New User";
         } else {
             var user = angular.copy($scope.users[index]);
-            $scope.selected.organization = $scope.organizations[user.ORGANIZATION_ID];
-            $scope.selected.role = $scope.roles[user.ROLE_ID];
-            $scope.selected.division = $scope.divisions[user.DIVISION_ID];
+            $scope.data.organization = $scope.organizations[user.ORGANIZATION_ID];
+            $scope.data.role = $scope.roles[user.ROLE_ID];
+            $scope.data.division = $scope.divisions[user.DIVISION_ID];
             $scope.user = user;
             $scope.editForm.title = "Edit User '" + user.USERNAME + "'";
         }
@@ -579,9 +992,9 @@ bltApp.controller('UserController', function ($scope, organizations, roles, user
         if (isValid) {
             //assign organization, roles and divisions ids
             var user = $scope.user;
-            var org = $scope.selected.organization;
-            var role = $scope.selected.role;
-            var division = $scope.selected.division;
+            var org = $scope.data.organization;
+            var role = $scope.data.role;
+            var division = $scope.data.division;
             user.ORGANIZATION_ID = org ? org.ORGANIZATION_ID : null;
             user.ROLE_ID = role ? role.ROLE_ID : null;
             user.DIVISION_ID = division ? division.DIVISION_ID : null;

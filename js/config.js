@@ -28,6 +28,63 @@ var config = {
     }
 }
 
+config.justificationTypes = [{
+        name: "Other",
+        items: [{
+            name: 'Other',
+            value: "OTHER_JUSTIFICATION"
+                }]
+    }, {
+        name: "Litigation",
+        items: [{
+            name: 'Biological Opinion',
+            value: "BIOLOGICAL_OPINION_LIT"
+                    }]
+    }, {
+        name: 'Registration Review',
+        items: [
+            {
+                name: 'Focus Meeting',
+                value: "FOCUS_MEETING"
+                    },
+            {
+                name: 'Proposed Interim Decision',
+                value: "INTERIM_PROPOSED_DECISION"
+                    },
+            {
+                name: 'Proposed Decision',
+                value: "PROPOSED_DECISION"
+                    },
+            {
+                name: 'Final Decision',
+                value: "FINAL_DECISION"
+                    },
+            {
+                name: 'Biological Opinion',
+                value: "BIOLOGICAL_OPINION_REGREVIEW"
+            }]
+    }, {
+        name: 'Registration Action',
+        items: [
+            {
+                name: 'Section 3 New Chem',
+                value: "SEC3_NEWCHEM"
+                    },
+            {
+                name: 'Section 3 New Use',
+                value: "SEC3_NEWUSE"
+                    },
+            {
+                name: 'Section 24 (c)',
+                value: "SEC24"
+                    },
+            {
+                name: 'Section 18 (c)',
+                value: "SEC18"
+            }]
+    }
+];
+
 config.parts = {
     pageSize: 10,
     db: {
@@ -62,7 +119,7 @@ config.parts = {
                     label: "AI Class",
                     required: false,
                     sourceUrl: "/AIClasses",
-                value: ""
+                    value: ""
             }, {
                     name: "PRODUCT",
                     label: "Product",

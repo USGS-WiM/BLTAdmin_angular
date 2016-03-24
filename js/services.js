@@ -42,7 +42,8 @@ bltApp.factory('AuthService', function ($cookies) {
 bltApp.factory('UserService', ['$resource', function ($resource) {
     return $resource(config.rootURL + '/users/:id', {}, {
         query: {
-            isArray: true
+            isArray: false,
+            url: config.rootURL + '/users'
         },
         getAll: {
             method: 'GET',
@@ -165,7 +166,7 @@ bltApp.factory('AIService', ['$http', function ($http) {
             return $http.get(config.rootURL + "/ActiveIngredients/" + id + "/aiClass");
         },
         getProducts: function (id) {
-            return $http.get(config.rootURL + "/ActiveIngredients/" + id + "/product");
+            return $http.get(config.rootURL + "/ActiveIngredients/" + id + "/product?publishedDate=3/01/2016");
         }
     };
 }]); //end of AIService
@@ -186,19 +187,25 @@ bltApp.factory('PULAPOIService', function ($http) {
         get: function (feature, date) {
             return $http.get(config.rootURL + "/PULAs/POI/" + feature.PULA_SHAPE_ID + "/?publishedDate=" + date.month + "/01/" + date.year);
         },
-        expire: function (id, date) {
-            return $http.get(config.rootURL + "/PULAs/" + id + "/updateStatus?status=EXPIRED&statusDate=" + date.month + "/01/" + date.year);
+        updateStatus: function (id, date, status) {
+            return $http.get(config.rootURL + "/PULAs/" + id + "/updateStatus?status=" + status + "&statusDate=" + date.month + "/01/" + date.year);
         },
         publish: function (id, date) {
             return $http.get(config.rootURL + "/PULAs/" + id + "/updateStatus?status=PUBLISHED");
+        },
+        update: function (details) {
+            return $http.put(config.rootURL + "/PULAs/" + details.ID, details);
         },
         addComment: function (pula, comment) {
             var comment = "[" + comment.name + "|" + comment.org + "|" + comment.text + "]";
             delete pula.comments;
             pula.COMMENTS = comment;
-            return $http.put(config.rootURL + "/PULAs/" + pula.id + "/AddComments.json", {
+            return $http.put(config.rootURL + "/PULAs/" + pula.ID + "/AddComments.json", {
                 COMMENTS: comment
             });
+        },
+        post: function (details) {
+            return $http.post(config.rootURL + "/PULAs", details);
         }
     };
 }); //end of PULAPOIService
@@ -213,10 +220,49 @@ bltApp.factory('VersionService', function ($http) {
 }); //end of VersionService
 
 //SpeciesService
-bltApp.factory('SpeciesService', function ($http) {
+bltApp.factory('SpeciesService', function ($http, $q) {
     return {
         get: function (pulaDetails) {
-            return $http.get(config.rootURL + "/ActiveIngredientPULA/" + pulaDetails.pulaId + "/Species");
+            return $http.get(config.rootURL + "/ActiveIngredientPULA/" + pulaDetails.PULA_ID + "/Species");
+        },
+        getAll: function () {
+            return $http.get(config.rootURL + "/SimpleSpecies");
+        },
+        add: function (pulaId, species) {
+            return $http.post(config.rootURL + "/PULAs/" + pulaId + "/AddSpeciesToPULA?publishedDate=", species);
+        },
+        addOrRemove: function (pulaId, speciesList) {
+
+            //add
+            var addSpecies = function (species) {
+                return $http.post(config.rootURL + "/PULAs/" + pulaId + "/AddSpeciesToPULA?publishedDate=", species);
+            };
+            //remove
+            var removeSpecies = function (species) {
+                return $http.post(config.rootURL + "/PULAs/" + pulaId + "/RemoveSpeciesFromPULA?publishedDate=", species);
+            };
+            var promises = [];
+            var addList = [];
+            var removeList = [];
+            speciesList.forEach(function (species) {
+                if (species.status == "new") {
+                    addList.push(species);
+                } else if (species.status == "delete") {
+                    removeList.push(species);
+                }
+
+            });
+            if (addList.length > 0) {
+                promises.push(addSpecies({
+                    SPECIES: addList
+                }));
+            }
+            if (removeList.length > 0) {
+                promises.push(removeSpecies({
+                    SPECIES: removeList
+                }));
+            }
+            return $q.all(promises);
         }
     };
 }); //end of SpeciesService
@@ -224,12 +270,74 @@ bltApp.factory('SpeciesService', function ($http) {
 //LimitationsService
 bltApp.factory('LimitationsService', function ($http, $q) {
     return {
-        get: function (feature, date) {
-            return $http.get(config.rootURL + "/PULAs/" + feature.PULA_ID + "/LimitationsForMapper.json?ShapeID=" + feature.PULA_SHAPE_ID + "&EffectDate=" + date.month + "/01/" + date.year);
+        get: function (feature, date, success) {
+            //"PULAs/{pulaID}/PULALimitations?ActiveDate={date}"
+            //            var getLimitationsForMapper = function () {
+            //                return $http.get(config.rootURL + "/PULAs/" + feature.PULA_ID + "/LimitationsForMapper.json?ShapeID=" + feature.PULA_SHAPE_ID + "&EffectDate=" + date.month + "/01/" + date.year);
+            //            }
+            //
+            //            var getLimitations = function () {
+            //                return $http.get(config.rootURL + "/PULAs/" + feature.PULA_ID + "/PULALimitations?" + "ActiveDate=" + date.month + "/01/" + date.year);
+            //            }
+            //
+            //            var promises = [];
+            //            promises.push(getLimitationsForMapper());
+            //            promises.push(getLimitations());
+            //
+            //            $q.all(promises).then(function (results) {
+            //                var limitationsForMapper = results[0].data.MapperLimits;
+            //                var limitations = results[1].data;
+            //                for (var i = 0; i < limitationsForMapper.length; i++) {
+            //                    _.extend(limitations[i], limitationsForMapper[i]);
+            //                }
+            //                success(limitations);
+            //            });
+
+            var getProducts = function (id) {
+                if (!id) {
+                    return null;
+                } else {
+                    return $http.get(config.rootURL + "/Products/" + id);
+                }
+            }
+            var promises = [];
+            var limit;
+            $http.get(config.rootURL + "/PULAs/" + feature.PULA_ID + "/PULALimitations?" + "ActiveDate=" + date.month + "/01/" + date.year).success(function (limitations) {
+                //product names
+                for (var i = 0; i < limitations.length; i++) {
+                    limit = limitations[i];
+                    promises.push(getProducts(limit.PRODUCT_ID));
+                }
+                $q.all(promises).then(function (products) {
+                    for (var i = 0; i < products.length; i++) {
+                        if (products[i]) {
+                            limitations[i].PRODUCT_NAME = products[i].data.PRODUCT_NAME;
+                        }
+                    }
+                    success(limitations);
+                });
+
+            });
+
+            //get it's associated products
+            //
+            //                //                //get limitations associated app method, form, limit, name and use
+            //                //                APPMETHOD: "Animal burrow treatment"
+            //                //                FORM: "Gas cartridge"
+            //                //                LIMIT: {
+            //                //                    LIMITATION_ID: 75,
+            //                //                    CODE: "C1",
+            //                //                    …
+            //                //                }
+            //                //                NAME: "SMOKE 'EM [4-463]"
+            //                //                PULAID: 16
+            //                //                PULASHPID: 11
+            //                //                USE: "Any Use"
+
         },
         getCodes: function (limitationList, date, success) {
             var getCode = function (limitation) {
-                return $http.get(config.rootURL + "/Limitations/" + limitation.LIMIT.LIMITATION_ID + "?publishedDate=" + date.month + "/01/" + date.year);
+                return $http.get(config.rootURL + "/Limitations/" + limitation.LIMITATION_ID + "?publishedDate=" + date.month + "/01/" + date.year);
             };
             var promises = [];
             var processedLimitations = {};
@@ -244,6 +352,28 @@ bltApp.factory('LimitationsService', function ($http, $q) {
             $q.all(promises).then(function (results) {
                 success(results);
             });
+        },
+        addOrRemove: function (limitationList) {
+
+            //add
+            var addLimitation = function (limitation) {
+                return $http.post(config.rootURL + "/PULALimitations", limitation);
+            };
+            //remove
+            var removeLimitation = function (limitation) {
+                return $http.delete(config.rootURL + "/PULALimitation/" + limitation.PULA_LIMITATION_ID);
+            };
+            var promises = [];
+            limitationList.forEach(function (limitation) {
+                if (limitation.status == "new") {
+                    promises.push(addLimitation(limitation));
+                } else if (limitation.status == "delete") {
+                    promises.push(removeLimitation(limitation));
+                }
+
+            });
+
+            return $q.all(promises);
         }
     };
 }); //end of LimitationsService
@@ -355,7 +485,7 @@ bltApp.factory('PartsService', ['$resource', function ($resource) {
         getAll: {
             method: 'GET',
             isArray: true,
-            url: config.rootURL + '/:url' + "?publishedDate="+moment().format("MMMM YYYY"),
+            url: config.rootURL + '/:url' + "?publishedDate=" + moment().format("MMMM YYYY"),
             cache: false
         },
         update: {
