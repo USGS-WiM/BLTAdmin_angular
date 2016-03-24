@@ -36,7 +36,6 @@ bltApp.controller('LoginController', function ($scope, LoginService, AuthService
                     $location.path("/home");
                     $scope.showLoading = false;
                 } else {
-                    console.log("Login Failed");
                     $scope.showLoading = false;
                 }
             },
@@ -44,7 +43,7 @@ bltApp.controller('LoginController', function ($scope, LoginService, AuthService
                 $scope.showLoading = false;
                 //remove credentials
                 AuthService.removeCredentials();
-                $scope.error = "We couldn't log in you in. Please try again.";
+                $scope.error = "We couldn't log you in. Please try again.";
             });
 
     }
@@ -63,10 +62,7 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
         $scope.hideFilters = true;
         $scope.hideMenu = true;
     }
-    //else {
-
-    //}
-
+    
     //get user role
     $scope.role = roles[AuthService.getRoleId()];
 
@@ -193,7 +189,6 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
             $scope.ui.formulationList = results[4];
             $scope.ui.limitationCodeList = results[5];
             $scope.ui.events = results[6];
-            console.log($scope.events);
 
             $scope.showPULALoading = false;
         });
@@ -208,11 +203,6 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
 
         //show loading indicator
         $scope.showPULALoading = true;
-        //        $scope.modalLoading = $modal.open({
-        //            scope: $scope,
-        //            animation: true,
-        //            templateUrl: 'loading.cshtml'
-        //        });
         $scope.pula.identify().on(map).at(e.latlng).run(function (error, featureCollection) {
             if (featureCollection.features.length > 0) {
                 //highlight the pula that was clicked
@@ -235,11 +225,6 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
                         $scope.pulaDetails = response;
                         $scope.pulaDetails.data = {};
                         if (response && response != "") {
-                            //pula id
-                            //                            $scope.pulaDetails.id = response.ID;
-                            //                            $scope.pulaDetails.pulaId = response.PULA_ID;
-                            //                            $scope.pulaDetails.isPublished = response.IS_PUBLISHED;
-
                             //effective date
                             $scope.pulaDetails.data.effectiveDateStr = response.EFFECTIVE_DATE ? moment(response.EFFECTIVE_DATE).format("MM/DD/YYYY") : "";
                             //comments
@@ -268,8 +253,6 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
                             var versionId = response.VERSION_ID;
 
                             //justification information
-                            //$scope.pulaDetails.baseData = response.BASE_DATA;
-                            //$scope.pulaDetails.baseDataModifiers = response.BASE_DATA_MODIFIERS;
                             for (var header in config.justificationTypes) {
                                 var items = config.justificationTypes[header].items;
                                 for (var item in items) {
@@ -281,7 +264,6 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
                                     }
                                 }
                             }
-                            //$scope.pulaDetails.additionalInfo = response.ADDITIONAL_INFORMATION;
                         }
 
                         VersionService.get(versionId).success(function (response) {
@@ -318,7 +300,6 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
                                     $scope.pulaDetails.data.expirer = expirer.FNAME + " " + expirer.LNAME;
                                 });
                             }
-                            //console.log($scope.pulaDetails);
                         });
 
                         //get the species
@@ -357,7 +338,7 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
 
 
                             }
-                            console.log(limitaitons);
+                            
                             if ($scope.isGuest) {
                                 //limitation codes
                                 LimitationsService.getCodes(response, $scope.seclectedDate, function (response) {
@@ -731,8 +712,6 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
             }
         }
 
-        console.log(mapperLimitNew);
-
     }
 
     $scope.addSpecies = function () {
@@ -796,11 +775,9 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
             //Limitations
             var limitations = data.mapperLimits;
             LimitationsService.addOrRemove(limitations).then(function (results) {
-                console.log(results);
                 //species
                 var species = data.speciesList;
                 SpeciesService.addOrRemove($scope.mPulaDetails.PULA_ID, species).then(function (results) {
-                    console.log(results);
                     callback();
                 });
             });
@@ -827,8 +804,6 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
         date = data.expirationDate
         if (date && (!date.month || !date.year)) {
             data.errors.push("Please choose both month and year for Expiration Date in the 'General Information section'");
-        } else {
-            console.log($scope.expirationDate);
         }
 
         //stop processing if there are any errors
@@ -836,27 +811,12 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
             $scope.showPULALoading = false;
             return;
         }
-        console.log($scope.mPulaDetails.data);
 
         //set event id
         $scope.mPulaDetails.EVENT_ID = data.event.EVENT_ID;
         //set effective date
         $scope.setPULAEffectiveDate();
 
-        //        console.log($scope.mPulaDetails);
-        //
-        //        for (var i = 0; i < data.mapperLimits.length; i++) {
-        //            var l = data.mapperLimits[i];
-        //            if (l.status) {
-        //                console.log(l);
-        //            }
-        //        }
-        //        for (var i = 0; i < data.speciesList.length; i++) {
-        //            var l = data.speciesList[i];
-        //            if (l.status) {
-        //                console.log(l);
-        //            }
-        //        }
         var isNew = data.isNew;
         if (isNew) {
             //create the PULA first
@@ -1190,7 +1150,6 @@ bltApp.controller('PartsController', function ($scope, $rootScope, $modal, RoleS
                     }
                 });
             } else {
-                //console.log($scope.part);
                 //edit
                 var ai = angular.copy($scope.part);
                 //delete $scope.part.ID;

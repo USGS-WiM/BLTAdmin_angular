@@ -271,28 +271,6 @@ bltApp.factory('SpeciesService', function ($http, $q) {
 bltApp.factory('LimitationsService', function ($http, $q) {
     return {
         get: function (feature, date, success) {
-            //"PULAs/{pulaID}/PULALimitations?ActiveDate={date}"
-            //            var getLimitationsForMapper = function () {
-            //                return $http.get(config.rootURL + "/PULAs/" + feature.PULA_ID + "/LimitationsForMapper.json?ShapeID=" + feature.PULA_SHAPE_ID + "&EffectDate=" + date.month + "/01/" + date.year);
-            //            }
-            //
-            //            var getLimitations = function () {
-            //                return $http.get(config.rootURL + "/PULAs/" + feature.PULA_ID + "/PULALimitations?" + "ActiveDate=" + date.month + "/01/" + date.year);
-            //            }
-            //
-            //            var promises = [];
-            //            promises.push(getLimitationsForMapper());
-            //            promises.push(getLimitations());
-            //
-            //            $q.all(promises).then(function (results) {
-            //                var limitationsForMapper = results[0].data.MapperLimits;
-            //                var limitations = results[1].data;
-            //                for (var i = 0; i < limitationsForMapper.length; i++) {
-            //                    _.extend(limitations[i], limitationsForMapper[i]);
-            //                }
-            //                success(limitations);
-            //            });
-
             var getProducts = function (id) {
                 if (!id) {
                     return null;
@@ -318,22 +296,6 @@ bltApp.factory('LimitationsService', function ($http, $q) {
                 });
 
             });
-
-            //get it's associated products
-            //
-            //                //                //get limitations associated app method, form, limit, name and use
-            //                //                APPMETHOD: "Animal burrow treatment"
-            //                //                FORM: "Gas cartridge"
-            //                //                LIMIT: {
-            //                //                    LIMITATION_ID: 75,
-            //                //                    CODE: "C1",
-            //                //                    …
-            //                //                }
-            //                //                NAME: "SMOKE 'EM [4-463]"
-            //                //                PULAID: 16
-            //                //                PULASHPID: 11
-            //                //                USE: "Any Use"
-
         },
         getCodes: function (limitationList, date, success) {
             var getCode = function (limitation) {
