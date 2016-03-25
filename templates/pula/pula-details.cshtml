@@ -51,7 +51,7 @@
                         <select ng-model="expirationDate.year" class="form-control" ng-options="y for y in expirationYears"></select>
                     </div>
                     <div class="form-group">
-                        <button class="btn btn-primary btn-sm" ng-disabled="!expirationDate.month || !expirationDate.year" ng-click="addExpirationDate()">Add Expiration Date</button>
+                        <button class="btn btn-primary btn-sm" ng-disabled="!expirationDate.month || !expirationDate.year" ng-click="addExpirationDate(expirationDate)">Add Expiration Date</button>
                     </div>
                 </form>
 

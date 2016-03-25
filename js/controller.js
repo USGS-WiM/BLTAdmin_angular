@@ -225,7 +225,9 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
 
         //get the effective date, comments, event, entity id
         if (pulaId != "Null" && shapeId != "Null") {
-            PULAPOIService.get(shapeId, $scope.seclectedDate).success(function (response) {
+            var date = $scope.seclectedDate;
+            date.month = $scope.months.indexOf($scope.date.month) + 1;
+            PULAPOIService.get(shapeId, date).success(function (response) {
                 $scope.pulaDetails = response;
                 $scope.pulaDetails.data = {};
                 if (response && response != "") {
@@ -460,7 +462,7 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
         var product = $scope.filter.product;
 
         PULAService.get({
-            date: $scope.date.month + " " + $scope.date.year,
+            date: $scope.months.indexOf($scope.date.month) + 1 + "/01/" + $scope.date.year,
             eventID: event != "All" ? event : "0",
             productID: product ? product : "0",
             aiID: ai ? ai : "0"
@@ -556,11 +558,12 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
 
     //expire pulas
     $scope.expirationYears = getYears(5);
-    $scope.addExpirationDate = function (callback) {
-        var date = $scope.mPulaDetails.data.expirationDate;
+    $scope.addExpirationDate = function (date, callback) {
         PULAPOIService.updateStatus($scope.mPulaDetails.ID, date, "Expired").success(function () {
             $scope.mPulaDetails.data.expirationDateStr = date.month + "/01/" + date.year;
-            callback();
+            if (callback) {
+                callback();
+            }
         });
     }
 
@@ -818,9 +821,9 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
         }
         var saveAdditionalInfo = function (callback) {
             //expiration date
-            var date = data.expirationDate
+            var date = data.expirationDate;
             if (date && date.month && date.year) {
-                $scope.addExpirationDate(function () {
+                $scope.addExpirationDate(date, function () {
                     saveLimitsAndSpecies(callback);
                 });
             } else {
@@ -839,7 +842,7 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
         if (date && (!date.month || !date.year)) {
             data.errors.push("Please choose both month and year for Expiration Date in the 'General Information section'");
         }
-
+        return;
         //stop processing if there are any errors
         if (data.errors.length > 0) {
             $scope.showPULALoading = false;
