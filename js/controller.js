@@ -927,7 +927,6 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
     //if guest show the event based PULAs
     if ($scope.isGuest) {
         $scope.showLoading = true;
-        $scope.commenting = true;
         EventPULAService.get($scope.eventId).success(function (response) {
             var createdPulaShapes = [];
             var pulaList = response.PULA;
@@ -940,7 +939,7 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
                 pula = pulaList[i];
                 if (pula.isPublished == 1 && !pula.Expired) {
                     //show that the commenting period is over
-                    $scope.commenting = false;
+                    $scope.commenting = true;
                 }
                 createdPulaShapes.push(pula.ShapeID);
             }
