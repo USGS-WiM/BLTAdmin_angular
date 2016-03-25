@@ -7,7 +7,16 @@
 </script>
 -->
 <div>
-    <div class="container-fluid">
+    <div class="container-fluid" ng-show="!commenting">
+        <div class="row">
+            <div class="col-xs-4 col-sm-4 col-md-4"></div>
+            <div class="col-xs-4 col-sm-4 col-md-4">
+                <div class="alert alert-warning center">The comment period is over. </div>
+            </div>
+            <div class="col-xs-4 col-sm-4 col-md-4"></div>
+        </div>
+    </div>
+    <div class="container-fluid" ng-show="commenting">
         <span class="glyphicon center glyphicon-refresh" ng-show="showPULALoading"></span>
         <div class="row" ng-class="{ 'loading': showPULALoading }">
             <div class="col-md-6">
