@@ -275,7 +275,7 @@ bltApp.factory('LimitationsService', function ($http, $q) {
                 if (!id) {
                     return null;
                 } else {
-                    return $http.get(config.rootURL + "/Products/" + id);
+                    return $http.get(config.rootURL + "/Products?ProductID=" + id + "&publishedDate=");
                 }
             }
             var promises = [];
@@ -289,7 +289,8 @@ bltApp.factory('LimitationsService', function ($http, $q) {
                 $q.all(promises).then(function (products) {
                     for (var i = 0; i < products.length; i++) {
                         if (products[i]) {
-                            limitations[i].PRODUCT_NAME = products[i].data.PRODUCT_NAME;
+                            limitations[i].PRODUCT_NAME = products[i].data[0].PRODUCT_NAME;
+                            limitations[i].PRODUCT_REGISTRATION_NUMBER = products[i].data[0].PRODUCT_REGISTRATION_NUMBER;
                         }
                     }
                     success(limitations);

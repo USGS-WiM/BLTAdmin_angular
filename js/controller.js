@@ -307,62 +307,59 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
                             });
                         }
                     });
-                }
+
+                    //get the species
+                    ///ActiveIngredientPULA/{activeIngredientPULAID}/Species
+                    $scope.pulaDetails.data.speciesList = [];
+
+                    SpeciesService.get($scope.pulaDetails)
+                        .success(function (response) {
+                            $scope.pulaDetails.data.speciesList = response.SPECIES;
+                        });
+
+                    //get the limitations
+
+                    LimitationsService.get(pulaId, $scope.seclectedDate, function (response) {
+                        $scope.pulaDetails.data.mapperLimits = response;
+
+                        //set limitation's extra information
+                        var limitaitons = response;
+                        var limit;
+                        for (var i = 0; i < limitaitons.length; i++) {
+                            limit = limitaitons[i];
+                            //name
+                            if (limit.ACTIVE_INGREDIENT_ID) {
+                                limit.NAME = $scope.aiList[limit.ACTIVE_INGREDIENT_ID]["INGREDIENT_NAME"];
+                            } else if (limit.PRODUCT_ID) {
+                                limit.NAME = limit.PRODUCT_NAME + "[" + limit.PRODUCT_REGISTRATION_NUMBER + "]";
+                            }
+                            //application method
+                            limit.APPMETHOD = $scope.applicationMethodList[limit.APPLICATION_METHOD_ID]["METHOD"];
+                            //formulation
+                            limit.FORM = $scope.formulationList[limit.FORMULATION_ID]["FORM"];
+                            //crop use
+                            limit.USE = $scope.cropUseList[limit.CROP_USE_ID]["USE"];
+                            //limiations code
+                            limit.CODE = $scope.limitationCodeList[limit.LIMITATION_ID]["CODE"];
 
 
-                //get the species
-                ///ActiveIngredientPULA/{activeIngredientPULAID}/Species
-                $scope.pulaDetails.data.speciesList = [];
-
-                SpeciesService.get($scope.pulaDetails)
-                    .success(function (response) {
-                        $scope.pulaDetails.data.speciesList = response.SPECIES;
-                    });
-
-                //get the limitations
-
-                LimitationsService.get(pulaId, $scope.seclectedDate, function (response) {
-                    $scope.pulaDetails.data.mapperLimits = response;
-
-                    //set limitation's extra information
-                    var limitaitons = response;
-                    var limit;
-                    for (var i = 0; i < limitaitons.length; i++) {
-                        limit = limitaitons[i];
-                        //name
-                        if (limit.ACTIVE_INGREDIENT_ID) {
-                            limit.NAME = $scope.aiList[limit.ACTIVE_INGREDIENT_ID]["INGREDIENT_NAME"];
-                        } else if (limit.PRODUCT_ID) {
-                            limit.NAME = limit.PRODUCT_NAME;
                         }
-                        //application method
-                        limit.APPMETHOD = $scope.applicationMethodList[limit.APPLICATION_METHOD_ID]["METHOD"];
-                        //formulation
-                        limit.FORM = $scope.formulationList[limit.FORMULATION_ID]["FORM"];
-                        //crop use
-                        limit.USE = $scope.cropUseList[limit.CROP_USE_ID]["USE"];
-                        //limiations code
-                        limit.CODE = $scope.limitationCodeList[limit.LIMITATION_ID]["CODE"];
 
-
-                    }
-
-                    if ($scope.isGuest) {
-                        //limitation codes
-                        LimitationsService.getCodes(response, $scope.seclectedDate, function (response) {
-                            $scope.limitationCodes = response;
+                        if ($scope.isGuest) {
+                            //limitation codes
+                            LimitationsService.getCodes(response, $scope.seclectedDate, function (response) {
+                                $scope.limitationCodes = response;
+                                $scope.pulaSectionUrl = "templates/pula/pula-details.cshtml";
+                                $scope.showPULALoading = false;
+                            });
+                        } else {
                             $scope.pulaSectionUrl = "templates/pula/pula-details.cshtml";
                             $scope.showPULALoading = false;
-                        });
-                    } else {
-                        $scope.pulaSectionUrl = "templates/pula/pula-details.cshtml";
-                        $scope.showPULALoading = false;
-                    }
-                });
+                        }
+                    });
+                }
+
             });
-
-
-
 
         } else {
 
