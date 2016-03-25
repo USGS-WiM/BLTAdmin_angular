@@ -403,7 +403,7 @@
                     <td></td>
                     <td></td>
                         </tr>
-                        <tr ng-repeat="species in mPulaDetails.data.speciesList" ng-hide="species.status=='delete'">
+                        <tr ng-repeat="species in mPulaDetails.data.speciesList|orderBy:'COMNAME'" ng-hide="species.status=='delete'">
 
                             <td>{{species.SCINAME}}</td>
                             <td>{{species.COMNAME}}</td>
