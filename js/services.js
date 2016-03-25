@@ -184,8 +184,8 @@ bltApp.factory('PULAService', ['$resource', function ($resource) {
 //PULAPOIService
 bltApp.factory('PULAPOIService', function ($http) {
     return {
-        get: function (feature, date) {
-            return $http.get(config.rootURL + "/PULAs/POI/" + feature.PULA_SHAPE_ID + "/?publishedDate=" + date.month + "/01/" + date.year);
+        get: function (pulaShapeId, date) {
+            return $http.get(config.rootURL + "/PULAs/POI/" + pulaShapeId + "/?publishedDate=" + date.month + "/01/" + date.year);
         },
         updateStatus: function (id, date, status) {
             return $http.get(config.rootURL + "/PULAs/" + id + "/updateStatus?status=" + status + "&statusDate=" + date.month + "/01/" + date.year);
@@ -270,7 +270,7 @@ bltApp.factory('SpeciesService', function ($http, $q) {
 //LimitationsService
 bltApp.factory('LimitationsService', function ($http, $q) {
     return {
-        get: function (feature, date, success) {
+        get: function (pulaId, date, success) {
             var getProducts = function (id) {
                 if (!id) {
                     return null;
@@ -280,7 +280,7 @@ bltApp.factory('LimitationsService', function ($http, $q) {
             }
             var promises = [];
             var limit;
-            $http.get(config.rootURL + "/PULAs/" + feature.PULA_ID + "/PULALimitations?" + "ActiveDate=" + date.month + "/01/" + date.year).success(function (limitations) {
+            $http.get(config.rootURL + "/PULAs/" + pulaId + "/PULALimitations?" + "ActiveDate=" + date.month + "/01/" + date.year).success(function (limitations) {
                 //product names
                 for (var i = 0; i < limitations.length; i++) {
                     limit = limitations[i];
