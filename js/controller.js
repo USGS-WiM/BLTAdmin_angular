@@ -576,10 +576,25 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
 
     //publish PULA
     $scope.publishPULA = function () {
-        var date = $scope.expirationDate;
-        date.month = $scope.months.indexOf(date.month) + 1;
+
+        $scope.showLoading = true;
         PULAPOIService.publish($scope.pulaDetails.ID).success(function () {
-            $scope.pulaDetails.IS_PUBLISHED = 1; //double check
+            //refresh the map
+            $scope.pula.setLayerDefs(getLayerDefs());
+            //remove pula layer filters
+            $scope.mapLayers = {
+                pending: true,
+                created: true,
+                published: true,
+                effective: true,
+                expired: true
+            };
+            $scope.filterLayers();
+            //set it to published
+            $scope.pulaDetails.IS_PUBLISHED = 1;
+            $scope.showLoading = false;
+            //show message
+            $scope.pulaDetails.data.message = "The PULA has been published";
         });
     }
 
@@ -795,7 +810,7 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
             }
             LimitationsService.addOrRemove(limitations).then(function (results) {
                 //species
-                var species = data.speciesList;                
+                var species = data.speciesList;
                 SpeciesService.addOrRemove($scope.mPulaDetails.PULA_ID, species).then(function (results) {
                     callback();
                 });
