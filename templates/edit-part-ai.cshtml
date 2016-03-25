@@ -42,7 +42,8 @@
                         <button class="btn" ng-click="addClassToAI(activeAIClass)">Add</button>
                     </div>
                 </div>
-<!--                <p>(Choose AI Class, Click Add. Can add one to many.)</p>-->
+                <!--                <p>(Choose AI Class, Click Add. Can add one to many.)</p>-->
+                <br>
                 <div class="panel panel-default panel-table">
                     <table class="table table-condensed table-striped small">
                         <tr ng-repeat="item in classList" ng-hide="item.status=='delete'">
@@ -71,10 +72,11 @@
                         <button class="btn" ng-click="addProductToAI(productSearchResults[activeProduct])">Add</button>
                     </div>
                 </div>
-<!--                <p>(Choose Product, Click Add. Can add one to many.)</p>-->
+                <!--                <p>(Choose Product, Click Add. Can add one to many.)</p>-->
+                <br>
                 <div class="panel panel-default panel-table">
                     <table class="table table-condensed table-striped small">
-                        <tr ng-repeat="item in productList"  ng-hide="item.status=='delete'">
+                        <tr ng-repeat="item in productList" ng-hide="item.status=='delete'">
                             <td>{{item.PRODUCT_NAME}}</td>
                             <td>
                                 <a class="text-danger">
