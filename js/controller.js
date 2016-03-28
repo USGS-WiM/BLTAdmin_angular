@@ -145,10 +145,9 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
                 });
             });
 
-            pula.setLayerDefs(getLayerDefs());
+            $scope.filterShapes();
         }
     );
-
 
     var getLayerDefs = function () {
         if (!$scope.isGuest) {
@@ -411,7 +410,7 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
             return ProductService.get(date, term).then(function (response) {
                 return response.data.map(function (item) {
                     $scope.productSearchResults[item.PRODUCT_NAME] = item;
-                    return item.PRODUCT_NAME;
+                    return item;
                 });
             });
         }
@@ -450,53 +449,104 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
         $scope.filterShapes();
     }
 
-    $scope.filterShapes = function () {
+    $scope.filterShapes = function (isFilter) {
         $scope.noPULAs = false;
         $scope.showLoading = true;
         //1. get date, active ingredient, event and product
         var event = $scope.filter.event;
         var ai = $scope.filter.ai;
         var product = $scope.filter.product;
-
-        PULAService.get({
+        var filter = {
             date: $scope.months.indexOf($scope.date.month) + 1 + "/01/" + $scope.date.year,
-            eventID: event != "All" ? event : "0",
-            productID: product ? product : "0",
-            aiID: ai ? ai : "0"
-        }, function (response) {
+            eventID: (event && event != "All") ? event : "-1",
+            productID: product ? parseInt(product.PRODUCT_ID) : "-1",
+            aiID: ai ? parseInt(ai) : "-1"
+        };
+
+        PULAService.get(filter, function (response) {
+            var pendingPulaShapes = [];
+            var createdPulaShapes = [];
             var publishedPulaShapes = [];
             var effectivePulaShapes = [];
             var expiredPulaShapes = [];
-            var pulaList = response.PULA;
-            var pula, effectiveDate, expiredDate;
+            var pulaList = response;
+            var pula, effectiveDate, expiredDate, shapeId, createdDate, publishDate, eventID;
+            var limitations, match;
             var chosenDate = moment($scope.date.month + " " + $scope.date.year);
             if (pulaList.length == 0) {
                 $scope.showLoading = false;
                 $scope.noPULAs = true;
-            }
+            }            
             for (var i = 0; i < pulaList.length; i++) {
                 pula = pulaList[i];
-                effectiveDate = pula.Effective;
-                expiredDate = pula.Expired;
+                effectiveDate = pula.EFFECTIVE_DATE;
+                expiredDate = pula.EXPIRED_TIME_STAMP;
+                createdDate = pula.CREATED_TIME_STAMP;
+                publishDate = pula.PUBLISHED_TIME_STAMP;
+                shapeID = pula.PULA_SHAPE_ID;
+                eventID = pula.EVENT_ID;
+                limitations = pula.limitations;
+
+                if (isFilter) {
+                    //filter by event
+                    if (filter.eventID != -1) {
+                        if (eventID != filter.eventID) {
+                            continue;
+                        }
+                    }
+                    //filter by ai
+                    if (filter.aiID != -1) {
+                        match = _.find(limitations, {
+                            "ACTIVE_INGREDIENT_ID": filter.aiID
+                        });
+                        if (!match) {
+                            continue;
+                        }
+                    }
+                    //filter by product
+                    if (filter.productID != -1) {
+                        match = _.find(limitations, {
+                            "PRODUCT_ID": filter.productID
+                        });
+                        if (!match) {
+                            continue;
+                        }
+                    }
+                }
+
+                //pending if there is no Shape Id associated with the pula               
+                if (!shapeID) {
+                    pendingPulaShapes.push(pula.PULASHAPEI);
+                    continue;
+                }
+                //created if (created is <= chosen date AND (published is null OR published is null expired)
+                if ((!createdDate || moment(createdDate).isBefore(chosenDate)) && (publishDate == null && expiredDate == null)) {
+                    createdPulaShapes.push(shapeID);
+                }
                 //published if (effective is null OR after chosenDate) AND (expired is null or after chosendate)
-                if ((!effectiveDate || moment(effectiveDate).isAfter(chosenDate)) && (expiredDate || moment(expiredDate).isAfter(chosenDate))) {
-                    publishedPulaShapes.push(pula.ShapeID);
+                if ((moment(publishDate).isBefore(chosenDate)) && (effectiveDate == null || moment(effectiveDate).isAfter(chosenDate)) && (expiredDate == null)) {
+
+                    publishedPulaShapes.push(shapeID);
                 }
                 //effective if (effective is <= chosen date AND (expired is null OR after chosenDate)
-                if ((!moment(effectiveDate).isAfter(chosenDate)) && (!expiredDate || moment(expiredDate).isAfter(chosenDate))) {
-                    effectivePulaShapes.push(pula.ShapeID);
+                if ((moment(effectiveDate).isBefore(chosenDate)) && (!publishDate || moment(publishDate).isBefore(chosenDate)) && (expiredDate == null || moment(expiredDate).isAfter(chosenDate))) {
+                    effectivePulaShapes.push(shapeID);
                 }
                 //ExpiredList.PULA = PULAlist.PULA.Where(x => (x.Expired.HasValue && x.Expired.Value <= chosenDate)).ToList();
-                if (expiredDate && !moment(expiredDate).isAfter(chosenDate)) {
-                    expiredPulaShapes.push(pula.ShapeID);
+                if (moment(expiredDate).isBefore(chosenDate)) {
+                    expiredPulaShapes.push(shapeID);
                 }
             }
+
             var layers = {
-                0: "1=0",
-                1: "1=0",
+                0: pendingPulaShapes.length == 0 ? "1=0" : "PULASHAPEI = " + pendingPulaShapes.join(" or PULASHAPEI = "),
+                1: createdPulaShapes.length == 0 ? "1=0" : "PULA_SHAPE_ID = " + createdPulaShapes.join(" or PULA_SHAPE_ID = "),
                 2: publishedPulaShapes.length == 0 ? "1=0" : "PULA_SHAPE_ID = " + publishedPulaShapes.join(" or PULA_SHAPE_ID = "),
                 3: effectivePulaShapes.length == 0 ? "1=0" : "PULA_SHAPE_ID = " + effectivePulaShapes.join(" or PULA_SHAPE_ID = "),
                 4: expiredPulaShapes.length == 0 ? "1=0" : "PULA_SHAPE_ID = " + expiredPulaShapes.join(" or PULA_SHAPE_ID = ")
+            }
+            if (pendingPulaShapes.length == 0 && createdPulaShapes.length == 0 && publishedPulaShapes.length == 0 && effectivePulaShapes.length == 0 && expiredPulaShapes.length == 0) {
+                $scope.noPULAs = true;
             }
             $scope.pula.setLayerDefs(layers);
             $scope.showLoading = false;
@@ -580,7 +630,8 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
         $scope.showLoading = true;
         PULAPOIService.publish($scope.pulaDetails.ID).success(function () {
             //refresh the map
-            $scope.pula.setLayerDefs(getLayerDefs());
+            $scope.filterShapes();
+            //$scope.pula.setLayerDefs(getLayerDefs());
             //remove pula layer filters
             $scope.mapLayers = {
                 pending: true,
@@ -860,7 +911,7 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
         if (isNew) {
             //create the PULA first
             $scope.mPulaDetails.PULA_SHAPE_ID = $scope.mPulaDetails.data.mapShapeId;
-            console.log($scope.mPulaDetails);
+            
             PULAPOIService.post($scope.mPulaDetails).success(function (response) {
                 $scope.mPulaDetails.ID = response.ID;
                 $scope.mPulaDetails.PULA_ID = response.PULA_ID;
@@ -868,7 +919,7 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
                 $scope.mPulaDetails.VERSION_ID = response.VERSION_ID;
                 saveAdditionalInfo(function () {
                     //refresh the map
-                    $scope.pula.setLayerDefs(getLayerDefs());
+                    $scope.filterShapes();
                     getPULADetails($scope.mPulaDetails.ID, $scope.mPulaDetails.PULA_ID, $scope.mPulaDetails.PULA_SHAPE_ID);
                     $scope.pulaDetails.data.message = "The PULA has been saved";
                     $scope.showPULALoading = false;

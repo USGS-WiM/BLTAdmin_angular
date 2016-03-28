@@ -37,7 +37,7 @@
                                     </div>
                                     <br/>
                                     <div>
-                                        <button type="submit" class="btn btn-default btn-sm" ng-click="filterShapes()">Submit</button>
+                                        <button type="submit" class="btn btn-default btn-sm" ng-click="filterShapes(true)">Submit</button>
                                     </div>
                                 </form>
                                 <div ng-show="filter.showDatePicker">
@@ -80,7 +80,8 @@
                                 </div>
                                 <div class="form-group">
                                     <label>Product </label>
-                                    <input type="text" ng-model="filter.product" uib-typeahead="products for products in getProducts($viewValue)" typeahead-loading="loadingProducts" typeahead-no-results="noResults" class="form-control">
+<!--                                    ng-options="ev as ev.NAME for ev in ui.events"-->
+                                    <input type="text" ng-model="filter.product" uib-typeahead="product as product.PRODUCT_NAME for product in getProducts($viewValue)" typeahead-loading="loadingProducts" typeahead-no-results="noResults" class="form-control">
                                     <i ng-show="loadingProducts" class="glyphicon glyphicon-refresh"></i>
                                     <div ng-show="noResults">
                                         <i class="glyphicon glyphicon-remove"></i> No Results Found
@@ -93,7 +94,7 @@
 -->
                                 <form class="form-inline">
                                     <button type="submit" class="btn btn-default btn-sm " ng-click="clearPULAFilter()">Clear</button>
-                                    <button type="submit" class="btn btn-default btn-sm pull-right" ng-click="filterShapes()">Submit</button>
+                                    <button type="submit" class="btn btn-default btn-sm pull-right" ng-click="filterShapes(true)">Submit</button>
                                 </form>
                             </div>
                         </uib-accordion-group>

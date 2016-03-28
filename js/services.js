@@ -171,15 +171,75 @@ bltApp.factory('AIService', ['$http', function ($http) {
     };
 }]); //end of AIService
 
-//PULAService
-bltApp.factory('PULAService', ['$resource', function ($resource) {
-    return $resource(config.pulaURL, {}, {
-        get: {
-            method: 'GET'
-        }
-    });
-}]); //end of PULAService
 
+//PULAService
+bltApp.factory('PULAService', function ($http, $q, VersionService, LimitationsService) {
+
+    return {
+        get: function (params, success) {
+            var getPulasFromArcGIS = function () {
+                return $http.get(config.BLTMapServerPulaURl);
+            }
+
+            var getPulasFromDB = function (params, success) {
+                //                if (params) {
+                //                    return $http.get(config.pulaURL, params);
+                //                } else {
+                var promises = [];
+                var limitationPromises = [];
+
+                $http.get(config.rootURL + "/PULAs").success(function (pulaList) {
+                    for (var i = 0; i < pulaList.length; i++) {
+
+                        //get version information
+                        promises.push(VersionService.get(pulaList[i].VERSION_ID));
+
+                        //get limitations
+                        limitationPromises.push(LimitationsService.getSimpleLimitations(pulaList[i].PULA_ID, params.date));
+                    }
+                    $q.all(promises).then(function (versionList) {
+                        for (var i = 0; i < pulaList.length; i++) {
+                            _.extend(pulaList[i], versionList[i].data);
+                        }
+                        $q.all(limitationPromises).then(function (limitationList) {
+                            for (var i = 0; i < pulaList.length; i++) {
+                                pulaList[i].limitations = limitationList[i].data;
+                            }
+                            success(pulaList);
+                        });
+                    });
+
+                });
+                //}
+            }
+
+            var pulaList = [];
+            getPulasFromArcGIS().success(function (response) {
+                var arcGISPulas = response.features;
+                getPulasFromDB(params, function (dbPulas) {
+                    var pula, match, shapeId;
+                    for (var i = 0; i < arcGISPulas.length; i++) {
+                        pula = {};
+                        shapeId = arcGISPulas[i].attributes["PULA_111015.PULASHAPEI"];
+                        match = _.find(dbPulas, {
+                            "PULA_SHAPE_ID": shapeId
+                        });
+                        if (match) {
+                            pula = match;
+                            pula.PULASHAPEI = shapeId;
+                        } else {
+                            pula.PULASHAPEI = shapeId;
+                        }
+                        pulaList.push(pula);
+                    }
+                    success(pulaList);
+
+                })
+
+            });
+        }
+    }
+});
 
 //PULAPOIService
 bltApp.factory('PULAPOIService', function ($http) {
@@ -337,6 +397,9 @@ bltApp.factory('LimitationsService', function ($http, $q) {
             });
 
             return $q.all(promises);
+        },
+        getSimpleLimitations: function (pulaId, date) {
+            return $http.get(config.rootURL + "/PULAs/" + pulaId + "/PULALimitations?" + "ActiveDate=" + date.month + "/01/" + date.year)
         }
     };
 }); //end of LimitationsService
