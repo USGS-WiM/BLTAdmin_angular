@@ -1,7 +1,7 @@
 <script src="js/parts.js"></script>
 <div class="parts">
     <div class="container-fluid">
-        
+
         <span class="glyphicon center glyphicon-refresh" ng-show="showLoading"></span>
         <div class="row" ng-class="{ 'loading': showLoading }">
             <div class="col-md-3">
@@ -21,16 +21,11 @@
                         <div class="col-md-10">
                             <form class="form-inline">
                                 <div class="form-group">
-                                    <label>Product </label>
-                                    <input type="text" ng-model="activeProduct" uib-typeahead="products for products in searchProduct($viewValue)" typeahead-loading="loadingProducts" typeahead-no-results="noResults" class="form-control">
-                                    <i ng-show="loadingProducts" class="glyphicon glyphicon-refresh"></i>
-                                    <div ng-show="noResults">
-                                        <i class="glyphicon glyphicon-remove"></i> No Results Found
-                                    </div>
+                                    <input type="text" ng-model="search" class="form-control" placeholder="Enter a term to search">
                                 </div>
-                                <button class="btn btn-primary btn-xs" ng-disabled="!activeProduct" ng-if="role.ROLE_NAME == 'ADMIN' || role.ROLE_NAME == 'PUBLISH'"><span class="glyphicon glyphicon-pencil" ng-click="editProduct($index,part)" ></span></button>
-                                <button class="btn btn-danger btn-xs" ng-disabled="!activeProduct" ng-click="deletePart(part)" ng-if="role.ROLE_NAME == 'ADMIN' || role.ROLE_NAME == 'PUBLISH'"><span class="glyphicon glyphicon-trash"></span></button>
-                                <button class="btn btn-link" ng-click="activeProduct=''">Clear</button>
+                                <button class="btn btn-success btn-sm" ng-click="searchProduct(search)" ng-disabled="search.length < 3"><span class="glyphicon glyphicon-search"></span></button>
+                                <span class="glyphicon glyphicon-refresh" ng-show="showProductLoading"></span>
+                                <button class="btn btn-link" ng-click="search=''">Clear</button>
                             </form>
                         </div>
                         <div class="col-md-2">
@@ -38,9 +33,10 @@
                         </div>
                     </div>
                 </div>
-                <!--other parts-->
-                <div ng-if="!selectedPart.search">
-                    <div class="row">
+
+                <div>
+                    <!--other parts-->
+                    <div class="row" ng-if="!selectedPart.search">
                         <div class="col-md-10">
                             <form class="form-inline">
                                 <div class="form-group">
@@ -61,7 +57,7 @@
                                     <th scope="col" ng-repeat="col in selectedPart.display.columns">{{col.heading}}</th>
                                     <th ng-if="role.ROLE_NAME == 'ADMIN' || role.ROLE_NAME == 'PUBLISH'">Edit</th>
                                     <th ng-if="selectedPart.copy">Copy</th>
-                                    <th ng-if="role.ROLE_NAME == 'ADMIN' || role.ROLE_NAME == 'PUBLISH'">Delete</th>
+                                    <th ng-hide="selectedPart.enableDelete == false" ng-if="role.ROLE_NAME == 'ADMIN' || role.ROLE_NAME == 'PUBLISH'">Delete</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -75,7 +71,7 @@
                                         <button class="btn btn-success btn-xs"><span class="glyphicon glyphicon glyphicon-copy" ng-click="editPart(-1,part,true)"></span></button>
 
                                     </td>
-                                    <td ng-if="role.ROLE_NAME == 'ADMIN'">
+                                    <td ng-hide="selectedPart.enableDelete == false" ng-if="role.ROLE_NAME == 'ADMIN'">
                                         <button class="btn btn-danger btn-xs" ng-click="deletePart($index,part)"><span class="glyphicon glyphicon-trash"></span></button>
 
                                     </td>
@@ -95,7 +91,7 @@
 <!--templates-->
 <div>
     <!--edit template-->
-<!--    <div ng-include="templates/edit-part.cshtml"></div>-->
+    <!--    <div ng-include="templates/edit-part.cshtml"></div>-->
 
     <!--    <script type="text/ng-template" id="part.cshtml" ng-include="templates/edit-part.html"> -->
 

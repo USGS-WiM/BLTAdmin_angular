@@ -476,7 +476,7 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
             if (pulaList.length == 0) {
                 $scope.showLoading = false;
                 $scope.noPULAs = true;
-            }            
+            }
             for (var i = 0; i < pulaList.length; i++) {
                 pula = pulaList[i];
                 effectiveDate = pula.EFFECTIVE_DATE;
@@ -911,7 +911,7 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
         if (isNew) {
             //create the PULA first
             $scope.mPulaDetails.PULA_SHAPE_ID = $scope.mPulaDetails.data.mapShapeId;
-            
+
             PULAPOIService.post($scope.mPulaDetails).success(function (response) {
                 $scope.mPulaDetails.ID = response.ID;
                 $scope.mPulaDetails.PULA_ID = response.PULA_ID;
@@ -1156,7 +1156,8 @@ bltApp.controller('PartsController', function ($scope, $rootScope, $modal, RoleS
         $scope.selectedPart.active = true;
         if (!$scope.selectedPart.search) {
             PartsService.getAll({
-                    url: $scope.selectedPart.url
+                    url: $scope.selectedPart.url,
+                    publishedDate: ""
                 },
                 function (response) {
 
@@ -1165,6 +1166,7 @@ bltApp.controller('PartsController', function ($scope, $rootScope, $modal, RoleS
 
                 });
         } else {
+            $scope.parts = [];
             $scope.showLoading = false;
         }
     }
@@ -1182,6 +1184,8 @@ bltApp.controller('PartsController', function ($scope, $rootScope, $modal, RoleS
                 $scope.part = part;
             } else {
                 $scope.part = {};
+                $scope.classList = {};
+                $scope.productList = {};
             }
             $scope.editForm.submited = false;
             $scope.editForm.title = "Add New " + $scope.selectedPart.heading;
@@ -1233,13 +1237,17 @@ bltApp.controller('PartsController', function ($scope, $rootScope, $modal, RoleS
             if ($scope.index == -1) {
                 PartsService.create({
                     url: $scope.selectedPart.url
-                }, $scope.part, function (newAI) {
+                }, $scope.part, function (newItem) {
+                    //show the new item if it's product
+                    if ($scope.selectedPart.name == "PRODUCT") {
+                        $scope.parts.unshift(newItem);
+                    }
                     //add any classes and products if any for an active ingredient
-                    if ($scope.selectedPart.name == "ACTIVE INGREDIENT") {
+                    else if ($scope.selectedPart.name == "ACTIVE INGREDIENT") {
                         //add classes
-                        AIClassService.addMultipleToAI($scope.classList, newAI, function () {
+                        AIClassService.addMultipleToAI($scope.classList, newItem, function () {
                             //add products
-                            ProductService.addMultipleToAI($scope.productList, newAI, function () {
+                            ProductService.addMultipleToAI($scope.productList, newItem, function () {
                                 $scope.modalInstance.dismiss('cancel');
                                 $scope.refresh();
                             });
@@ -1251,20 +1259,25 @@ bltApp.controller('PartsController', function ($scope, $rootScope, $modal, RoleS
                 });
             } else {
                 //edit
-                var ai = angular.copy($scope.part);
+                var part = angular.copy($scope.part);
                 //delete $scope.part.ID;
                 PartsService.update({
                     url: $scope.selectedPart.url + "/" + $scope.part[$scope.selectedPart.primaryKey]
-                }, $scope.part, function () {
-
-                    //add or remove classes
-                    AIClassService.addRemoveMultipleAI($scope.classList, ai, function () {
-                        //add products
-                        ProductService.addRemoveMultipleAI($scope.productList, ai, function () {
-                            $scope.modalInstance.dismiss('cancel');
-                            $scope.refresh();
+                }, $scope.part, function (newItem) {
+                    //show the changes if it's product
+                    if ($scope.selectedPart.name == "PRODUCT") {
+                        $scope.parts[$scope.index] = newItem;
+                        $scope.modalInstance.dismiss('cancel');
+                    } else if ($scope.selectedPart.name == "ACTIVE INGREDIENT") {
+                        //add or remove classes
+                        AIClassService.addRemoveMultipleAI($scope.classList, part, function () {
+                            //add products
+                            ProductService.addRemoveMultipleAI($scope.productList, part, function () {
+                                $scope.modalInstance.dismiss('cancel');
+                                $scope.refresh();
+                            });
                         });
-                    });
+                    }
 
                 });
             }
@@ -1302,18 +1315,13 @@ bltApp.controller('PartsController', function ($scope, $rootScope, $modal, RoleS
 
     //product
     $scope.searchProduct = function (term) {
+        $scope.showProductLoading = true;
         $scope.productSearchResults = {};
-        if (term.length < 3) {
-            return [];
-        } else {
-            var date = moment().format("DD/MM/YYYY");
-            return ProductService.get(date, term).then(function (response) {
-                return response.data.map(function (item) {
-                    $scope.productSearchResults[item.PRODUCT_NAME] = item;
-                    return item.PRODUCT_NAME;
-                });
-            });
-        }
+        var date = moment().format("DD/MM/YYYY");
+        return ProductService.get(date, term).then(function (response) {
+            $scope.parts = response.data;
+            $scope.showProductLoading = false;
+        });
     };
 
     //add AI class to active ingredient 

@@ -166,7 +166,7 @@ bltApp.factory('AIService', ['$http', function ($http) {
             return $http.get(config.rootURL + "/ActiveIngredients/" + id + "/aiClass");
         },
         getProducts: function (id) {
-            return $http.get(config.rootURL + "/ActiveIngredients/" + id + "/product?publishedDate=3/01/2016");
+            return $http.get(config.rootURL + "/ActiveIngredients/" + id + "/product?publishedDate=");
         }
     };
 }]); //end of AIService
@@ -511,7 +511,7 @@ bltApp.factory('PartsService', ['$resource', function ($resource) {
         getAll: {
             method: 'GET',
             isArray: true,
-            url: config.rootURL + '/:url' + "?publishedDate=" + moment().format("MM/01/YYYY"),
+            url: config.rootURL + '/:url',
             cache: false
         },
         update: {
