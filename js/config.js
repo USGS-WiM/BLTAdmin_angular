@@ -270,6 +270,7 @@ config.parts = {
             url: "Organizations",
             primaryKey: "ORGANIZATION_ID",
             includeCopy: false,
+            enableDelete: false,
             display: {
                 columns: [{
                     name: "NAME",
