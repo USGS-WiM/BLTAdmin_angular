@@ -330,7 +330,7 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
                             if (limit.ACTIVE_INGREDIENT_ID) {
                                 limit.NAME = $scope.aiList[limit.ACTIVE_INGREDIENT_ID]["INGREDIENT_NAME"];
                             } else if (limit.PRODUCT_ID) {
-                                limit.NAME = limit.PRODUCT_NAME + "[" + limit.PRODUCT_REGISTRATION_NUMBER + "]";
+                                limit.NAME = limit.PRODUCT_NAME + " [" + limit.PRODUCT_REGISTRATION_NUMBER + "]";
                             }
                             //application method
                             limit.APPMETHOD = $scope.applicationMethodList[limit.APPLICATION_METHOD_ID]["METHOD"];
