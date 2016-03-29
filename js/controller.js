@@ -141,7 +141,7 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
                                 };
                             }
                         }).addTo(map);
-                        getPULADetails(feature.PULA_ID, feature.PULA_SHAPE_ID, feature.PULASHAPEI);
+                        getPULADetails(feature.PULASHAPEI);
                     }
                 });
             });
@@ -218,16 +218,18 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
     initialize();
 
     //get limitations
-    var getPULADetails = function (pulaId, shapeId, mapShapeId) {
+    var getPULADetails = function (mapShapeId) {
 
         //show loading indicator
         $scope.showPULALoading = true;
+        var pulaDetails = $scope.pulaList[mapShapeId];
+        var pulaId = pulaDetails ? pulaDetails.PULA_ID : null;
 
         //get the effective date, comments, event, entity id
-        if (pulaId != "Null" && shapeId != "Null") {
+        if (pulaId != null) {
             var date = $scope.seclectedDate;
             date.month = $scope.months.indexOf($scope.date.month) + 1;
-            PULAPOIService.get(shapeId, date).success(function (response) {
+            PULAPOIService.get(mapShapeId, date).success(function (response) {
                 $scope.pulaDetails = response;
                 $scope.pulaDetails.data = {};
                 if (response && response != "") {
@@ -549,6 +551,7 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
                 $scope.noPULAs = true;
             }
             $scope.pula.setLayerDefs(layers);
+            $scope.pulaList = _.indexBy(pulaList, "PULASHAPEI");
             $scope.showLoading = false;
         });
     }
@@ -916,11 +919,12 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
                 $scope.mPulaDetails.PULA_ID = response.PULA_ID;
                 $scope.mPulaDetails.PULA_SHAPE_ID = response.PULA_SHAPE_ID;
                 $scope.mPulaDetails.VERSION_ID = response.VERSION_ID;
+                $scope.pulaList[response.PULA_SHAPE_ID] = response;
                 saveAdditionalInfo(function () {
                     //refresh the map
                     $scope.refreshMap();
-                    getPULADetails($scope.mPulaDetails.ID, $scope.mPulaDetails.PULA_ID, $scope.mPulaDetails.PULA_SHAPE_ID);
                     $scope.pulaDetails.data.message = "The PULA has been saved";
+                    getPULADetails($scope.mPulaDetails.PULA_SHAPE_ID);
                     $scope.showPULALoading = false;
                 });
             });
