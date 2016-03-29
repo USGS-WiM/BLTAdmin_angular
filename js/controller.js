@@ -221,6 +221,7 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
     //get limitations
     var getPULADetails = function (mapShapeId) {
 
+        $scope.pulaDetails = null;
         //show loading indicator
         $scope.showPULALoading = true;
         $scope.noAccess = false;
@@ -461,7 +462,8 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
         $scope.filterShapes();
     }
 
-    $scope.filterShapes = function (isFilter) {
+    $scope.filterShapes = function (isFilter) {      
+        $scope.pulaDetails = null;
         $scope.noPULAs = false;
         $scope.showLoading = true;
         //1. get date, active ingredient, event and product

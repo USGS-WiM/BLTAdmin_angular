@@ -124,7 +124,7 @@
             <div class="col-md-6">
                 <div class="alert alert-warning" role="alert" ng-show="noPULAs">No PULAs matching this filter were returned</div>
                 <div class="alert alert-warning" role="alert" ng-show="noAccess">You do not have access</div>
-                <div ng-show="!pulaDetails">Choose a PULA shape to get started. </div>
+                <div ng-show="!pulaDetails && !noPULAs">Choose a PULA shape to get started. </div>
                 <div class="slide-animate" ng-include="pulaSectionUrl"></div>
             </div>
         </div>
