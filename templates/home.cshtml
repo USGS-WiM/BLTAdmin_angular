@@ -20,7 +20,7 @@
         <span class="glyphicon center glyphicon-refresh" ng-show="showPULALoading"></span>
         <div class="row" ng-class="{ 'loading': showPULALoading }">
             <div class="col-md-6">
-                <span class="glyphicon center glyphicon-refresh" ng-show="showLoading"></span>
+                <span class="glyphicon center glyphicon-refresh" ng-show="showLoading && !showPULALoading "></span>
                 <leaflet center="center" layers="layers" markers="markers" constrol="controls" width="100%" height="550px" ng-class="{ 'loading': showLoading }">
                 </leaflet>
                 <div id="filters" ng-hide="hideFilters">
