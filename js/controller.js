@@ -463,7 +463,7 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
     }
 
     $scope.filterShapes = function (isFilter) {
-        
+
         if (isFilter) {
             $scope.pulaDetails = null;
         }
@@ -474,11 +474,24 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
         var ai = $scope.filter.ai;
         var product = $scope.filter.product;
         var filter = {
-            date: isFilter ? $scope.months.indexOf($scope.date.month) + 1 + "/01/" + $scope.date.year : moment().format("MM/DD/YYYY"),
             eventID: (event && event != "All") ? event : "-1",
             productID: product ? parseInt(product.PRODUCT_ID) : "-1",
             aiID: ai ? parseInt(ai) : "-1"
         };
+
+        //determine date
+        if (isFilter) {
+            //use the date set that is set in the filter unless it's the current month and year
+            var currentDate = moment();
+            if (currentDate.format("MMMM") == $scope.date.month && currentDate.year() == $scope.date.year) {
+                //include the day if it's the current month and year
+                filter.date = moment().format("MM/DD/YYYY");
+            } else {
+                filter.date = $scope.months.indexOf($scope.date.month) + 1 + "/01/" + $scope.date.year;
+            }
+        } else {
+            filter.date = moment().format("MM/DD/YYYY");
+        }
 
         //if guest, filter by event
         if ($scope.isGuest) {
