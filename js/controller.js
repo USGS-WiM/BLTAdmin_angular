@@ -462,7 +462,7 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
         $scope.filterShapes();
     }
 
-    $scope.filterShapes = function (isFilter) {      
+    $scope.filterShapes = function (isFilter) {
         $scope.pulaDetails = null;
         $scope.noPULAs = false;
         $scope.showLoading = true;
@@ -1008,21 +1008,20 @@ bltApp.controller('HeaderCtrl', function ($scope, $location, AuthService, RoleSe
     $scope.user.name = AuthService.getUsername();
     $scope.$on("userLoggedIn", function (event) {
         $scope.user.name = AuthService.getUsername();
-    });
+        if (AuthService.getEventId()) {
+            $scope.hideMenu = true;
+        } else {
+            var roleId = AuthService.getRoleId();
+            if (roleId) {
+                RoleService.getAll({}, function (roles) {
+                    $scope.hideMenu = false;
+                    $scope.role = roles[roleId];
+                    $scope.isAdmin = $scope.role.ROLE_NAME == config.ADMIN_ROLE ? true : false;
 
-    if (AuthService.getEventId()) {
-        $scope.hideMenu = true;
-    } else {
-        var roleId = AuthService.getRoleId();
-        if (roleId) {
-            RoleService.getAll({}, function (roles) {
-                $scope.hideMenu = false;
-                $scope.role = roles[roleId];
-                $scope.isAdmin = $scope.role.ROLE_NAME == config.ADMIN_ROLE ? true : false;
-
-            });
+                });
+            }
         }
-    }
+    });
 
     $scope.logOff = function () {
         //remove credentials
