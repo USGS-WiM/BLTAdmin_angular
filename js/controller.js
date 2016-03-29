@@ -531,29 +531,33 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
                         }
                     }
                 }
-                //created if (created is <= chosen date AND (published is null OR published is null expired)
-                if ((!createdDate || moment(createdDate).isSameOrBefore(chosenDate)) && (publishDate == null && expiredDate == null)) {
-                    createdPulaShapes.push(shapeID);
-                }
-                //show only the created PULAs when a guest is logged in
+
                 if (!$scope.isGuest) {
                     //pending if there is no Shape Id associated with the pula               
                     if (!shapeID) {
                         pendingPulaShapes.push(pula.PULASHAPEI);
                         continue;
                     }
+                }
+                
+                //created if (created is <= chosen date AND (published is null OR published is null expired)
+                if ((!createdDate || moment(createdDate).isSameOrBefore(chosenDate)) && (publishDate == null && expiredDate == null)) {
+                    createdPulaShapes.push(pula.PULASHAPEI);
+                }
+                //show only the created PULAs when a guest is logged in
+                if (!$scope.isGuest) {
 
                     //published if (effective is null OR after chosenDate) AND (expired is null or after chosendate)
                     if ((moment(publishDate).isSameOrBefore(chosenDate)) && (effectiveDate == null || moment(effectiveDate).isAfter(chosenDate)) && (expiredDate == null)) {
-                        publishedPulaShapes.push(shapeID);
+                        publishedPulaShapes.push(pula.PULASHAPEI);
                     }
                     //effective if (effective is <= chosen date AND (expired is null OR after chosenDate)
                     if ((moment(effectiveDate).isSameOrBefore(chosenDate)) && (moment(publishDate).isSameOrBefore(chosenDate)) && (expiredDate == null || moment(expiredDate).isSameOrAfter(chosenDate))) {
-                        effectivePulaShapes.push(shapeID);
+                        effectivePulaShapes.push(pula.PULASHAPEI);
                     }
                     //ExpiredList.PULA = PULAlist.PULA.Where(x => (x.Expired.HasValue && x.Expired.Value <= chosenDate)).ToList();
                     if (moment(expiredDate).isSameOrBefore(chosenDate)) {
-                        expiredPulaShapes.push(shapeID);
+                        expiredPulaShapes.push(pula.PULASHAPEI);
                     }
                 }
             }
