@@ -539,7 +539,7 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
                         continue;
                     }
                 }
-                
+
                 //created if (created is <= chosen date AND (published is null OR published is null expired)
                 if ((!createdDate || moment(createdDate).isSameOrBefore(chosenDate)) && (publishDate == null && expiredDate == null)) {
                     createdPulaShapes.push(pula.PULASHAPEI);
@@ -1011,13 +1011,17 @@ bltApp.controller('HeaderCtrl', function ($scope, $location, AuthService, RoleSe
     if (AuthService.getEventId()) {
         $scope.hideMenu = true;
     } else {
-        RoleService.getAll({}, function (roles) {
-            $scope.hideMenu = false;
-            $scope.role = roles[AuthService.getRoleId()];
-            $scope.isAdmin = $scope.role.ROLE_NAME == config.ADMIN_ROLE ? true : false;
+        var roleId = AuthService.getRoleId();
+        if (roleId) {
+            RoleService.getAll({}, function (roles) {
+                $scope.hideMenu = false;
+                $scope.role = roles[roleId];
+                $scope.isAdmin = $scope.role.ROLE_NAME == config.ADMIN_ROLE ? true : false;
 
-        });
+            });
+        }
     }
+
     $scope.logOff = function () {
         //remove credentials
         AuthService.removeCredentials();
