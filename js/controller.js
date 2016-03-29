@@ -145,8 +145,9 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
                     }
                 });
             });
-
-            $scope.filterShapes();
+            if (!$scope.isGuest) {
+                $scope.filterShapes();
+            }
         }
     );
 
