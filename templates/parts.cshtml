@@ -21,11 +21,11 @@
                         <div class="col-md-10">
                             <form class="form-inline">
                                 <div class="form-group">
-                                    <input type="text" ng-model="search" class="form-control" placeholder="Enter a term to search">
+                                    <input type="text" ng-model="search.term" class="form-control" placeholder="Enter a term to search">
                                 </div>
-                                <button class="btn btn-success btn-sm" ng-click="searchProduct(search)" ng-disabled="search.length < 3"><span class="glyphicon glyphicon-search"></span></button>
+                                <button class="btn btn-success btn-sm" ng-click="searchProduct(search.term)" ng-disabled="search.term.length < 3"><span class="glyphicon glyphicon-search"></span></button>
                                 <span class="glyphicon glyphicon-refresh" ng-show="showProductLoading"></span>
-                                <button class="btn btn-link" ng-click="search=''">Clear</button>
+                                <button class="btn btn-link" ng-click="search.term=''">Clear</button>
                             </form>
                         </div>
                         <div class="col-md-2">
@@ -40,9 +40,9 @@
                         <div class="col-md-10">
                             <form class="form-inline">
                                 <div class="form-group">
-                                    <input type="text" ng-model="search" class="form-control" placeholder="Search">
+                                    <input type="text" ng-model="search.term" class="form-control" placeholder="Search">
                                 </div>
-                                <button class="btn btn-link" ng-click="search=''">Clear</button>
+                                <button class="btn btn-link" ng-click="search.term=''">Clear</button>
                             </form>
                         </div>
                         <div class="col-md-2">
@@ -61,7 +61,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr dir-paginate="part in parts|orderBy:selectedPart.display.orderBy|filter:search|itemsPerPage:10" current-page="currentPage">
+                                <tr dir-paginate="part in parts|orderBy:selectedPart.display.orderBy|filter:search.term|itemsPerPage:10" current-page="currentPage">
                                     <td ng-repeat="col in selectedPart.display.columns">{{part[col.name]}}</td>
                                     <td ng-if="isAdmin">
                                         <button class="btn btn-primary btn-xs"><span class="glyphicon glyphicon-pencil" ng-click="editPart($index,part)"></span></button>

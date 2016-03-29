@@ -1173,7 +1173,9 @@ bltApp.controller('PartsController', function ($scope, $rootScope, $modal, RoleS
     $scope.showPart = function (name) {
         $scope.currentPage = 1;
         $scope.showLoading = true;
-        $scope.search = "";
+        $scope.search = {
+            term: ""
+        };
         $scope.data = [];
         $scope.selectedPart.active = false;
         $scope.selectedPart = $scope.config.parts[name];
