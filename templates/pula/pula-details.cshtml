@@ -42,8 +42,8 @@
         <tr>
             <td>Expiration Date:</td>
             <td ng-show="pulaDetails.data.expirationDateStr">{{pulaDetails.data.expirationDateStr}}</td>
-            <td ng-show=" pulaDetails.data.expirationDateStr == '' && isAdmin">
-                <form class="form-inline">
+            <td ng-show="pulaDetails.data.expirationDateStr == ''">
+                <form class="form-inline" ng-show="isAdmin">
                     <div class="form-group">
                         <select ng-model="expirationDate.month" class="form-control" ng-options="(months.indexOf(m)+1) as m for m in months"></select>
                     </div>
