@@ -372,7 +372,7 @@ bltApp.factory('LimitationsService', function ($http, $q) {
             var processedLimitations = {};
             var id;
             limitationList.forEach(function (limitation) {
-                id = limitation.LIMIT.LIMITATION_ID;
+                id = limitation.LIMITATION_ID;
                 if (!processedLimitations[id]) {
                     processedLimitations[id] = true;
                     promises.push(getCode(limitation));
