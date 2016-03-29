@@ -6,7 +6,7 @@
             <!--Edit PULA-->
             <button class="btn btn-default" ng-click="editPULA()" ng-show="isAdmin">Edit PULA</button>
             <!--Generate Contributor Password-->
-            <button class="btn btn-default" ng-click="showContributorPassword()" ng-show="pulaDetails.EVENT_ID != null &&pulaDetails.EVENT_ID >= 1">Generate Contributor Password</button>
+            <button class="btn btn-default" ng-click="showContributorPassword()" ng-show="isAdmin && pulaDetails.EVENT_ID != null &&pulaDetails.EVENT_ID >= 1">Generate Contributor Password</button>
             <!--Publish PULA-->
             <button class="btn btn-default" ng-click="publishPULA()" ng-show="isAdmin">Publish PULA</button>
         </div>
