@@ -54,7 +54,7 @@ bltApp.controller('LoginController', function ($scope, LoginService, AuthService
 
 
 
-bltApp.controller('HomeController', function ($scope, $location, AuthService, leafletData, $modal, PULAService, limitToFilter, UserService, EventService, ProductService, PULAPOIService, VersionService, SpeciesService, LimitationsService, EventPULAService, AIService, PartsService, $q, AuthService) {
+bltApp.controller('HomeController', function ($scope, $location, AuthService, leafletData, $modal, PULAService, limitToFilter, UserService, EventService, ProductService, PULAPOIService, VersionService, SpeciesService, LimitationsService, EventPULAService, AIService, PartsService, $q, AuthService, RoleService) {
     //guest
     //get event id
     if (AuthService.getEventId()) {
@@ -190,13 +190,6 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
         var limitationCodeList = PartsService.getAll({
             url: config.parts.db["LIMITATION"].url
         });
-        activeIngredients: function (AIService, AuthService) {
-                if (AuthService.getEventId()) {
-                    return [];
-                } else {
-                    return AIService.get();
-                }
-            }
         var eventList = EventService.get({});
         $scope.showPULALoading = true;
         $q.all([species, aiList, cropUseList, applicationMethodList, formulationList, limitationCodeList, eventList]).then(function (results) {
