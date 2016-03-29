@@ -613,6 +613,8 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
             } else {
                 //refresh map
                 $scope.refreshMap();
+                //show message
+                $scope.pulaDetails.data.message = "Expiration date has been added";
             }
         });
     }
