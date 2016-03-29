@@ -442,7 +442,7 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
     $scope.setDateToToday();
     $scope.setDateToSelected();
 
-    $scope.clearPULAFilter = function () {
+    $scope.refreshMap = function () {
         $scope.noPULAs = false;
         $scope.filter.event = "All";
         $scope.filter.ai = "";
