@@ -1177,10 +1177,9 @@ bltApp.controller('PartsController', function ($scope, $rootScope, $modal, RoleS
             term: ""
         };
         $scope.data = [];
-        $scope.selectedPart.active = false;
+        $scope.selectedKey = name;
         $scope.selectedPart = $scope.config.parts[name];
         $scope.selectedPart.name = name;
-        $scope.selectedPart.active = true;
         if (!$scope.selectedPart.search) {
             PartsService.getAll({
                     url: $scope.selectedPart.url,

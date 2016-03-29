@@ -6,7 +6,7 @@
         <div class="row" ng-class="{ 'loading': showLoading }">
             <div class="col-md-3">
                 <ul class="nav nav-pills nav-stacked">
-                    <li ng-repeat="(key,part) in config.parts" ng-class="{ active: part.active }">
+                    <li ng-repeat="(key,part) in config.parts" ng-class="{ active: key == selectedKey }">
                         <a ng-click="showPart(key)">
                             {{part.heading}}          
                         </a>
