@@ -463,7 +463,10 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
     }
 
     $scope.filterShapes = function (isFilter) {
-        $scope.pulaDetails = null;
+        
+        if (isFilter) {
+            $scope.pulaDetails = null;
+        }
         $scope.noPULAs = false;
         $scope.showLoading = true;
         //1. get date, active ingredient, event and product
