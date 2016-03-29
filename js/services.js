@@ -17,11 +17,14 @@ bltApp.factory('AuthService', function ($cookies) {
             $cookies.put('password', credentials.password);
             $cookies.put('roleId', credentials.roleId);
             $cookies.put('eventId', credentials.eventId);
+            $cookies.put('name', credentials.name);
         },
         removeCredentials: function () {
             $cookies.remove('username');
             $cookies.remove('password');
             $cookies.remove('roleId');
+            $cookies.remove('eventId');
+            $cookies.remove('name');
         },
         isLoggedIn: function () {
             return $cookies.get('username') && $cookies.get('password') ? true : false;
@@ -34,6 +37,9 @@ bltApp.factory('AuthService', function ($cookies) {
         },
         getRoleId: function () {
             return $cookies.get('roleId');
+        },
+        getName: function () {
+            return $cookies.get('name');
         }
     };
 }); //end of Auth

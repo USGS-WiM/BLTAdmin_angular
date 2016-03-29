@@ -29,6 +29,7 @@ bltApp.controller('LoginController', function ($scope, LoginService, AuthService
                 var user = response;
                 if (user != undefined) {
                     $scope.credentials.roleId = response.ROLE_ID;
+                    $scope.credentials.name = response.FNAME + " " + response.LNAME;
                     AuthService.setCredentials($scope.credentials);
                     //send user to the home page
                     //after a successful login
@@ -457,7 +458,7 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
         var ai = $scope.filter.ai;
         var product = $scope.filter.product;
         var filter = {
-            date: $scope.months.indexOf($scope.date.month) + 1 + "/01/" + $scope.date.year,
+            date: isFilter ? $scope.months.indexOf($scope.date.month) + 1 + "/01/" + $scope.date.year : moment().format("MM/DD/YYYY"),
             eventID: (event && event != "All") ? event : "-1",
             productID: product ? parseInt(product.PRODUCT_ID) : "-1",
             aiID: ai ? parseInt(ai) : "-1"
@@ -472,7 +473,7 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
             var pulaList = response;
             var pula, effectiveDate, expiredDate, shapeId, createdDate, publishDate, eventID;
             var limitations, match;
-            var chosenDate = moment($scope.date.month + " " + $scope.date.year);
+            var chosenDate = filter.date;
             if (pulaList.length == 0) {
                 $scope.showLoading = false;
                 $scope.noPULAs = true;
@@ -520,20 +521,19 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
                     continue;
                 }
                 //created if (created is <= chosen date AND (published is null OR published is null expired)
-                if ((!createdDate || moment(createdDate).isBefore(chosenDate)) && (publishDate == null && expiredDate == null)) {
+                if ((!createdDate || moment(createdDate).isSameOrBefore(chosenDate)) && (publishDate == null && expiredDate == null)) {
                     createdPulaShapes.push(shapeID);
                 }
                 //published if (effective is null OR after chosenDate) AND (expired is null or after chosendate)
-                if ((moment(publishDate).isBefore(chosenDate)) && (effectiveDate == null || moment(effectiveDate).isAfter(chosenDate)) && (expiredDate == null)) {
-
+                if ((moment(publishDate).isSameOrBefore(chosenDate)) && (effectiveDate == null || moment(effectiveDate).isAfter(chosenDate)) && (expiredDate == null)) {
                     publishedPulaShapes.push(shapeID);
                 }
                 //effective if (effective is <= chosen date AND (expired is null OR after chosenDate)
-                if ((moment(effectiveDate).isBefore(chosenDate)) && (!publishDate || moment(publishDate).isBefore(chosenDate)) && (expiredDate == null || moment(expiredDate).isAfter(chosenDate))) {
+                if ((moment(effectiveDate).isSameOrBefore(chosenDate)) && (moment(publishDate).isSameOrBefore(chosenDate)) && (expiredDate == null || moment(expiredDate).isSameOrAfter(chosenDate))) {
                     effectivePulaShapes.push(shapeID);
                 }
                 //ExpiredList.PULA = PULAlist.PULA.Where(x => (x.Expired.HasValue && x.Expired.Value <= chosenDate)).ToList();
-                if (moment(expiredDate).isBefore(chosenDate)) {
+                if (moment(expiredDate).isSameOrBefore(chosenDate)) {
                     expiredPulaShapes.push(shapeID);
                 }
             }
@@ -628,7 +628,7 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
     $scope.publishPULA = function () {
 
         $scope.showLoading = true;
-        PULAPOIService.publish($scope.pulaDetails.ID).success(function () {
+        PULAPOIService.publish($scope.pulaDetails.ID).success(function (response) {
             //refresh the map
             $scope.filterShapes();
             //$scope.pula.setLayerDefs(getLayerDefs());
@@ -641,8 +641,12 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
                 expired: true
             };
             $scope.filterLayers();
+
             //set it to published
             $scope.pulaDetails.IS_PUBLISHED = 1;
+            $scope.pulaDetails.data.publishedDate = moment().format("MM/DD/YYYY");
+            $scope.pulaDetails.data.publisher = AuthService.getName();
+
             $scope.showLoading = false;
             //show message
             $scope.pulaDetails.data.message = "The PULA has been published";
