@@ -60,10 +60,55 @@
     </table>
     <h4>PULA Justification</h4>
     <table class="table table-condensed">
-        <tr>
-            <td>{{pulaDetails.data.justificationLabel}}:</td>
-            <td>{{pulaDetails[pulaDetails.data.justificationType]}}</td>
+        <!--Other-->
+        <tr ng-if="pulaDetails.OTHER_JUSTIFICATION">
+            <td>Other:</td>
+            <td>{{pulaDetails.OTHER_JUSTIFICATION}}</td>
         </tr>
+        <!--Litigation-->
+        <tr ng-if="pulaDetails.BIOLOGICAL_OPINION_LIT">
+            <td>Litigation, Biological Opinion:</td>
+            <td>{{pulaDetails.BIOLOGICAL_OPINION_LIT}}</td>
+        </tr>
+        <!--Registration Review-->
+        <tr ng-if="pulaDetails.FOCUS_MEETING">
+            <td>Registration Review, Focus Meeting:</td>
+            <td>{{pulaDetails.FOCUS_MEETING}}</td>
+        </tr>
+        <tr ng-if="pulaDetails.BIOLOGICAL_OPINION_REGREVIEW">
+            <td>Registration Review, Biological Opinion:</td>
+            <td>{{pulaDetails.BIOLOGICAL_OPINION_REGREVIEW}}</td>
+        </tr>
+        <tr ng-if="pulaDetails.PROPOSED_DECISION">
+            <td>Registration Review, Proposed Decision:</td>
+            <td>{{pulaDetails.PROPOSED_DECISION}}</td>
+        </tr>
+        <tr ng-if="pulaDetails.FINAL_DECISION">
+            <td>Registration Review, Final Decision:</td>
+            <td>{{pulaDetails.FINAL_DECISION}}</td>
+        </tr>
+        <tr ng-if="pulaDetails.INTERIM_PROPOSED_DECISION">
+            <td>Registration Review, Proposed Interim Decision:</td>
+            <td>{{pulaDetails.INTERIM_PROPOSED_DECISION}}</td>
+        </tr>
+        <!--Registration Action-->
+        <tr ng-if="pulaDetails.SEC3_NEWCHEM">
+            <td>Registration Action, Section 3 New Chem:</td>
+            <td>{{pulaDetails.SEC3_NEWCHEM}}</td>
+        </tr>
+        <tr ng-if="pulaDetails.SEC3_NEWUSE">
+            <td>Registration Action, Section 3 New Use:</td>
+            <td>{{pulaDetails.SEC3_NEWUSE}}</td>
+        </tr>
+        <tr ng-if="pulaDetails.SEC24">
+            <td>Registration Action, Section 24 (c):</td>
+            <td>{{pulaDetails.SEC24}}</td>
+        </tr>
+        <tr ng-if="pulaDetails.SEC18">
+            <td>Registration Action, Section 18 (c):</td>
+            <td>{{pulaDetails.SEC18}}</td>
+        </tr>
+
         <tr>
             <td>Base Data:</td>
             <td>{{pulaDetails.BASE_DATA}}</td>
