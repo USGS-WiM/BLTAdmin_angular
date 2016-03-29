@@ -889,7 +889,7 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
         if (date && (!date.month || !date.year)) {
             data.errors.push("Please choose both month and year for Expiration Date in the 'General Information section'");
         }
-        return;
+
         //stop processing if there are any errors
         if (data.errors.length > 0) {
             $scope.showPULALoading = false;
