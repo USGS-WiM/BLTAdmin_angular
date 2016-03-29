@@ -1232,7 +1232,7 @@ bltApp.controller('PartsController', function ($scope, $rootScope, $modal, RoleS
             }
 
         }
-        var templateUrl = $scope.selectedPart.name == "ACTIVE INGREDIENT" ? "edit-part-ai.cshtml" : "edit-part.cshtml"
+        var templateUrl = $scope.selectedPart.name == "ACTIVE INGREDIENT" ? "parts/edit-part-ai.cshtml" : "parts/edit-part.cshtml"
         $scope.modalInstance = $modal.open({
             scope: $scope,
             animation: true,
