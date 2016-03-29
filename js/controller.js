@@ -540,10 +540,10 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
 
             var layers = {
                 0: pendingPulaShapes.length == 0 ? "1=0" : "PULASHAPEI = " + pendingPulaShapes.join(" or PULASHAPEI = "),
-                1: createdPulaShapes.length == 0 ? "1=0" : "PULA_SHAPE_ID = " + createdPulaShapes.join(" or PULA_SHAPE_ID = "),
-                2: publishedPulaShapes.length == 0 ? "1=0" : "PULA_SHAPE_ID = " + publishedPulaShapes.join(" or PULA_SHAPE_ID = "),
-                3: effectivePulaShapes.length == 0 ? "1=0" : "PULA_SHAPE_ID = " + effectivePulaShapes.join(" or PULA_SHAPE_ID = "),
-                4: expiredPulaShapes.length == 0 ? "1=0" : "PULA_SHAPE_ID = " + expiredPulaShapes.join(" or PULA_SHAPE_ID = ")
+                1: createdPulaShapes.length == 0 ? "1=0" : "PULASHAPEI = " + createdPulaShapes.join(" or PULASHAPEI = "),
+                2: publishedPulaShapes.length == 0 ? "1=0" : "PULASHAPEI = " + publishedPulaShapes.join(" or PULASHAPEI = "),
+                3: effectivePulaShapes.length == 0 ? "1=0" : "PULASHAPEI = " + effectivePulaShapes.join(" or PULASHAPEI = "),
+                4: expiredPulaShapes.length == 0 ? "1=0" : "PULASHAPEI = " + expiredPulaShapes.join(" or PULASHAPEI = ")
             }
             if (pendingPulaShapes.length == 0 && createdPulaShapes.length == 0 && publishedPulaShapes.length == 0 && effectivePulaShapes.length == 0 && expiredPulaShapes.length == 0) {
                 $scope.noPULAs = true;
