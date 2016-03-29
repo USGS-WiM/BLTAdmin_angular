@@ -405,7 +405,7 @@ bltApp.factory('LimitationsService', function ($http, $q) {
             return $q.all(promises);
         },
         getSimpleLimitations: function (pulaId, date) {
-            return $http.get(config.rootURL + "/PULAs/" + pulaId + "/PULALimitations?" + "ActiveDate=" + date.month + "/01/" + date.year)
+            return $http.get(config.rootURL + "/PULAs/" + pulaId + "/PULALimitations?" + "ActiveDate=" + date)
         }
     };
 }); //end of LimitationsService
