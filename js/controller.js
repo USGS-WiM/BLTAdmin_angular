@@ -1022,20 +1022,27 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
 bltApp.controller('HeaderCtrl', function ($scope, $location, AuthService, RoleService) {
     $scope.user = {};
     $scope.user.name = AuthService.getUsername();
+    
+    var initializeRole = function () {
+        var roleId = AuthService.getRoleId();
+        if (roleId) {
+
+            RoleService.getAll({}, function (roles) {
+                $scope.hideMenu = false;
+                $scope.role = roles[roleId];
+                $scope.isAdmin = $scope.role.ROLE_NAME == config.ADMIN_ROLE ? true : false;
+
+            });
+        }
+    }
+    
+    initializeRole();
     $scope.$on("userLoggedIn", function (event) {
         $scope.user.name = AuthService.getUsername();
         if (AuthService.getEventId()) {
             $scope.hideMenu = true;
         } else {
-            var roleId = AuthService.getRoleId();
-            if (roleId) {
-                RoleService.getAll({}, function (roles) {
-                    $scope.hideMenu = false;
-                    $scope.role = roles[roleId];
-                    $scope.isAdmin = $scope.role.ROLE_NAME == config.ADMIN_ROLE ? true : false;
-
-                });
-            }
+            initializeRole();
         }
     });
 
