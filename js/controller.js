@@ -992,6 +992,7 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
     //if guest show the event based PULAs
     if ($scope.isGuest) {
         $scope.showLoading = true;
+        $scope.pulaList = [];
         EventPULAService.get($scope.eventId).success(function (response) {
             var createdPulaShapes = [];
             var pulaList = response.PULA;
@@ -1007,6 +1008,7 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
                     $scope.commenting = true;
                 }
                 createdPulaShapes.push(pula.ShapeID);
+                $scope.pulaList[pula.ShapeID] = pula;
             }
             var layers = {
                 0: "1=0",
