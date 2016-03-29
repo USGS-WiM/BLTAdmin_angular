@@ -145,9 +145,9 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
                     }
                 });
             });
-            if (!$scope.isGuest) {
-                $scope.filterShapes();
-            }
+
+            $scope.filterShapes();
+
         }
     );
 
@@ -475,6 +475,12 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
             aiID: ai ? parseInt(ai) : "-1"
         };
 
+        //if guest, filter by event
+        if ($scope.isGuest) {
+            isFilter = true;
+            filter.eventID = $scope.eventId;
+        }
+
         PULAService.get(filter, function (response) {
             var pendingPulaShapes = [];
             var createdPulaShapes = [];
@@ -525,27 +531,30 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
                         }
                     }
                 }
-
-                //pending if there is no Shape Id associated with the pula               
-                if (!shapeID) {
-                    pendingPulaShapes.push(pula.PULASHAPEI);
-                    continue;
-                }
                 //created if (created is <= chosen date AND (published is null OR published is null expired)
                 if ((!createdDate || moment(createdDate).isSameOrBefore(chosenDate)) && (publishDate == null && expiredDate == null)) {
                     createdPulaShapes.push(shapeID);
                 }
-                //published if (effective is null OR after chosenDate) AND (expired is null or after chosendate)
-                if ((moment(publishDate).isSameOrBefore(chosenDate)) && (effectiveDate == null || moment(effectiveDate).isAfter(chosenDate)) && (expiredDate == null)) {
-                    publishedPulaShapes.push(shapeID);
-                }
-                //effective if (effective is <= chosen date AND (expired is null OR after chosenDate)
-                if ((moment(effectiveDate).isSameOrBefore(chosenDate)) && (moment(publishDate).isSameOrBefore(chosenDate)) && (expiredDate == null || moment(expiredDate).isSameOrAfter(chosenDate))) {
-                    effectivePulaShapes.push(shapeID);
-                }
-                //ExpiredList.PULA = PULAlist.PULA.Where(x => (x.Expired.HasValue && x.Expired.Value <= chosenDate)).ToList();
-                if (moment(expiredDate).isSameOrBefore(chosenDate)) {
-                    expiredPulaShapes.push(shapeID);
+                //show only the created PULAs when a guest is logged in
+                if (!$scope.isGuest) {
+                    //pending if there is no Shape Id associated with the pula               
+                    if (!shapeID) {
+                        pendingPulaShapes.push(pula.PULASHAPEI);
+                        continue;
+                    }
+
+                    //published if (effective is null OR after chosenDate) AND (expired is null or after chosendate)
+                    if ((moment(publishDate).isSameOrBefore(chosenDate)) && (effectiveDate == null || moment(effectiveDate).isAfter(chosenDate)) && (expiredDate == null)) {
+                        publishedPulaShapes.push(shapeID);
+                    }
+                    //effective if (effective is <= chosen date AND (expired is null OR after chosenDate)
+                    if ((moment(effectiveDate).isSameOrBefore(chosenDate)) && (moment(publishDate).isSameOrBefore(chosenDate)) && (expiredDate == null || moment(expiredDate).isSameOrAfter(chosenDate))) {
+                        effectivePulaShapes.push(shapeID);
+                    }
+                    //ExpiredList.PULA = PULAlist.PULA.Where(x => (x.Expired.HasValue && x.Expired.Value <= chosenDate)).ToList();
+                    if (moment(expiredDate).isSameOrBefore(chosenDate)) {
+                        expiredPulaShapes.push(shapeID);
+                    }
                 }
             }
 
@@ -986,42 +995,6 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
         $scope.mPulaDetails.data.numLimits = $scope.mPulaDetails.data.numLimits - 1;
     }
 
-
-
-
-    //if guest show the event based PULAs
-    if ($scope.isGuest) {
-        $scope.showLoading = true;
-        $scope.pulaList = [];
-        EventPULAService.get($scope.eventId).success(function (response) {
-            var createdPulaShapes = [];
-            var pulaList = response.PULA;
-            if (pulaList.length == 0) {
-                $scope.showLoading = false;
-                $scope.noPULAs = true;
-            }
-            //see if any PULA has been published and not expired
-            for (var i = 0; i < pulaList.length; i++) {
-                pula = pulaList[i];
-                if (pula.isPublished == 1 && !pula.Expired) {
-                    //show that the commenting period is over
-                    $scope.commenting = true;
-                }
-                createdPulaShapes.push(pula.ShapeID);
-                $scope.pulaList[pula.ShapeID] = pula;
-            }
-            var layers = {
-                0: "1=0",
-                1: createdPulaShapes.length == 0 ? "1=0" : "PULA_SHAPE_ID = " + createdPulaShapes.join(" or PULA_SHAPE_ID = "),
-                2: "1=0",
-                3: "1=0",
-                4: "1=0"
-            }
-            $scope.pula.setLayerDefs(layers);
-            $scope.showLoading = false;
-        });
-
-    }
 });
 
 bltApp.controller('HeaderCtrl', function ($scope, $location, AuthService, RoleService) {
