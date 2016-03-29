@@ -605,11 +605,14 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
 
     //expire pulas
     $scope.expirationYears = getYears(5);
-    $scope.addExpirationDate = function (date, callback) {
-        PULAPOIService.updateStatus($scope.mPulaDetails.ID, date, "Expired").success(function () {
-            $scope.mPulaDetails.data.expirationDateStr = date.month + "/01/" + date.year;
+    $scope.addExpirationDate = function (pula, date, callback) {
+        PULAPOIService.updateStatus(pula.ID, date, "Expired").success(function () {
+            pula.data.expirationDateStr = date.month + "/01/" + date.year;
             if (callback) {
                 callback();
+            } else {
+                //refresh map
+                $scope.refreshMap();
             }
         });
     }
@@ -630,17 +633,7 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
         $scope.showLoading = true;
         PULAPOIService.publish($scope.pulaDetails.ID).success(function (response) {
             //refresh the map
-            $scope.filterShapes();
-            //$scope.pula.setLayerDefs(getLayerDefs());
-            //remove pula layer filters
-            $scope.mapLayers = {
-                pending: true,
-                created: true,
-                published: true,
-                effective: true,
-                expired: true
-            };
-            $scope.filterLayers();
+            $scope.refreshMap();
 
             //set it to published
             $scope.pulaDetails.IS_PUBLISHED = 1;
@@ -875,7 +868,7 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
             //expiration date
             var date = data.expirationDate;
             if (date && date.month && date.year) {
-                $scope.addExpirationDate(date, function () {
+                $scope.addExpirationDate($scope.mPulaDetails, date, function () {
                     saveLimitsAndSpecies(callback);
                 });
             } else {
@@ -923,7 +916,7 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
                 $scope.mPulaDetails.VERSION_ID = response.VERSION_ID;
                 saveAdditionalInfo(function () {
                     //refresh the map
-                    $scope.filterShapes();
+                    $scope.refreshMap();
                     getPULADetails($scope.mPulaDetails.ID, $scope.mPulaDetails.PULA_ID, $scope.mPulaDetails.PULA_SHAPE_ID);
                     $scope.pulaDetails.data.message = "The PULA has been saved";
                     $scope.showPULALoading = false;
@@ -932,6 +925,8 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
         } else {
             PULAPOIService.update($scope.mPulaDetails).success(function () {
                 saveAdditionalInfo(function () {
+                    //refresh the map
+                    $scope.refreshMap();
                     $scope.pulaDetails = angular.copy($scope.mPulaDetails);
                     $scope.pulaDetails.data.message = "The PULA has been saved";
                     $scope.pulaSectionUrl = "templates/pula/pula-details.cshtml";
