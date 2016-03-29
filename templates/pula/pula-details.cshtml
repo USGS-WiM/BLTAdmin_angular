@@ -4,11 +4,11 @@
     <div ng-show="pulaDetails.IS_PUBLISHED == 0" class="pull-right">
         <div class="btn-group btn-group-sm">
             <!--Edit PULA-->
-            <button class="btn btn-default" ng-click="editPULA()" ng-show="role.ROLE_ID <= 2">Edit PULA</button>
+            <button class="btn btn-default" ng-click="editPULA()" ng-show="isAdmin">Edit PULA</button>
             <!--Generate Contributor Password-->
             <button class="btn btn-default" ng-click="showContributorPassword()" ng-show="pulaDetails.EVENT_ID != null &&pulaDetails.EVENT_ID >= 1">Generate Contributor Password</button>
             <!--Publish PULA-->
-            <button class="btn btn-default" ng-click="publishPULA()" ng-show="role.ROLE_ID <= 2">Publish PULA</button>
+            <button class="btn btn-default" ng-click="publishPULA()" ng-show="isAdmin">Publish PULA</button>
         </div>
     </div>
     </h2>
@@ -27,7 +27,7 @@
             <td>Creation Date:</td>
             <td>{{pulaDetails.data.creationDate}}</td>
         </tr>
-        <tr>
+        <tr ng-if="isAdmin">
             <td>Created By:</td>
             <td>{{pulaDetails.data.creator}}</td>
         </tr>
@@ -35,14 +35,14 @@
             <td>Published Date:</td>
             <td>{{pulaDetails.data.publishedDate}}</td>
         </tr>
-        <tr>
+        <tr ng-if="isAdmin">
             <td>Published By:</td>
             <td>{{pulaDetails.data.publisher}}</td>
         </tr>
         <tr>
             <td>Expiration Date:</td>
-            <td ng-show="pulaDetails.data.expirationDateStr != ''">{{pulaDetails.data.expirationDateStr}}</td>
-            <td ng-show=" pulaDetails.data.expirationDateStr == ''">
+            <td ng-show="pulaDetails.data.expirationDateStr">{{pulaDetails.data.expirationDateStr}}</td>
+            <td ng-show=" pulaDetails.data.expirationDateStr == '' && isAdmin">
                 <form class="form-inline">
                     <div class="form-group">
                         <select ng-model="expirationDate.month" class="form-control" ng-options="(months.indexOf(m)+1) as m for m in months"></select>

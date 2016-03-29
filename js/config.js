@@ -309,3 +309,5 @@ config.parts = {
         }
     }
 }
+
+config.ADMIN_ROLE = "ADMIN"

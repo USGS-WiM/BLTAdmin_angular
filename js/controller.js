@@ -62,11 +62,11 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
         $scope.eventId = AuthService.getEventId();
         $scope.hideFilters = true;
         $scope.hideMenu = true;
+    } else {
+        //get user role
+        $scope.role = roles[AuthService.getRoleId()];
+        $scope.isAdmin = $scope.role.ROLE_NAME == config.ADMIN_ROLE ? true : false;
     }
-
-    //get user role
-    $scope.role = roles[AuthService.getRoleId()];
-
     $scope.noPULAs = false;
     //$scope.showPULALoading = true;
     $scope.filter = {};
@@ -222,6 +222,7 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
 
         //show loading indicator
         $scope.showPULALoading = true;
+        $scope.noAccess = false;
         var pulaDetails = $scope.pulaList[mapShapeId];
         var pulaId = pulaDetails ? pulaDetails.PULA_ID : null;
 
@@ -281,32 +282,34 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
                         $scope.pulaDetails.data.publishedDate = version.PUBLISHED_TIME_STAMP ? moment(version.PUBLISHED_TIME_STAMP).format("MM/DD/YYYY") : "";
                         $scope.pulaDetails.data.expirationDateStr = version.EXPIRED_TIME_STAMP ? moment(version.EXPIRED_TIME_STAMP).format("MM/DD/YYYY") : "";
                         //get users
-                        //creator
-                        if (version.CREATOR_ID) {
-                            UserService.getAll({
-                                id: version.CREATOR_ID
-                            }, function (response) {
-                                var creator = response.length == 1 ? response[0] : response;
-                                $scope.pulaDetails.data.creator = creator.FNAME + " " + creator.LNAME;
-                            });
-                        }
-                        //publisher
-                        if (version.PUBLISHER_ID) {
-                            UserService.getAll({
-                                id: version.PUBLISHER_ID
-                            }, function (response) {
-                                var publisher = response.length == 1 ? response[0] : response;
-                                $scope.pulaDetails.data.publisher = publisher.FNAME + " " + publisher.LNAME;
-                            });
-                        }
-                        //expirer
-                        if (version.EXPIRER_ID) {
-                            UserService.getAll({
-                                id: version.EXPIRER_ID
-                            }, function (response) {
-                                var expirer = response.length == 1 ? response[0] : response;
-                                $scope.pulaDetails.data.expirer = expirer.FNAME + " " + expirer.LNAME;
-                            });
+                        if ($scope.isAdmin) {
+                            //creator
+                            if (version.CREATOR_ID) {
+                                UserService.getAll({
+                                    id: version.CREATOR_ID
+                                }, function (response) {
+                                    var creator = response.length == 1 ? response[0] : response;
+                                    $scope.pulaDetails.data.creator = creator.FNAME + " " + creator.LNAME;
+                                });
+                            }
+                            //publisher
+                            if (version.PUBLISHER_ID) {
+                                UserService.getAll({
+                                    id: version.PUBLISHER_ID
+                                }, function (response) {
+                                    var publisher = response.length == 1 ? response[0] : response;
+                                    $scope.pulaDetails.data.publisher = publisher.FNAME + " " + publisher.LNAME;
+                                });
+                            }
+                            //expirer
+                            if (version.EXPIRER_ID) {
+                                UserService.getAll({
+                                    id: version.EXPIRER_ID
+                                }, function (response) {
+                                    var expirer = response.length == 1 ? response[0] : response;
+                                    $scope.pulaDetails.data.expirer = expirer.FNAME + " " + expirer.LNAME;
+                                });
+                            }
                         }
                     });
 
@@ -371,8 +374,13 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
                     mapShapeId: mapShapeId
                 }
             };
-
-            $scope.newPULA();
+            if ($scope.isAdmin) {
+                $scope.newPULA();
+            } else {
+                $scope.noAccess = true;
+                $scope.showPULALoading = false;
+                $scope.pulaSectionUrl = "";
+            }
         }
 
     }
@@ -1013,12 +1021,23 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
     }
 });
 
-bltApp.controller('HeaderCtrl', function ($scope, $location, AuthService) {
+bltApp.controller('HeaderCtrl', function ($scope, $location, AuthService, RoleService) {
     $scope.user = {};
     $scope.user.name = AuthService.getUsername();
     $scope.$on("userLoggedIn", function (event) {
         $scope.user.name = AuthService.getUsername();
     });
+
+    if (AuthService.getEventId()) {
+        $scope.hideMenu = true;
+    } else {
+        RoleService.getAll({}, function (roles) {
+            $scope.hideMenu = false;
+            $scope.role = roles[AuthService.getRoleId()];
+            $scope.isAdmin = $scope.role.ROLE_NAME == config.ADMIN_ROLE ? true : false;
+
+        });
+    }
     $scope.logOff = function () {
         //remove credentials
         AuthService.removeCredentials();
@@ -1138,6 +1157,7 @@ bltApp.controller('UserController', function ($scope, organizations, roles, user
 bltApp.controller('PartsController', function ($scope, $rootScope, $modal, RoleService, AuthService, AIClassService, PartsService, ProductService, AIService) {
     RoleService.getAll({}, function (roles) {
         $scope.role = roles[AuthService.getRoleId()];
+        $scope.isAdmin = $scope.role.ROLE_NAME == config.ADMIN_ROLE ? true : false;
     });
 
     var pageSize = config.parts.pageSize;

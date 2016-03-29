@@ -29,7 +29,7 @@
                             </form>
                         </div>
                         <div class="col-md-2">
-                            <button class="btn btn-primary pull-right" ng-click="editPart(-1)"><span class="glyphicon glyphicon-plus"></span> New</button>
+                            <button ng-if="isAdmin" class="btn btn-primary pull-right" ng-click="editPart(-1)"><span class="glyphicon glyphicon-plus"></span> New</button>
                         </div>
                     </div>
                 </div>
@@ -46,7 +46,7 @@
                             </form>
                         </div>
                         <div class="col-md-2">
-                            <button class="btn btn-primary pull-right" ng-click="editPart(-1)"><span class="glyphicon glyphicon-plus"></span> New</button>
+                            <button  ng-if="isAdmin" class="btn btn-primary pull-right" ng-click="editPart(-1)"><span class="glyphicon glyphicon-plus"></span> New</button>
                         </div>
                     </div>
                     <br/>
@@ -55,23 +55,23 @@
                             <thead>
                                 <tr>
                                     <th scope="col" ng-repeat="col in selectedPart.display.columns">{{col.heading}}</th>
-                                    <th ng-if="role.ROLE_NAME == 'ADMIN' || role.ROLE_NAME == 'PUBLISH'">Edit</th>
-                                    <th ng-if="selectedPart.copy">Copy</th>
-                                    <th ng-hide="selectedPart.enableDelete == false" ng-if="role.ROLE_NAME == 'ADMIN' || role.ROLE_NAME == 'PUBLISH'">Delete</th>
+                                    <th ng-if="isAdmin">Edit</th>
+                                    <th ng-if="isAdmin && selectedPart.copy">Copy</th>
+                                    <th ng-hide="selectedPart.enableDelete == false" ng-if="isAdmin">Delete</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr dir-paginate="part in parts|orderBy:selectedPart.display.orderBy|filter:search|itemsPerPage:10" current-page="currentPage">
                                     <td ng-repeat="col in selectedPart.display.columns">{{part[col.name]}}</td>
-                                    <td ng-if="role.ROLE_NAME == 'ADMIN' || role.ROLE_NAME == 'PUBLISH'">
+                                    <td ng-if="isAdmin">
                                         <button class="btn btn-primary btn-xs"><span class="glyphicon glyphicon-pencil" ng-click="editPart($index,part)"></span></button>
 
                                     </td>
-                                    <td ng-if="selectedPart.copy">
+                                    <td ng-if="isAdmin && selectedPart.copy" ng-if="isAdmin">
                                         <button class="btn btn-success btn-xs"><span class="glyphicon glyphicon glyphicon-copy" ng-click="editPart(-1,part,true)"></span></button>
 
                                     </td>
-                                    <td ng-hide="selectedPart.enableDelete == false" ng-if="role.ROLE_NAME == 'ADMIN'">
+                                    <td ng-hide="selectedPart.enableDelete == false" ng-if="isAdmin">
                                         <button class="btn btn-danger btn-xs" ng-click="deletePart($index,part)"><span class="glyphicon glyphicon-trash"></span></button>
 
                                     </td>
