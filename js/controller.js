@@ -54,7 +54,7 @@ bltApp.controller('LoginController', function ($scope, LoginService, AuthService
 
 
 
-bltApp.controller('HomeController', function ($scope, $location, AuthService, leafletData, $modal, PULAService, activeIngredients, limitToFilter, UserService, EventService, ProductService, PULAPOIService, VersionService, SpeciesService, LimitationsService, roles, EventPULAService, AIService, PartsService, $q, AuthService) {
+bltApp.controller('HomeController', function ($scope, $location, AuthService, leafletData, $modal, PULAService, limitToFilter, UserService, EventService, ProductService, PULAPOIService, VersionService, SpeciesService, LimitationsService, EventPULAService, AIService, PartsService, $q, AuthService) {
     //guest
     //get event id
     if (AuthService.getEventId()) {
@@ -63,16 +63,16 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
         $scope.hideFilters = true;
         $scope.hideMenu = true;
     } else {
-        //get user role
-        $scope.role = roles[AuthService.getRoleId()];
-        $scope.isAdmin = $scope.role.ROLE_NAME == config.ADMIN_ROLE ? true : false;
+        RoleService.getAll({}, function (roles) {
+            //get user role
+            $scope.role = roles[AuthService.getRoleId()];
+            $scope.isAdmin = $scope.role.ROLE_NAME == config.ADMIN_ROLE ? true : false;
+        });
     }
     $scope.noPULAs = false;
     //$scope.showPULALoading = true;
     $scope.filter = {};
     $scope.filter.event = "All";
-
-    $scope.activeIngredients = activeIngredients;
 
     $scope.mapperLimits = [];
     $scope.mapLayers = {
@@ -190,6 +190,13 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
         var limitationCodeList = PartsService.getAll({
             url: config.parts.db["LIMITATION"].url
         });
+        activeIngredients: function (AIService, AuthService) {
+                if (AuthService.getEventId()) {
+                    return [];
+                } else {
+                    return AIService.get();
+                }
+            }
         var eventList = EventService.get({});
         $scope.showPULALoading = true;
         $q.all([species, aiList, cropUseList, applicationMethodList, formulationList, limitationCodeList, eventList]).then(function (results) {

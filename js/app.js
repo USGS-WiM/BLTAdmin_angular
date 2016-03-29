@@ -80,22 +80,6 @@ bltApp.config(function ($stateProvider, $urlRouterProvider, $httpProvider) {
         controller: "HomeController",
         data: {
             isLoginRequired: true
-        },
-        resolve: {
-            activeIngredients: function (AIService, AuthService) {
-                if (AuthService.getEventId()) {
-                    return [];
-                } else {
-                    return AIService.get();
-                }
-            },
-            roles: function (AuthService, RoleService) {
-                if (AuthService.getEventId()) {
-                    return [];
-                } else {
-                    return RoleService.getAll();
-                }
-            }
         }
     })
 
