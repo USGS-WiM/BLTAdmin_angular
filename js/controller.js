@@ -1281,6 +1281,7 @@ bltApp.controller('PartsController', function ($scope, $rootScope, $modal, RoleS
                     //show the new item if it's product
                     if ($scope.selectedPart.name == "PRODUCT") {
                         $scope.parts.unshift(newItem);
+                        $scope.modalInstance.dismiss('cancel');
                     }
                     //add any classes and products if any for an active ingredient
                     else if ($scope.selectedPart.name == "ACTIVE INGREDIENT") {

@@ -301,6 +301,10 @@ config.parts = {
             },
             edit: {
                 columns: [{
+                    name: "PRODUCT_REGISTRATION_NUMBER",
+                    label: "Registration Number",
+                    required: true
+            },{
                     name: "PRODUCT_NAME",
                     label: "Product Name",
                     required: true
