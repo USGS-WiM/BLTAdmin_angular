@@ -1215,7 +1215,13 @@ bltApp.controller('PartsController', function ($scope, $rootScope, $modal, RoleS
         $scope.index = index;
         if (index == -1) {
             if (copy) {
-                $scope.part = part;
+                 $scope.part = {};
+                var columns = $scope.selectedPart.edit.columns;
+                var col;
+                for(var i = 0; i < columns.length; i++){
+                    col = columns[i].name;
+                    $scope.part[col] = part[col];
+                }
             } else {
                 $scope.part = {};
                 $scope.classList = {};
