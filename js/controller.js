@@ -142,6 +142,8 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
                             }
                         }).addTo(map);
                         getPULADetails(feature.PULASHAPEI);
+                    } else {
+                        $scope.showPULALoading = false;
                     }
                 });
             });
@@ -1022,7 +1024,7 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
 bltApp.controller('HeaderCtrl', function ($scope, $location, AuthService, RoleService) {
     $scope.user = {};
     $scope.user.name = AuthService.getUsername();
-    
+
     var initializeRole = function () {
         var roleId = AuthService.getRoleId();
         if (roleId) {
@@ -1035,7 +1037,7 @@ bltApp.controller('HeaderCtrl', function ($scope, $location, AuthService, RoleSe
             });
         }
     }
-    
+
     initializeRole();
     $scope.$on("userLoggedIn", function (event) {
         $scope.user.name = AuthService.getUsername();
@@ -1215,10 +1217,10 @@ bltApp.controller('PartsController', function ($scope, $rootScope, $modal, RoleS
         $scope.index = index;
         if (index == -1) {
             if (copy) {
-                 $scope.part = {};
+                $scope.part = {};
                 var columns = $scope.selectedPart.edit.columns;
                 var col;
-                for(var i = 0; i < columns.length; i++){
+                for (var i = 0; i < columns.length; i++) {
                     col = columns[i].name;
                     $scope.part[col] = part[col];
                 }
