@@ -1215,6 +1215,11 @@ bltApp.controller('PartsController', function ($scope, $rootScope, $modal, RoleS
     //edit
     $scope.editPart = function (index, part, copy) {
         $scope.index = index;
+        $scope.products = [];
+        $scope.classList = {};
+        $scope.product = {
+            term: ""
+        };
         if (index == -1) {
             if (copy) {
                 $scope.part = {};
@@ -1363,6 +1368,17 @@ bltApp.controller('PartsController', function ($scope, $rootScope, $modal, RoleS
         var date = moment().format("DD/MM/YYYY");
         return ProductService.get(date, term).then(function (response) {
             $scope.parts = response.data;
+            $scope.showProductLoading = false;
+        });
+    };
+
+    $scope.searchProductsForAI = function (term) {
+        $scope.showProductLoading = true;
+        $scope.productSearchResults = {};
+        $scope.currentProductPage = 1;
+        var date = moment().format("DD/MM/YYYY");
+        return ProductService.get(date, term).then(function (response) {
+            $scope.products = response.data;
             $scope.showProductLoading = false;
         });
     };

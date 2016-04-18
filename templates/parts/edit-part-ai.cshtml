@@ -46,9 +46,17 @@
                 <br>
                 <div class="panel panel-default panel-table">
                     <table class="table table-condensed table-striped small">
+                        <thead>
+                            <tr>
+                                <th scope="col">AI Classes associated with this Active Ingredient</th>
+                                <th></th>
+                            </tr>
+                        </thead>
                         <tr ng-repeat="item in classList" ng-hide="item.status=='delete'">
                             <td>{{item.AI_CLASS_NAME}}</td>
-                            <td><a class="text-danger"><span class="glyphicon glyphicon-remove" ng-click="removeClass(item.AI_CLASS_NAME)"></a>
+                            <td>
+                                <button class="btn btn-danger btn-xs"><span class="glyphicon glyphicon-remove" ng-click="removeClass(item.AI_CLASS_NAME)"></span></button>
+
                             </td>
                         </tr>
                     </table>
@@ -60,29 +68,66 @@
         <div class="row form-group">
             <label class="col-sm-2 control-label">Product</label>
             <div class="col-sm-10">
+                <!--Search for products to add-->
                 <div class="form-inline">
                     <div class="form-group">
-                        <input type="text" ng-model="activeProduct" uib-typeahead="products for products in searchProduct($viewValue)" typeahead-loading="loadingProducts" typeahead-no-results="noResults" class="form-control" placeholder="Type first 3 letters of Product to begin search">
-                        <i ng-show="loadingProducts" class="glyphicon glyphicon-refresh"></i>
-                        <div ng-show="noResults">
-                            <i class="glyphicon glyphicon-remove"></i> No Results Found
-                        </div>
+                        <input type="text" ng-model="search.product.term" class="form-control" placeholder="Enter a term to search">
                     </div>
                     <div class="form-group">
-                        <button class="btn" ng-click="addProductToAI(productSearchResults[activeProduct])">Add</button>
+                        <button class="btn btn-success btn-sm" ng-click="searchProductsForAI(search.product.term)" ng-disabled="search.product.term.length < 3"><span class="glyphicon glyphicon-search"></span></button>
+                    </div>
+                    <div class="form-group">
+                        <span class="glyphicon glyphicon-refresh" ng-show="showProductLoading"></span>
+                        <button class="btn btn-link" ng-click="search.product.term=''">Clear</button>
                     </div>
                 </div>
-                <!--                <p>(Choose Product, Click Add. Can add one to many.)</p>-->
                 <br>
+                <!--show product search results-->
+                <div class="panel panel-default panel-table">
+                    <table class="table table-striped small">
+                        <thead>
+                            <tr>
+                                <th scope="col">Product Search Results</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr dir-paginate="product in products|orderBy:PRODUCT_NAME|filter:search.product.term|itemsPerPage:5" current-page="currentProductPage" pagination-id="product">
+                                <td>{{product.PRODUCT_NAME}}</td>
+                                <td>
+                                    <button class="btn btn-xs"><span class="glyphicon glyphicon-plus" ng-click="addProductToAI(product)"></span></button>
+
+                                </td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+                    <dir-pagination-controls max-size="5" direction-links="true" boundary-links="true" pagination-id="product">
+                    </dir-pagination-controls>
+                </div>
+                <br>
+                <!--show products associated with this AI-->
                 <div class="panel panel-default panel-table">
                     <table class="table table-condensed table-striped small">
+                        <thead>
+                            <tr>
+                                <th scope="col">Products associated with this Active Ingredient</th>
+                                <th></th>
+                            </tr>
+                        </thead>
                         <tr ng-repeat="item in productList" ng-hide="item.status=='delete'">
                             <td>{{item.PRODUCT_NAME}}</td>
+                            <td>
+                                <button class="btn btn-danger btn-xs"><span class="glyphicon glyphicon-remove" ng-click="removeProduct(item.PRODUCT_NAME)"></span></button>
+
+                            </td>
+                            <!--
                             <td>
                                 <a class="text-danger">
                                     <span class="glyphicon glyphicon-remove" ng-click="removeProduct(item.PRODUCT_NAME)">
                                 </a>                                    
                             </td>
+-->
                         </tr>
                     </table>
                 </div>
