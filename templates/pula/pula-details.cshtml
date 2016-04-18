@@ -83,6 +83,10 @@
             <td>Registration Review, Proposed Decision:</td>
             <td>{{pulaDetails.PROPOSED_DECISION}}</td>
         </tr>
+        <tr ng-if="pulaDetails.INTERIM_DECISION">
+            <td>Registration Review, Interim Decision:</td>
+            <td>{{pulaDetails.INTERIM_DECISION}}</td>
+        </tr>
         <tr ng-if="pulaDetails.FINAL_DECISION">
             <td>Registration Review, Final Decision:</td>
             <td>{{pulaDetails.FINAL_DECISION}}</td>

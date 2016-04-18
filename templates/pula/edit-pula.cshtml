@@ -323,6 +323,10 @@
                         <div class="col-xs-4 col-sm-4 col-md-4"><b>Registration Review, Proposed Decision:</b></div>
                         <div class="col-xs-8 col-sm-8 col-md-4">{{mPulaDetails.PROPOSED_DECISION}}</div>
                     </div>
+                    <div class="row" ng-if="mPulaDetails.INTERIM_DECISION">
+                        <div class="col-xs-4 col-sm-4 col-md-4"><b>Registration Review, Interim Decision:</b></div>
+                        <div class="col-xs-8 col-sm-8 col-md-4">{{mPulaDetails.INTERIM_DECISION}}</div>
+                    </div>
                     <div class="row" ng-if="mPulaDetails.FINAL_DECISION">
                         <div class="col-xs-4 col-sm-4 col-md-4"><b>Registration Review, Final Decision:</b></div>
                         <div class="col-xs-8 col-sm-8 col-md-4">{{mPulaDetails.FINAL_DECISION}}</div>

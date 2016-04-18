@@ -57,6 +57,10 @@ config.justificationTypes = [{
                 value: "PROPOSED_DECISION"
                     },
             {
+                name: 'Interim Decision',
+                value: "INTERIM_DECISION"
+                    },
+            {
                 name: 'Final Decision',
                 value: "FINAL_DECISION"
                     },
