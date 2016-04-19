@@ -75,7 +75,7 @@
                                     <br>
                                     <select ng-model="filter.ai" class="form-control">
                                         <option value=""></option>
-                                        <option ng-repeat="a in ui.aiList" value="{{a.ACTIVE_INGREDIENT_ID}}">{{a.INGREDIENT_NAME.substring(0,30)}}</option>
+                                        <option ng-repeat="a in ui.aiList" value="{{a.ACTIVE_INGREDIENT_ID}}" title="{{a.INGREDIENT_NAME}}">{{a.INGREDIENT_NAME.substring(0,30)}}</option>
                                     </select>
                                 </div>
                                 <div class="form-group">
