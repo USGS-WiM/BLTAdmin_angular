@@ -15,6 +15,7 @@
             </div>
             <div class="col-md-9" ng-hide="showLoading">
                 <h2>{{selectedPart.heading}}</h2>
+                <div class="alert alert-success" role="alert" ng-if="deleteMessage">{{deleteMessage}}</div>
                 <!--product-->
                 <div ng-if="selectedPart.search">
                     <div class="row">

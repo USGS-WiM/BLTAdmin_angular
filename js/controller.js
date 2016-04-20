@@ -1178,6 +1178,7 @@ bltApp.controller('PartsController', function ($scope, $rootScope, $modal, RoleS
     $scope.editForm = {};
     $scope.selectedPart = {};
     $scope.selectedPart.active = false;
+    $scope.deleteMessage = "";
 
     //query the specific type of part and display the results
     $scope.showPart = function (name) {
@@ -1186,6 +1187,7 @@ bltApp.controller('PartsController', function ($scope, $rootScope, $modal, RoleS
         $scope.search = {
             term: ""
         };
+        $scope.deleteMessage = "";
         $scope.data = [];
         $scope.selectedKey = name;
         $scope.selectedPart = $scope.config.parts[name];
@@ -1350,10 +1352,18 @@ bltApp.controller('PartsController', function ($scope, $rootScope, $modal, RoleS
 
     $scope.delete = function () {
         PartsService.delete({
-            url: $scope.selectedPart.url + "/" + $scope.part[$scope.selectedPart.primaryKey]
-        }, {}, function () {
+                    url: $scope.selectedPart.url + "/" + $scope.part[$scope.selectedPart.primaryKey]
+                }, {}, function () {
             $scope.deleteModalInstance.dismiss('cancel');
             $scope.refresh();
+            //Show a message saying that the part was expired
+            $scope.deleteMessage = "'" + $scope.part[$scope.selectedPart.display.columns[0].name] + "' was expired. ";
+            //An exception is that Active Ingredients are expired on the first of the next month
+            if ($scope.selectedPart.heading == "ACTIVE INGREDIENT") {
+                var date = moment().add(1, 'months').format("MM/1/YYYY");
+                $scope.deleteMessage = $scope.deleteMessage + "It will expire on " + date+".";
+            }
+
         });
     }
 
