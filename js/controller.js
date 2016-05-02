@@ -1327,6 +1327,9 @@ bltApp.controller('PartsController', function ($scope, $rootScope, $modal, RoleS
                                 $scope.refresh();
                             });
                         });
+                    } else {
+                        $scope.modalInstance.dismiss('cancel');
+                        $scope.refresh();
                     }
 
                 });
