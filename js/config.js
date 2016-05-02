@@ -174,7 +174,7 @@ config.parts = {
             }
         },
         "CROP USE": {
-            heading: "CROP USE",
+            heading: "USE",
             url: "CropUses",
             includeCopy: false,
             primaryKey: "ID",
@@ -188,7 +188,7 @@ config.parts = {
             edit: {
                 columns: [{
                     name: "USE",
-                    label: "Crop Use",
+                    label: "Use",
                     required: true
             }]
             }
