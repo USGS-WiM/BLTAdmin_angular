@@ -70,6 +70,7 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
         });
     }
     $scope.noPULAs = false;
+    $scope.filteredPULAs = {};
     //$scope.showPULALoading = true;
     $scope.filter = {};
     $scope.filter.event = "All";
@@ -126,10 +127,35 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
             map.on('click', function (e) {
                 //show loading indicator
                 $scope.showPULALoading = true;
-                $scope.pula.identify().on(map).at(e.latlng).run(function (error, featureCollection) {
-                    if (featureCollection.features.length > 0) {
+                //create a list of the pulas that are currently visible
+                var visibleLayers = $scope.pula.getLayers();
+                var filteredPULAs = $scope.filteredPULAs;
+                var pulas = [];
+                for (var i = 0; i < visibleLayers.length; i++) {
+                    if (filteredPULAs[visibleLayers[i]]) {
+                        pulas = pulas.concat(filteredPULAs[visibleLayers[i]]);
+                    }
+                }
+                $scope.pula.identify().on(map).at(e.latlng).layers('visible:' + visibleLayers.join(",")).run(function (error, featureCollection) {
+                    
+                    //Find the feature that is currently visible
+                    //This is needed as leaflet doesn't return just the visible pulas
+                    var features = featureCollection.features;
+                    var feature, shapeId, f;
+                    var layer;
+                    var properties = {};
+                    for (var i = 0; i < features.length; i++) {
+                        f = features[i].properties;
+                        shapeId = parseInt(f.PULASHAPEI);
+                        if (_.contains(pulas, shapeId)) {
+                            feature = f;
+                            break;
+                        }
+                    }
+
+                    if (feature) {
                         //highlight the pula that was clicked
-                        var feature = featureCollection.features[0].properties;
+                        //var feature = featureCollection.features[0].properties;
                         if ($scope.identifiedFeature) {
                             map.removeLayer($scope.identifiedFeature);
                         }
@@ -143,6 +169,7 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
                         }).addTo(map);
                         getPULADetails(feature.PULASHAPEI);
                     } else {
+                        $scope.pulaDetails = null;
                         $scope.showPULALoading = false;
                     }
                 });
@@ -588,7 +615,15 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
                 2: publishedPulaShapes.length == 0 ? "1=0" : "PULASHAPEI = " + publishedPulaShapes.join(" or PULASHAPEI = "),
                 3: effectivePulaShapes.length == 0 ? "1=0" : "PULASHAPEI = " + effectivePulaShapes.join(" or PULASHAPEI = "),
                 4: expiredPulaShapes.length == 0 ? "1=0" : "PULASHAPEI = " + expiredPulaShapes.join(" or PULASHAPEI = ")
-            }
+            };
+            //maintain a list of PULAs that are visible on the map
+            $scope.filteredPULAs = {
+                0: pendingPulaShapes,
+                1: createdPulaShapes,
+                2: publishedPulaShapes,
+                3: effectivePulaShapes,
+                4: expiredPulaShapes
+            };
             if (pendingPulaShapes.length == 0 && createdPulaShapes.length == 0 && publishedPulaShapes.length == 0 && effectivePulaShapes.length == 0 && expiredPulaShapes.length == 0) {
                 $scope.noPULAs = true;
             }
@@ -1355,8 +1390,8 @@ bltApp.controller('PartsController', function ($scope, $rootScope, $modal, RoleS
 
     $scope.delete = function () {
         PartsService.delete({
-                    url: $scope.selectedPart.url + "/" + $scope.part[$scope.selectedPart.primaryKey]
-                }, {}, function () {
+            url: $scope.selectedPart.url + "/" + $scope.part[$scope.selectedPart.primaryKey]
+        }, {}, function () {
             $scope.deleteModalInstance.dismiss('cancel');
             $scope.refresh();
             //Show a message saying that the part was expired
@@ -1364,7 +1399,7 @@ bltApp.controller('PartsController', function ($scope, $rootScope, $modal, RoleS
             //An exception is that Active Ingredients are expired on the first of the next month
             if ($scope.selectedPart.heading == "ACTIVE INGREDIENT") {
                 var date = moment().add(1, 'months').format("MM/1/YYYY");
-                $scope.deleteMessage = $scope.deleteMessage + "It will expire on " + date+".";
+                $scope.deleteMessage = $scope.deleteMessage + "It will expire on " + date + ".";
             }
 
         });
