@@ -1103,6 +1103,7 @@ bltApp.controller('UserController', function ($scope, organizations, roles, user
     $scope.roles = roles;
     $scope.users = users;
     $scope.divisions = divisions;
+    $scope.action = "";
 
     //Add or update user
     $scope.editUser = function (index) {
@@ -1111,6 +1112,7 @@ bltApp.controller('UserController', function ($scope, organizations, roles, user
             $scope.user = {};
             $scope.editForm.submited = false;
             $scope.editForm.title = "Add New User";
+            $scope.action = "add";
         } else {
             var user = angular.copy($scope.users[index]);
             $scope.data.organization = $scope.organizations[user.ORGANIZATION_ID];
@@ -1118,6 +1120,7 @@ bltApp.controller('UserController', function ($scope, organizations, roles, user
             $scope.data.division = $scope.divisions[user.DIVISION_ID];
             $scope.user = user;
             $scope.editForm.title = "Edit User '" + user.USERNAME + "'";
+            $scope.action = "edit";
         }
         $scope.modalInstance = $modal.open({
             scope: $scope,
