@@ -164,7 +164,7 @@
 
     <h4>Species</h4>
     <ul class="species">
-        <li ng-repeat="species in pulaDetails.data.speciesList|orderBy:'COMNAME'" ng-hide="species.status=='delete'">{{species.COMNAME}} | {{species.SCINAME}} <a href="http://ecos.fws.gov/speciesProfile/profile/speciesProfile?spcode={{species.SPCODE}}">(Link to Species Profile page)</a></li>
+        <li ng-repeat="species in pulaDetails.data.speciesList|orderBy:'COMNAME'" ng-hide="species.status=='delete'">{{species.COMNAME}} | {{species.SCINAME}} <a href="http://ecos.fws.gov/speciesProfile/profile/speciesProfile?spcode={{species.SPCODE}}" target="_blank">(Link to Species Profile page)</a></li>
     </ul>
     <!--comments-->
     <div ng-if="role.ROLE_NAME == 'ADMIN' && pulaDetails.data.comments && pulaDetails.data.comments.length > 0">
