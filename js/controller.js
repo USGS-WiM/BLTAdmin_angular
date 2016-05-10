@@ -170,6 +170,7 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
                         getPULADetails(feature.PULASHAPEI);
                     } else {
                         $scope.pulaDetails = null;
+                        $scope.mPulaDetails = null;
                         $scope.showPULALoading = false;
                     }
                 });
