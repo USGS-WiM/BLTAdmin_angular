@@ -378,6 +378,8 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
                             limit.USE = $scope.cropUseList[limit.CROP_USE_ID]["USE"];
                             //limiations code
                             limit.CODE = $scope.limitationCodeList[limit.LIMITATION_ID]["CODE"];
+                            //limiations
+                            limit.LIMITATION = $scope.limitationCodeList[limit.LIMITATION_ID]["LIMITATION1"];
 
 
                         }
