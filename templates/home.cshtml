@@ -80,7 +80,7 @@
                                 </div>
                                 <div class="form-group">
                                     <label>Product </label>
-<!--                                    ng-options="ev as ev.NAME for ev in ui.events"-->
+                                    <!--                                    ng-options="ev as ev.NAME for ev in ui.events"-->
                                     <input type="text" ng-model="filter.product" uib-typeahead="product as product.PRODUCT_NAME for product in getProducts($viewValue)" typeahead-loading="loadingProducts" typeahead-no-results="noResults" class="form-control">
                                     <i ng-show="loadingProducts" class="glyphicon glyphicon-refresh"></i>
                                     <div ng-show="noResults">
@@ -122,6 +122,8 @@
                 </div>
             </div>
             <div class="col-md-6">
+                <div class="alert alert-warning" role="alert" ng-show="expiredPULA">Details for expired PULAs are not available</div>
+                <div class="alert alert-warning" role="alert" ng-show="multiplePULAs">Please ensure only one PULA is selected by either zooming in or filtering the map layers.</div>
                 <div class="alert alert-warning" role="alert" ng-show="noPULAs">No PULAs matching this filter were returned</div>
                 <div class="alert alert-warning" role="alert" ng-show="noAccess">You do not have access</div>
                 <div ng-show="!pulaDetails && !noPULAs">Choose a PULA shape to get started. </div>

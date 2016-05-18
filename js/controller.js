@@ -116,7 +116,12 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
                 url: config.BLTMapServerURL,
                 opacity: 0.5,
                 layers: [0, 1, 2, 3, 4],
-                visible: true
+                visible: true,
+                tolerence: 4,
+                width: map._size.x,
+                height: map._size.y,
+                returnGeometry: true
+
             }).addTo(map);
             $scope.pula = pula;
             //add the address seach bar
@@ -136,30 +141,32 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
                         pulas = pulas.concat(filteredPULAs[visibleLayers[i]]);
                     }
                 }
-                $scope.pula.identify().on(map).at(e.latlng).layers('visible:' + visibleLayers.join(",")).run(function (error, featureCollection) {
-                    
+                $scope.pula.identify().on(map).at(e.latlng).layers('top').run(function (error, featureCollection) {
+
+                    if ($scope.identifiedFeature) {
+                        map.removeLayer($scope.identifiedFeature);
+                    }
+
                     //Find the feature that is currently visible
                     //This is needed as leaflet doesn't return just the visible pulas
                     var features = featureCollection.features;
                     var feature, shapeId, f;
                     var layer;
                     var properties = {};
+                    var visibleFeatureList = [];
+
                     for (var i = 0; i < features.length; i++) {
-                        f = features[i].properties;
-                        shapeId = parseInt(f.PULASHAPEI);
+                        f = features[i];
+                        shapeId = parseInt(f.properties.PULASHAPEI);
                         if (_.contains(pulas, shapeId)) {
-                            feature = f;
-                            break;
+                            visibleFeatureList.push(f);
                         }
                     }
 
-                    if (feature) {
-                        //highlight the pula that was clicked
-                        //var feature = featureCollection.features[0].properties;
-                        if ($scope.identifiedFeature) {
-                            map.removeLayer($scope.identifiedFeature);
-                        }
-                        $scope.identifiedFeature = new L.GeoJSON(featureCollection.features[0], {
+                    var feature = visibleFeatureList[0];
+                    if (visibleFeatureList.length == 1 && feature) {
+                        //highlight the pula that was clicked                        
+                        $scope.identifiedFeature = new L.GeoJSON(feature, {
                             style: function () {
                                 return {
                                     color: '#FFFF00',
@@ -167,12 +174,23 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
                                 };
                             }
                         }).addTo(map);
-                        getPULADetails(feature.PULASHAPEI);
+                        //details for expired pulas are not available
+                        if (feature.properties.EXPIRED_TIME_STAMP != "Null") {
+                            $scope.expiredPULA = true;
+                            $scope.pulaDetails = null;
+                            $scope.mPulaDetails = null;
+                            $scope.showPULALoading = false;
+                        } else {
+                            $scope.expiredPULA = false;
+                            getPULADetails(feature.properties.PULASHAPEI);
+                        }
                     } else {
                         $scope.pulaDetails = null;
                         $scope.mPulaDetails = null;
                         $scope.showPULALoading = false;
+                        $scope.expiredPULA = false;
                     }
+                    $scope.multiplePULAs = visibleFeatureList.length > 1 ? true : false;
                 });
             });
 
