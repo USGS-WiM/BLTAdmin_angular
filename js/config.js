@@ -1,8 +1,8 @@
 var config = {
-    "rootURL": "http://bltdev.wim.usgs.gov/BLTServices",
-    "pulaURL": "http://bltdev.wim.usgs.gov/BLTServices/PULAs/FilteredSimplePULAs",
-    "BLTMapServerURL": "http://bltdev.wim.usgs.gov/arcgis/rest/services/BLT/BLT_PULAsRelated/MapServer",
-    "BLTMapServerPulaURl": "http://bltdev.wim.usgs.gov/arcgis/rest/services/BLT/BLT_PULAsRelated/MapServer/2/query?where=1%3D1&text=&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&relationParam=&outFields=*&returnGeometry=false&maxAllowableOffset=&geometryPrecision=&outSR=&returnIdsOnly=false&returnCountOnly=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&returnZ=false&returnM=false&gdbVersion=&returnDistinctValues=false&f=json",
+    "rootURL": "http://blt.wim.usgs.gov/BLTServices",
+    "pulaURL": "http://blt.wim.usgs.gov/BLTServices/PULAs/FilteredSimplePULAs",
+    "BLTMapServerURL": "http://blt.wim.usgs.gov/arcgis/rest/services/BLT/BLT_PULAsRelated/MapServer",
+    "BLTMapServerPulaURl": "http://blt.wim.usgs.gov/arcgis/rest/services/BLT/BLT_PULAsRelated/MapServer/2/query?where=1%3D1&text=&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&relationParam=&outFields=*&returnGeometry=false&maxAllowableOffset=&geometryPrecision=&outSR=&returnIdsOnly=false&returnCountOnly=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&returnZ=false&returnM=false&gdbVersion=&returnDistinctValues=false&f=json",
     map: {
         arcGISMapServerURL: "https://services.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer",
         center: {
