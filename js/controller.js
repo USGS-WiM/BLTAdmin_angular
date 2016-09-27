@@ -28,8 +28,8 @@ bltApp.controller('LoginController', function ($scope, LoginService, AuthService
             function success(response) {
                 var user = response;
                 if (user != undefined) {
-                    $scope.credentials.roleId = response.ROLE_ID;
-                    $scope.credentials.name = response.FNAME + " " + response.LNAME;
+                    $scope.credentials.roleId = response.role_id;
+                    $scope.credentials.name = response.fname + " " + response.lname;
                     AuthService.setCredentials($scope.credentials);
                     //send user to the home page
                     //after a successful login
@@ -51,9 +51,6 @@ bltApp.controller('LoginController', function ($scope, LoginService, AuthService
 
 });
 
-
-
-
 bltApp.controller('HomeController', function ($scope, $location, AuthService, leafletData, $modal, PULAService, limitToFilter, UserService, EventService, ProductService, PULAPOIService, VersionService, SpeciesService, LimitationsService, EventPULAService, AIService, PartsService, $q, AuthService, RoleService) {
     //guest
     //get event id
@@ -66,7 +63,7 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
         RoleService.getAll({}, function (roles) {
             //get user role
             $scope.role = roles[AuthService.getRoleId()];
-            $scope.isAdmin = $scope.role.ROLE_NAME == config.ADMIN_ROLE ? true : false;
+            $scope.isAdmin = $scope.role.role_name == config.ADMIN_ROLE ? true : false;
         });
     }
     $scope.noPULAs = false;
@@ -175,7 +172,7 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
                             }
                         }).addTo(map);
                         //details for expired pulas are not available
-                        if (feature.properties.EXPIRED_TIME_STAMP != "Null") {
+                        if (feature.properties.expired_time_stamp != "Null") {
                             $scope.expiredPULA = true;
                             $scope.pulaDetails = null;
                             $scope.mPulaDetails = null;
@@ -203,10 +200,10 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
         if (!$scope.isGuest) {
             return {
                 0: "PULA_SHAPE_ID IS NULL",
-                1: "CREATED_TIME_STAMP <= timestamp '" + formatDate + "' AND (PUBLISHED_TIME_STAMP IS NULL AND EXPIRED_TIME_STAMP IS NULL)",
-                2: "PUBLISHED_TIME_STAMP <= timestamp '" + formatDate + "' AND ((EFFECTIVE_DATE > timestamp '" + formatDate + "') OR (EFFECTIVE_DATE IS NULL)) AND EXPIRED_TIME_STAMP IS NULL",
-                3: "EFFECTIVE_DATE <= timestamp '" + formatDate + "' AND PUBLISHED_TIME_STAMP <= timestamp '" + formatDate + "' AND ((EXPIRED_TIME_STAMP >= timestamp '" + monthYear + "') OR (EXPIRED_TIME_STAMP IS NULL))",
-                4: "(EXPIRED_TIME_STAMP <= timestamp '" + monthYear + "')"
+                1: "created_time_stamp <= timestamp '" + formatDate + "' AND (published_time_stamp IS NULL AND expired_time_stamp IS NULL)",
+                2: "published_time_stamp <= timestamp '" + formatDate + "' AND ((effective_date > timestamp '" + formatDate + "') OR (effective_date IS NULL)) AND expired_time_stamp IS NULL",
+                3: "effective_date <= timestamp '" + formatDate + "' AND published_time_stamp <= timestamp '" + formatDate + "' AND ((expired_time_stamp >= timestamp '" + monthYear + "') OR (expired_time_stamp IS NULL))",
+                4: "(expired_time_stamp <= timestamp '" + monthYear + "')"
 
             }
         } else {
@@ -242,12 +239,12 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
         $scope.showPULALoading = true;
         $q.all([species, aiList, cropUseList, applicationMethodList, formulationList, limitationCodeList, eventList]).then(function (results) {
             $scope.species = results[0].data.SPECIES;
-            $scope.aiList = _.indexBy(results[1].data, "ACTIVE_INGREDIENT_ID");
-            $scope.cropUseList = _.indexBy(results[2], "CROP_USE_ID");
-            $scope.applicationMethodList = _.indexBy(results[3], "APPLICATION_METHOD_ID");
-            $scope.formulationList = _.indexBy(results[4], "FORMULATION_ID");
-            $scope.limitationCodeList = _.indexBy(results[5], "LIMITATION_ID");
-            $scope.events = _.indexBy(results[6], "EVENT_ID");
+            $scope.aiList = _.indexBy(results[1].data, "active_ingredient_id");
+            $scope.cropUseList = _.indexBy(results[2], "crop_use_id");
+            $scope.applicationMethodList = _.indexBy(results[3], "application_method_id");
+            $scope.formulationList = _.indexBy(results[4], "formulation_id");
+            $scope.limitationCodeList = _.indexBy(results[5], "limitation_id");
+            $scope.events = _.indexBy(results[6], "event_id");
 
             //need arrays for ui dropdowns
             $scope.ui = {};
@@ -274,7 +271,7 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
         $scope.showPULALoading = true;
         $scope.noAccess = false;
         var pulaDetails = $scope.pulaList[mapShapeId];
-        var pulaId = pulaDetails ? pulaDetails.PULA_ID : null;
+        var pulaId = pulaDetails ? pulaDetails.pula_id : null;
 
         //get the effective date, comments, event, entity id
         if (pulaId != null) {
@@ -285,11 +282,11 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
                 $scope.pulaDetails.data = {};
                 if (response && response != "") {
                     //effective date
-                    $scope.pulaDetails.data.effectiveDateStr = response.EFFECTIVE_DATE ? moment(response.EFFECTIVE_DATE).format("MM/DD/YYYY") : "";
+                    $scope.pulaDetails.data.effectiveDateStr = response.effective_date ? moment(response.effective_date).format("MM/DD/YYYY") : "";
                     //comments
                     var commentList = [];
-                    if (response.COMMENTS) {
-                        var comments = response.COMMENTS.split("]");
+                    if (response.comments) {
+                        var comments = response.comments.split("]");
                         var commentSections;
                         comments.forEach(function (comment) {
                             comment = comment.replace("[", "");
@@ -306,7 +303,7 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
                     $scope.pulaDetails.data.comments = commentList;
 
                     //event
-                    var eventID = response.EVENT_ID;
+                    var eventID = response.event_id;
                     $scope.pulaDetails.data.event = $scope.events[eventID];
 
 
@@ -324,40 +321,40 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
                     }
 
                     //version
-                    var versionId = response.VERSION_ID;
+                    var versionId = response.version_id;
                     VersionService.get(versionId).success(function (response) {
                         var version = response;
                         $scope.pulaDetails.data.version = version;
-                        $scope.pulaDetails.data.creationDate = version.CREATED_TIME_STAMP ? moment(version.CREATED_TIME_STAMP).format("MM/DD/YYYY") : "";
-                        $scope.pulaDetails.data.publishedDate = version.PUBLISHED_TIME_STAMP ? moment(version.PUBLISHED_TIME_STAMP).format("MM/DD/YYYY") : "";
-                        $scope.pulaDetails.data.expirationDateStr = version.EXPIRED_TIME_STAMP ? moment(version.EXPIRED_TIME_STAMP).format("MM/DD/YYYY") : "";
+                        $scope.pulaDetails.data.creationDate = version.created_time_stamp ? moment(version.created_time_stamp).format("MM/DD/YYYY") : "";
+                        $scope.pulaDetails.data.publishedDate = version.published_time_stamp ? moment(version.published_time_stamp).format("MM/DD/YYYY") : "";
+                        $scope.pulaDetails.data.expirationDateStr = version.expired_time_stamp ? moment(version.expired_time_stamp).format("MM/DD/YYYY") : "";
                         //get users
                         if ($scope.isAdmin) {
                             //creator
-                            if (version.CREATOR_ID) {
-                                UserService.getAll({
-                                    id: version.CREATOR_ID
+                            if (version.creator_id) {
+                                UserService.query({
+                                    id: version.creator_id
                                 }, function (response) {
                                     var creator = response.length == 1 ? response[0] : response;
-                                    $scope.pulaDetails.data.creator = creator.FNAME + " " + creator.LNAME;
+                                    $scope.pulaDetails.data.creator = creator.fname + " " + creator.lname;
                                 });
                             }
                             //publisher
-                            if (version.PUBLISHER_ID) {
-                                UserService.getAll({
-                                    id: version.PUBLISHER_ID
+                            if (version.publisher_id) {
+                                UserService.query({
+                                    id: version.publisher_id
                                 }, function (response) {
                                     var publisher = response.length == 1 ? response[0] : response;
-                                    $scope.pulaDetails.data.publisher = publisher.FNAME + " " + publisher.LNAME;
+                                    $scope.pulaDetails.data.publisher = publisher.fname + " " + publisher.lname;
                                 });
                             }
                             //expirer
-                            if (version.EXPIRER_ID) {
-                                UserService.getAll({
-                                    id: version.EXPIRER_ID
+                            if (version.expirer_id) {
+                                UserService.query({
+                                    id: version.expirer_id
                                 }, function (response) {
                                     var expirer = response.length == 1 ? response[0] : response;
-                                    $scope.pulaDetails.data.expirer = expirer.FNAME + " " + expirer.LNAME;
+                                    $scope.pulaDetails.data.expirer = expirer.fname + " " + expirer.lname;
                                 });
                             }
                         }
@@ -383,21 +380,21 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
                         for (var i = 0; i < limitaitons.length; i++) {
                             limit = limitaitons[i];
                             //name
-                            if (limit.ACTIVE_INGREDIENT_ID) {
-                                limit.NAME = $scope.aiList[limit.ACTIVE_INGREDIENT_ID]["INGREDIENT_NAME"];
-                            } else if (limit.PRODUCT_ID) {
-                                limit.NAME = limit.PRODUCT_NAME + " [" + limit.PRODUCT_REGISTRATION_NUMBER + "]";
+                            if (limit.active_ingredient_id) {
+                                limit.NAME = $scope.aiList[limit.active_ingredient_id]["ingredient_name"];
+                            } else if (limit.product_id) {
+                                limit.NAME = limit.product_name + " [" + limit.product_registration_number + "]";
                             }
                             //application method
-                            limit.APPMETHOD = $scope.applicationMethodList[limit.APPLICATION_METHOD_ID]["METHOD"];
+                            limit.APPMETHOD = $scope.applicationMethodList[limit.application_method_id]["method"];
                             //formulation
-                            limit.FORM = $scope.formulationList[limit.FORMULATION_ID]["FORM"];
+                            limit.FORM = $scope.formulationList[limit.formulation_id]["form"];
                             //crop use
-                            limit.USE = $scope.cropUseList[limit.CROP_USE_ID]["USE"];
+                            limit.USE = $scope.cropUseList[limit.crop_use_id]["use"];
                             //limiations code
-                            limit.CODE = $scope.limitationCodeList[limit.LIMITATION_ID]["CODE"];
+                            limit.CODE = $scope.limitationCodeList[limit.limitation_id]["code"];
                             //limiations
-                            limit.LIMITATION = $scope.limitationCodeList[limit.LIMITATION_ID]["LIMITATION1"];
+                            limit.LIMITATION = $scope.limitationCodeList[limit.limitation_id]["limitation1"];
 
 
                         }
@@ -472,7 +469,7 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
             var date = moment().format("DD/MM/YYYY");
             return ProductService.get(date, term).then(function (response) {
                 return response.data.map(function (item) {
-                    $scope.productSearchResults[item.PRODUCT_NAME] = item;
+                    $scope.productSearchResults[item.product_name] = item;
                     return item;
                 });
             });
@@ -525,7 +522,7 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
         var product = $scope.filter.product;
         var filter = {
             eventID: (event && event != "All") ? event : "-1",
-            productID: product ? parseInt(product.PRODUCT_ID) : "-1",
+            productID: product ? parseInt(product.product_id) : "-1",
             aiID: ai ? parseInt(ai) : "-1"
         };
 
@@ -565,12 +562,12 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
             }
             for (var i = 0; i < pulaList.length; i++) {
                 pula = pulaList[i];
-                effectiveDate = pula.EFFECTIVE_DATE;
-                expiredDate = pula.EXPIRED_TIME_STAMP;
-                createdDate = pula.CREATED_TIME_STAMP;
-                publishDate = pula.PUBLISHED_TIME_STAMP;
-                shapeID = pula.PULA_SHAPE_ID;
-                eventID = pula.EVENT_ID;
+                effectiveDate = pula.effective_date;
+                expiredDate = pula.expired_time_stamp;
+                createdDate = pula.created_time_stamp;
+                publishDate = pula.published_time_stamp;
+                shapeID = pula.pula_shape_id;
+                eventID = pula.event_id;
                 limitations = pula.limitations;
 
                 if (isFilter) {
@@ -583,7 +580,7 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
                     //filter by ai
                     if (filter.aiID != -1) {
                         match = _.find(limitations, {
-                            "ACTIVE_INGREDIENT_ID": filter.aiID
+                            "active_ingredient_id": filter.aiID
                         });
                         if (!match) {
                             continue;
@@ -592,7 +589,7 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
                     //filter by product
                     if (filter.productID != -1) {
                         match = _.find(limitations, {
-                            "PRODUCT_ID": filter.productID
+                            "product_id": filter.productID
                         });
                         if (!match) {
                             continue;
@@ -689,7 +686,7 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
         for (var i = 0; i < n; i++) {
             text += possible.charAt(Math.floor(Math.random() * possible.length));
         }
-        contributor.password = "AbEv" + $scope.pulaDetails.EVENT_ID + "$BLTDefau1t" + text;
+        contributor.password = "AbEv" + $scope.pulaDetails.event_id + "$BLTDef@u1t" + text;
         $scope.contributor = contributor;
         $scope.contributorModalInstance = $modal.open({
             scope: $scope,
@@ -707,7 +704,7 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
     //expire pulas
     $scope.expirationYears = getYears(5);
     $scope.addExpirationDate = function (pula, date, callback) {
-        PULAPOIService.updateStatus(pula.ID, date, "Expired").success(function () {
+        PULAPOIService.updateStatus(pula.id, date, "Expired").success(function () {
             pula.data.expirationDateStr = date.month + "/01/" + date.year;
             if (callback) {
                 callback();
@@ -724,7 +721,7 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
     $scope.addEffectiveDate = function () {
         var date = $scope.effectiveDate;
         date.month = $scope.months.indexOf(date.month) + 1;
-        PULAPOIService.updateStatus($scope.pulaDetails.ID, date, "Effective").success(function () {
+        PULAPOIService.updateStatus($scope.pulaDetails.id, date, "Effective").success(function () {
             $scope.pulaDetails.data.effectiveDateStr = _.indexOf($scope.months, date.month) + 1 + "/01/" + date.year;
         });
     }
@@ -734,12 +731,12 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
     $scope.publishPULA = function () {
 
         $scope.showLoading = true;
-        PULAPOIService.publish($scope.pulaDetails.ID).success(function (response) {
+        PULAPOIService.publish($scope.pulaDetails.id).success(function (response) {
             //refresh the map
             $scope.refreshMap();
 
             //set it to published
-            $scope.pulaDetails.IS_PUBLISHED = 1;
+            $scope.pulaDetails.is_published = 1;
             $scope.pulaDetails.data.publishedDate = moment().format("MM/DD/YYYY");
             $scope.pulaDetails.data.publisher = AuthService.getName();
 
@@ -770,7 +767,7 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
             username: AuthService.getUsername()
         }, function (response) {
             var creator = response.length == 1 ? response[0] : response;
-            $scope.mPulaDetails.data.creator = creator.FNAME + " " + creator.LNAME;
+            $scope.mPulaDetails.data.creator = creator.fname + " " + creator.lname;
             $scope.pulaSectionUrl = "templates/pula/edit-pula.cshtml";
             $scope.showPULALoading = false;
         });
@@ -804,7 +801,7 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
         //        $scope.data = {
         //            events: $scope.events
         //        };
-        $scope.mPulaDetails.data.event = $scope.events[$scope.mPulaDetails.EVENT_ID];
+        $scope.mPulaDetails.data.event = $scope.events[$scope.mPulaDetails.event_id];
         $scope.pulaSectionUrl = "templates/pula/edit-pula.cshtml";
         $scope.showPULALoading = false;
 
@@ -819,9 +816,9 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
     $scope.setPULAEffectiveDate = function () {
         var date = $scope.mPulaDetails.data.effectiveDate;
         if (date.month && date.year) {
-            $scope.mPulaDetails.EFFECTIVE_DATE = date.month + "/01/" + date.year;
+            $scope.mPulaDetails.effective_date = date.month + "/01/" + date.year;
         } else {
-            $scope.mPulaDetails.EFFECTIVE_DATE = "";
+            $scope.mPulaDetails.effective_date = "";
         }
     }
     $scope.addLimitation = function () {
@@ -831,40 +828,40 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
         //active ingredient
         var activeIngredient = $scope.mPulaDetails.data.activeIngredient;
         if (activeIngredient) {
-            mapperLimitNew.NAME = activeIngredient["INGREDIENT_NAME"];
-            mapperLimitNew.ACTIVE_INGREDIENT_ID = activeIngredient.ACTIVE_INGREDIENT_ID;
+            mapperLimitNew.NAME = activeIngredient["ingredient_name"];
+            mapperLimitNew.active_ingredient_id = activeIngredient.active_ingredient_id;
         }
         //product
         var product = $scope.mPulaDetails.data.product;
         if (product) {
-            mapperLimitNew.NAME = product.PRODUCT_NAME + " [" + product.PRODUCT_REGISTRATION_NUMBER + "]";
-            mapperLimitNew.PRODUCT_ID = product.PRODUCT_ID;
-            delete mapperLimitNew.ACTIVE_INGREDIENT_ID;
+            mapperLimitNew.NAME = product.product_name + " [" + product.product_registration_number + "]";
+            mapperLimitNew.product_id = product.product_id;
+            delete mapperLimitNew.active_ingredient_id;
         }
         //crop use
         var cropUse = $scope.mPulaDetails.data.cropUse;
-        mapperLimitNew.USE = cropUse.USE;
-        mapperLimitNew.CROP_USE_ID = cropUse.CROP_USE_ID;
+        mapperLimitNew.USE = cropUse.use;
+        mapperLimitNew.crop_use_id = cropUse.crop_use_id;
         //application method
         var applicationMethod = $scope.mPulaDetails.data.applicationMethod;
-        mapperLimitNew.APPMETHOD = applicationMethod.METHOD;
-        mapperLimitNew.APPLICATION_METHOD_ID = applicationMethod.APPLICATION_METHOD_ID;
+        mapperLimitNew.APPMETHOD = applicationMethod.method;
+        mapperLimitNew.application_method_id = applicationMethod.application_method_id;
         //formulation
         var formulation = $scope.mPulaDetails.data.formulation;
-        mapperLimitNew.FORM = formulation.FORM;
-        mapperLimitNew.FORMULATION_ID = formulation.FORMULATION_ID;
+        mapperLimitNew.FORM = formulation.form;
+        mapperLimitNew.formulation_id = formulation.formulation_id;
         //code
         var limitation = $scope.mPulaDetails.data.limitation;
-        mapperLimitNew.CODE = limitation.CODE;
+        mapperLimitNew.CODE = limitation.code;
         //limitation id
-        mapperLimitNew.LIMITATION_ID = limitation.LIMITATION_ID;
+        mapperLimitNew.limitation_id = limitation.limitation_id;
 
 
         //check if duplicate
         var matchIndex = -1;
         for (var i = 0; i < $scope.mPulaDetails.data.mapperLimits.length; i++) {
             limit = $scope.mPulaDetails.data.mapperLimits[i];
-            if (limit.NAME == mapperLimitNew.NAME && limit.USE == mapperLimitNew.USE && limit.APPMETHOD == mapperLimitNew.APPMETHOD && limit.FORM == mapperLimitNew.FORM && limit.LIMIT.CODE == mapperLimitNew.LIMIT.CODE) {
+            if (limit.NAME == mapperLimitNew.NAME && limit.USE == mapperLimitNew.USE && limit.APPMETHOD == mapperLimitNew.APPMETHOD && limit.FORM == mapperLimitNew.FORM && limit.CODE == mapperLimitNew.CODE) {
                 matchIndex = i;
                 break;
             }
@@ -872,7 +869,7 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
 
         //no match was found
         if (matchIndex == -1) {
-            mapperLimitNew.PULA_ID = $scope.mPulaDetails.PULA_ID;
+            mapperLimitNew.pula_id = $scope.mPulaDetails.pula_id;
             $scope.mPulaDetails.data.mapperLimits.unshift(mapperLimitNew);
             $scope.mPulaDetails.data.numLimits = $scope.mPulaDetails.data.numLimits + 1;
             mapperLimitNew.status = "new";
@@ -948,7 +945,7 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
         //save expiration date, limitations and species
 
         var saveLimitsAndSpecies = function (callback) {
-            var pulaId = $scope.mPulaDetails.PULA_ID;
+            var pulaId = $scope.mPulaDetails.pula_id;
             //Limitations
             var limitations = data.mapperLimits;
             var limit;
@@ -956,13 +953,13 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
                 //add the pula id to all of the limitations
                 for (var i = 0; i < limitations.length; i++) {
                     limit = limitations[i];
-                    limit.PULA_ID = pulaId;
+                    limit.pula_id = pulaId;
                 };
             }
             LimitationsService.addOrRemove(limitations).then(function (results) {
                 //species
                 var species = data.speciesList;
-                SpeciesService.addOrRemove($scope.mPulaDetails.PULA_ID, species).then(function (results) {
+                SpeciesService.addOrRemove($scope.mPulaDetails.pula_id, species).then(function (results) {
                     callback();
                 });
             });
@@ -999,7 +996,7 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
 
         //set event id
         if (data.event) {
-            $scope.mPulaDetails.EVENT_ID = data.event.EVENT_ID;
+            $scope.mPulaDetails.event_id = data.event.event_id;
         }
         //set effective date
         if (data.effectiveDate) {
@@ -1010,19 +1007,19 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
 
         if (isNew) {
             //create the PULA first
-            $scope.mPulaDetails.PULA_SHAPE_ID = $scope.mPulaDetails.data.mapShapeId;
+            $scope.mPulaDetails.pula_shape_id = $scope.mPulaDetails.data.mapShapeId;
 
             PULAPOIService.post($scope.mPulaDetails).success(function (response) {
-                $scope.mPulaDetails.ID = response.ID;
-                $scope.mPulaDetails.PULA_ID = response.PULA_ID;
-                $scope.mPulaDetails.PULA_SHAPE_ID = response.PULA_SHAPE_ID;
-                $scope.mPulaDetails.VERSION_ID = response.VERSION_ID;
-                $scope.pulaList[response.PULA_SHAPE_ID] = response;
+                $scope.mPulaDetails.id = response.id;
+                $scope.mPulaDetails.pula_id = response.pula_id;
+                $scope.mPulaDetails.pula_shape_id = response.pula_shape_id;
+                $scope.mPulaDetails.version_id = response.version_id;
+                $scope.pulaList[response.pula_shape_id] = response;
                 saveAdditionalInfo(function () {
                     //refresh the map
                     $scope.refreshMap();
                     $scope.pulaDetails.data.message = "The PULA has been saved";
-                    getPULADetails($scope.mPulaDetails.PULA_SHAPE_ID);
+                    getPULADetails($scope.mPulaDetails.pula_shape_id);
                     $scope.showPULALoading = false;
                 });
             });
@@ -1048,7 +1045,7 @@ bltApp.controller('HomeController', function ($scope, $location, AuthService, le
     $scope.getProductList = function () {
         var activeIngredient = $scope.mPulaDetails.data.activeIngredient;
         //get products associated with the active ingredient
-        AIService.getProducts(activeIngredient["ACTIVE_INGREDIENT_ID"]).success(function (response) {
+        AIService.getProducts(activeIngredient["active_ingredient_id"]).success(function (response) {
             $scope.productList = response;
         });
     };
@@ -1088,7 +1085,7 @@ bltApp.controller('HeaderCtrl', function ($scope, $location, AuthService, RoleSe
             RoleService.getAll({}, function (roles) {
                 $scope.hideMenu = false;
                 $scope.role = roles[roleId];
-                $scope.isAdmin = $scope.role.ROLE_NAME == config.ADMIN_ROLE ? true : false;
+                $scope.isAdmin = $scope.role.role_name == config.ADMIN_ROLE ? true : false;
 
             });
         }
@@ -1124,6 +1121,22 @@ bltApp.controller('UserController', function ($scope, organizations, roles, user
     $scope.users = users;
     $scope.divisions = divisions;
     $scope.action = "";
+    $scope.pass = {
+        newP: '',
+        confirmP: ''
+    };
+
+    //password change section
+    $scope.changeMyPassBtn = function (evt) {
+        $scope.changePass === false ? $scope.changePass = true : $scope.changePass = false;
+    };
+
+
+    $scope.DontChangePass = function () {
+        //nevermind,  clear input
+        $scope.changePass = false;
+        $scope.pass = { newP: '', confirmP: ''   };
+    };
 
     //Add or update user
     $scope.editUser = function (index) {
@@ -1132,15 +1145,16 @@ bltApp.controller('UserController', function ($scope, organizations, roles, user
             $scope.user = {};
             $scope.editForm.submited = false;
             $scope.editForm.title = "Add New User";
-            $scope.action = "add";
+            $scope.action = "add";            
         } else {
             var user = angular.copy($scope.users[index]);
-            $scope.data.organization = $scope.organizations[user.ORGANIZATION_ID];
-            $scope.data.role = $scope.roles[user.ROLE_ID];
-            $scope.data.division = $scope.divisions[user.DIVISION_ID];
+            $scope.data.organization = $scope.organizations[user.organization_id];
+            $scope.data.role = $scope.roles[user.role_id];
+            $scope.data.division = $scope.divisions[user.division_id];
             $scope.user = user;
-            $scope.editForm.title = "Edit User '" + user.USERNAME + "'";
+            $scope.editForm.title = "Edit User '" + user.username + "'";
             $scope.action = "edit";
+            $scope.changePass = false;
         }
         $scope.modalInstance = $modal.open({
             scope: $scope,
@@ -1158,9 +1172,10 @@ bltApp.controller('UserController', function ($scope, organizations, roles, user
             var org = $scope.data.organization;
             var role = $scope.data.role;
             var division = $scope.data.division;
-            user.ORGANIZATION_ID = org ? org.ORGANIZATION_ID : null;
-            user.ROLE_ID = role ? role.ROLE_ID : null;
-            user.DIVISION_ID = division ? division.DIVISION_ID : null;
+            user.organization_id = org ? org.organization_id : null;
+            user.role_id = role ? role.role_id : null;
+            user.division_id = division ? division.division_id : null;
+            user.password = $scope.pass.confirmP !== "" ? btoa($scope.pass.confirmP) : "";
 
             //new user
             if ($scope.userIndex == -1) {
@@ -1172,7 +1187,7 @@ bltApp.controller('UserController', function ($scope, organizations, roles, user
             //save existing user
             else {
                 $scope.user.$update({
-                    id: user.USER_ID
+                    id: user.user_id
                 }).then(function () {
                     $scope.users[$scope.userIndex] = user;
                     $scope.modalInstance.dismiss('cancel');
@@ -1208,7 +1223,7 @@ bltApp.controller('UserController', function ($scope, organizations, roles, user
         var user = $scope.users[index];
 
         user.$delete({
-            id: user.USER_ID
+            id: user.user_id
         }).then(function () {
             $scope.users.splice(index, 1);
             $scope.cancelDelete();
@@ -1226,7 +1241,7 @@ bltApp.controller('UserController', function ($scope, organizations, roles, user
 bltApp.controller('PartsController', function ($scope, $rootScope, $modal, RoleService, AuthService, AIClassService, PartsService, ProductService, AIService) {
     RoleService.getAll({}, function (roles) {
         $scope.role = roles[AuthService.getRoleId()];
-        $scope.isAdmin = $scope.role.ROLE_NAME == config.ADMIN_ROLE ? true : false;
+        $scope.isAdmin = $scope.role.role_name == config.ADMIN_ROLE ? true : false;
     });
 
     var pageSize = config.parts.pageSize;
@@ -1299,17 +1314,17 @@ bltApp.controller('PartsController', function ($scope, $rootScope, $modal, RoleS
             $scope.editForm.title = "Add New " + $scope.selectedPart.heading;
         } else {
             var part = angular.copy(part);
-            delete part.VERSION_ID; //don't send the version id
+            delete part.version_id; //don't send the version id
             $scope.part = part;
             $scope.editForm.title = "Edit";
             if ($scope.selectedPart.name == "ACTIVE INGREDIENT") {
                 //get classes associated with the active ingredient
-                AIService.getClasses(part.ACTIVE_INGREDIENT_ID).success(function (response) {
-                    $scope.classList = _.indexBy(response, "AI_CLASS_NAME");
+                AIService.getClasses(part.active_ingredient_id).success(function (response) {
+                    $scope.classList = _.indexBy(response, "ai_class_name");
                 });
                 //get products associated with the active ingredient
-                AIService.getProducts(part.ACTIVE_INGREDIENT_ID).success(function (response) {
-                    $scope.productList = _.indexBy(response, "PRODUCT_NAME");
+                AIService.getProducts(part.active_ingredient_id).success(function (response) {
+                    $scope.productList = _.indexBy(response, "product_name");
                 });
             }
 
@@ -1461,7 +1476,7 @@ bltApp.controller('PartsController', function ($scope, $rootScope, $modal, RoleS
         if (!$scope.classList) {
             $scope.classList = {}
         }
-        $scope.classList[aiClass.AI_CLASS_NAME] = aiClass;
+        $scope.classList[aiClass.ai_class_name] = aiClass;
     }
 
     $scope.removeClass = function (index) {
@@ -1475,7 +1490,7 @@ bltApp.controller('PartsController', function ($scope, $rootScope, $modal, RoleS
         if (!$scope.productList) {
             $scope.productList = {}
         }
-        $scope.productList[product.PRODUCT_NAME] = product;
+        $scope.productList[product.product_name] = product;
     }
 
     $scope.removeProduct = function (index) {

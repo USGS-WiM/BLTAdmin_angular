@@ -1,12 +1,12 @@
 <div ng-show="pulaDetails" class="pulaDetails">
     <div ng-show="pulaDetails.data.message" class="alert alert-success" role="alert">{{pulaDetails.data.message}}</div>
     <h2>Details<!-- Edit PULA,Contributor Password, Publish PULA-->
-    <div ng-show="pulaDetails.IS_PUBLISHED == 0" class="pull-right">
+    <div ng-show="pulaDetails.is_published == 0" class="pull-right">
         <div class="btn-group btn-group-sm">
             <!--Edit PULA-->
             <button class="btn btn-default" ng-click="editPULA()" ng-show="isAdmin">Edit PULA</button>
             <!--Generate Contributor Password-->
-            <button class="btn btn-default" ng-click="showContributorPassword()" ng-show="isAdmin && pulaDetails.EVENT_ID != null &&pulaDetails.EVENT_ID >= 1">Generate Contributor Password</button>
+            <button class="btn btn-default" ng-click="showContributorPassword()" ng-show="isAdmin && pulaDetails.event_id != null &&pulaDetails.event_id >= 1">Generate Contributor Password</button>
             <!--Publish PULA-->
             <button class="btn btn-default" ng-click="publishPULA()" ng-show="isAdmin">Publish PULA</button>
         </div>
@@ -17,7 +17,7 @@
     <table class="table table-condensed">
         <tr>
             <td>Event:</td>
-            <td>{{pulaDetails.data.event['NAME']}}</td>
+            <td>{{pulaDetails.data.event['name']}}</td>
         </tr>
         <tr>
             <td>Effective Date:</td>
@@ -61,69 +61,69 @@
     <h4>PULA Justification</h4>
     <table class="table table-condensed">
         <!--Other-->
-        <tr ng-if="pulaDetails.OTHER_JUSTIFICATION">
+        <tr ng-if="pulaDetails.other_justification">
             <td>Other:</td>
-            <td>{{pulaDetails.OTHER_JUSTIFICATION}}</td>
+            <td>{{pulaDetails.other_justification}}</td>
         </tr>
         <!--Litigation-->
-        <tr ng-if="pulaDetails.BIOLOGICAL_OPINION_LIT">
+        <tr ng-if="pulaDetails.biological_opinion_lit">
             <td>Litigation, Biological Opinion:</td>
-            <td>{{pulaDetails.BIOLOGICAL_OPINION_LIT}}</td>
+            <td>{{pulaDetails.biological_opinion_lit}}</td>
         </tr>
         <!--Registration Review-->
-        <tr ng-if="pulaDetails.FOCUS_MEETING">
+        <tr ng-if="pulaDetails.focus_meeting">
             <td>Registration Review, Focus Meeting:</td>
-            <td>{{pulaDetails.FOCUS_MEETING}}</td>
+            <td>{{pulaDetails.focus_meeting}}</td>
         </tr>
-        <tr ng-if="pulaDetails.BIOLOGICAL_OPINION_REGREVIEW">
+        <tr ng-if="pulaDetails.biological_opinion_regreview">
             <td>Registration Review, Biological Opinion:</td>
-            <td>{{pulaDetails.BIOLOGICAL_OPINION_REGREVIEW}}</td>
+            <td>{{pulaDetails.biological_opinion_regreview}}</td>
         </tr>
-        <tr ng-if="pulaDetails.PROPOSED_DECISION">
+        <tr ng-if="pulaDetails.proposed_decision">
             <td>Registration Review, Proposed Decision:</td>
-            <td>{{pulaDetails.PROPOSED_DECISION}}</td>
+            <td>{{pulaDetails.proposed_decision}}</td>
         </tr>
-        <tr ng-if="pulaDetails.INTERIM_DECISION">
+        <tr ng-if="pulaDetails.interim_decision">
             <td>Registration Review, Interim Decision:</td>
-            <td>{{pulaDetails.INTERIM_DECISION}}</td>
+            <td>{{pulaDetails.interim_decision}}</td>
         </tr>
-        <tr ng-if="pulaDetails.FINAL_DECISION">
+        <tr ng-if="pulaDetails.final_decision">
             <td>Registration Review, Final Decision:</td>
-            <td>{{pulaDetails.FINAL_DECISION}}</td>
+            <td>{{pulaDetails.final_decision}}</td>
         </tr>
-        <tr ng-if="pulaDetails.INTERIM_PROPOSED_DECISION">
+        <tr ng-if="pulaDetails.interim_proposed_decision">
             <td>Registration Review, Proposed Interim Decision:</td>
-            <td>{{pulaDetails.INTERIM_PROPOSED_DECISION}}</td>
+            <td>{{pulaDetails.interim_proposed_decision}}</td>
         </tr>
         <!--Registration Action-->
-        <tr ng-if="pulaDetails.SEC3_NEWCHEM">
+        <tr ng-if="pulaDetails.sec3_newchem">
             <td>Registration Action, Section 3 New Chem:</td>
-            <td>{{pulaDetails.SEC3_NEWCHEM}}</td>
+            <td>{{pulaDetails.sec3_newchem}}</td>
         </tr>
-        <tr ng-if="pulaDetails.SEC3_NEWUSE">
+        <tr ng-if="pulaDetails.sec3_newuse">
             <td>Registration Action, Section 3 New Use:</td>
-            <td>{{pulaDetails.SEC3_NEWUSE}}</td>
+            <td>{{pulaDetails.sec3_newuse}}</td>
         </tr>
-        <tr ng-if="pulaDetails.SEC24">
+        <tr ng-if="pulaDetails.sec24">
             <td>Registration Action, Section 24 (c):</td>
-            <td>{{pulaDetails.SEC24}}</td>
+            <td>{{pulaDetails.sec24}}</td>
         </tr>
-        <tr ng-if="pulaDetails.SEC18">
+        <tr ng-if="pulaDetails.sec18">
             <td>Registration Action, Section 18 (c):</td>
-            <td>{{pulaDetails.SEC18}}</td>
+            <td>{{pulaDetails.sec18}}</td>
         </tr>
 
         <tr>
             <td>Base Data:</td>
-            <td>{{pulaDetails.BASE_DATA}}</td>
+            <td>{{pulaDetails.base_data}}</td>
         </tr>
         <tr>
             <td>Base Data Modifiers:</td>
-            <td>{{pulaDetails.BASE_DATA_MODIFIERS}}</td>
+            <td>{{pulaDetails.base_data_modifiers}}</td>
         </tr>
         <tr>
             <td>Additional Information:</td>
-            <td>{{pulaDetails.ADDITIONAL_INFORMATION}}</td>
+            <td>{{pulaDetails.additional_information}}</td>
         </tr>
     </table>
     <h4>Limitations</h4>
@@ -156,8 +156,8 @@
                 </tr>
             </thead>
             <tr ng-repeat="code in limitationCodes">
-                <td>{{code.data[0].CODE}}</td>
-                <td>{{code.data[0].LIMITATION1}}</td>
+                <td>{{code.data[0].code}}</td>
+                <td>{{code.data[0].limitation1}}</td>
             </tr>
         </table>
     </div>
@@ -167,7 +167,7 @@
         <li ng-repeat="species in pulaDetails.data.speciesList|orderBy:'COMNAME'" ng-hide="species.status=='delete'">{{species.COMNAME}} | {{species.SCINAME}} <a href="http://ecos.fws.gov/ecp0/profile/speciesProfile?spcode={{species.SPCODE}}" target="_blank">(Link to Species Profile page)</a></li>
     </ul>
     <!--comments-->
-    <div ng-if="role.ROLE_NAME == 'ADMIN' && pulaDetails.data.comments && pulaDetails.data.comments.length > 0">
+    <div ng-if="role.role_name == 'ADMIN' && pulaDetails.data.comments && pulaDetails.data.comments.length > 0">
         <h4>Contributor Comments</h4>
         <table class="table table-striped  table-condensed">
             <thead>

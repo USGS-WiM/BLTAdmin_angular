@@ -1,8 +1,8 @@
-var config = {
-    "rootURL": "http://blt.wim.usgs.gov/BLTServices",
-    "pulaURL": "http://blt.wim.usgs.gov/BLTServices/PULAs/FilteredSimplePULAs",
-    "BLTMapServerURL": "http://blt.wim.usgs.gov/arcgis/rest/services/BLT/BLT_PULAsRelated/MapServer",
-    "BLTMapServerPulaURl": "http://blt.wim.usgs.gov/arcgis/rest/services/BLT/BLT_PULAsRelated/MapServer/2/query?where=1%3D1&text=&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&relationParam=&outFields=*&returnGeometry=false&maxAllowableOffset=&geometryPrecision=&outSR=&returnIdsOnly=false&returnCountOnly=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&returnZ=false&returnM=false&gdbVersion=&returnDistinctValues=false&f=json",
+﻿var config = {
+    "rootURL": "https://bltdev.wim.usgs.gov/BLTServices",
+    "pulaURL": "https://bltdev.wim.usgs.gov/BLTServices/PULAs/FilteredSimplePULAs",
+    "BLTMapServerURL": "http://bltdev.wim.usgs.gov/arcgis/rest/services/BLT/BLT_PULAsRelated/MapServer",
+    "BLTMapServerPulaURl": "http://bltdev.wim.usgs.gov/arcgis/rest/services/BLT/BLT_PULAsRelated/MapServer/2/query?where=1%3D1&text=&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&relationParam=&outFields=*&returnGeometry=false&maxAllowableOffset=&geometryPrecision=&outSR=&returnIdsOnly=false&returnCountOnly=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&returnZ=false&returnM=false&gdbVersion=&returnDistinctValues=false&f=json",
     map: {
         arcGISMapServerURL: "https://services.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer",
         center: {
@@ -33,59 +33,59 @@ config.justificationTypes = [{
         name: "Other",
         items: [{
             name: 'Other',
-            value: "OTHER_JUSTIFICATION"
+            value: "other_justification"
                 }]
     }, {
         name: "Litigation",
         items: [{
             name: 'Biological Opinion',
-            value: "BIOLOGICAL_OPINION_LIT"
+            value: "biological_opinion_lit"
                     }]
     }, {
         name: 'Registration Review',
         items: [
             {
                 name: 'Focus Meeting',
-                value: "FOCUS_MEETING"
+                value: "focus_meeting"
                     },
             {
                 name: 'Proposed Interim Decision',
-                value: "INTERIM_PROPOSED_DECISION"
+                value: "interim_proposed_decision"
                     },
             {
                 name: 'Proposed Decision',
-                value: "PROPOSED_DECISION"
+                value: "proposed_decision"
                     },
             {
                 name: 'Interim Decision',
-                value: "INTERIM_DECISION"
+                value: "interim_decision"
                     },
             {
                 name: 'Final Decision',
-                value: "FINAL_DECISION"
+                value: "final_decision"
                     },
             {
                 name: 'Biological Opinion',
-                value: "BIOLOGICAL_OPINION_REGREVIEW"
+                value: "biological_opinion_regreview"
             }]
     }, {
         name: 'Registration Action',
         items: [
             {
                 name: 'Section 3 New Chem',
-                value: "SEC3_NEWCHEM"
+                value: "sec3_newchem"
                     },
             {
                 name: 'Section 3 New Use',
-                value: "SEC3_NEWUSE"
+                value: "sec3_newuse"
                     },
             {
                 name: 'Section 24 (c)',
-                value: "SEC24"
+                value: "sec24"
                     },
             {
                 name: 'Section 18 (c)',
-                value: "SEC18"
+                value: "sec18"
             }]
     }
 ];
@@ -97,26 +97,26 @@ config.parts = {
             heading: "ACTIVE INGREDIENT",
             url: "ActiveIngredients",
             includeCopy: true,
-            primaryKey: "ID",
+            primaryKey: "id",
             copy: true,
             display: {
                 columns: [{
-                    name: "INGREDIENT_NAME",
+                    name: "ingredient_name",
                     heading: "Name"
             }],
-                orderBy: "INGREDIENT_NAME"
+                orderBy: "ingredient_name"
             },
             edit: {
                 columns: [{
-                    name: "INGREDIENT_NAME",
+                    name: "ingredient_name",
                     label: "AI Name",
                     required: false
             }, {
-                    name: "PC_CODE",
+                    name: "pc_code",
                     label: "PC Code",
                     required: true
             }, {
-                    name: "CAS_NUMBER",
+                    name: "cas_number",
                     label: "CAS Number",
                     required: false
             }, {
@@ -137,17 +137,17 @@ config.parts = {
             heading: "AI CLASS",
             url: "AIClasses",
             includeCopy: false,
-            primaryKey: "ID",
+            primaryKey: "id",
             display: {
                 columns: [{
-                    name: "AI_CLASS_NAME",
+                    name: "ai_class_name",
                     heading: "Name"
             }],
-                orderBy: "AI_CLASS_NAME"
+                orderBy: "ai_class_name"
             },
             edit: {
                 columns: [{
-                    name: "AI_CLASS_NAME",
+                    name: "ai_class_name",
                     label: "AI Class Name",
                     required: true
             }]
@@ -157,17 +157,17 @@ config.parts = {
             heading: "APPLICATION METHOD",
             url: "ApplicationMethods",
             includeCopy: false,
-            primaryKey: "ID",
+            primaryKey: "id",
             display: {
                 columns: [{
-                    name: "METHOD",
+                    name: "method",
                     heading: "Method"
             }],
-                orderBy: "METHOD"
+                orderBy: "method"
             },
             edit: {
                 columns: [{
-                    name: "METHOD",
+                    name: "method",
                     label: "Application Method",
                     required: true
             }]
@@ -177,17 +177,17 @@ config.parts = {
             heading: "USE",
             url: "CropUses",
             includeCopy: false,
-            primaryKey: "ID",
+            primaryKey: "id",
             display: {
                 columns: [{
-                    name: "USE",
+                    name: "use",
                     heading: "Use"
             }],
-                orderBy: "USE"
+                orderBy: "use"
             },
             edit: {
                 columns: [{
-                    name: "USE",
+                    name: "use",
                     label: "Use",
                     required: true
             }]
@@ -205,17 +205,17 @@ config.parts = {
             heading: "EVENT",
             url: "Events",
             includeCopy: false,
-            primaryKey: "EVENT_ID",
+            primaryKey: "event_id",
             display: {
                 columns: [{
-                    name: "NAME",
+                    name: "name",
                     heading: "Name"
             }],
-                orderBy: "NAME"
+                orderBy: "name"
             },
             edit: {
                 columns: [{
-                    name: "NAME",
+                    name: "name",
                     label: "Event",
                     required: true
             }]
@@ -225,17 +225,17 @@ config.parts = {
             heading: "FORMULATION",
             url: "Formulations",
             includeCopy: false,
-            primaryKey: "ID",
+            primaryKey: "id",
             display: {
                 columns: [{
-                    name: "FORM",
+                    name: "form",
                     heading: "Form"
             }],
-                orderBy: "FORM"
+                orderBy: "form"
             },
             edit: {
                 columns: [{
-                    name: "FORM",
+                    name: "form",
                     label: "Formulation",
                     required: true
             }]
@@ -245,25 +245,25 @@ config.parts = {
             heading: "LIMITATION",
             url: "Limitations",
             includeCopy: false,
-            primaryKey: "ID",
+            primaryKey: "id",
             copy: true,
             display: {
                 columns: [{
-                    name: "CODE",
+                    name: "code",
                     heading: "Code"
             }, {
-                    name: "LIMITATION1",
+                    name: "limitation1",
                     heading: "Limitation"
             }],
-                orderBy: "CODE"
+                orderBy: "code"
             },
             edit: {
                 columns: [{
-                    name: "CODE",
+                    name: "code",
                     label: "Limitation Code",
                     required: false
             }, {
-                    name: "LIMITATION1",
+                    name: "limitation1",
                     label: "Limitation",
                     required: true
             }]
@@ -272,19 +272,19 @@ config.parts = {
         "ORGANIZATION": {
             heading: "ORGANIZATION",
             url: "Organizations",
-            primaryKey: "ORGANIZATION_ID",
+            primaryKey: "organization_id",
             includeCopy: false,
             enableDelete: false,
             display: {
                 columns: [{
-                    name: "NAME",
+                    name: "name",
                     heading: "Name"
             }],
-                orderBy: "NAME"
+                orderBy: "name"
             },
             edit: {
                 columns: [{
-                    name: "NAME",
+                    name: "name",
                     label: "Organization",
                     required: true
             }]
@@ -295,21 +295,21 @@ config.parts = {
             url: "Products",
             includeCopy: false,
             search: true,
-            primaryKey: "ID",
+            primaryKey: "id",
             display: {
                 columns: [{
-                    name: "PRODUCT_NAME",
+                    name: "product_name",
                     heading: "Name"
             }],
-                orderBy: "PRODUCT_NAME"
+                orderBy: "product_name"
             },
             edit: {
                 columns: [{
-                    name: "PRODUCT_REGISTRATION_NUMBER",
+                    name: "product_registration_number",
                     label: "Registration Number",
                     required: true
             },{
-                    name: "PRODUCT_NAME",
+                    name: "product_name",
                     label: "Product Name",
                     required: true
             }]

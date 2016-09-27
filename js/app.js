@@ -30,7 +30,48 @@ bltApp.factory('httpInterceptor', ['$rootScope', '$q', '$cookies', '$location', 
     };
 }]);
 
+bltApp.constant('RegExp', {
+    PASSWORD: /^(((?=.*[a-z])(?=.*[A-Z])(?=.*[0-9]))|((?=.*[a-z])(?=.*[A-Z])(?=.*[!@@?#$%^&_:;-]))|((?=.*[a-z])(?=.*[0-9])(?=.*[!@@?#$%^&_:;-]))|((?=.*[A-Z])(?=.*[0-9])(?=.*[!@@?#$%^&_:;-]))).{8,}$/
+});
 
+bltApp.directive('passwordValidate', ['RegExp', function (regex) {
+    return {
+        require: 'ngModel',
+        link: function (scope, elm, attrs, ctrl) {
+            elm.unbind('keydown').unbind('change');
+            elm.bind('blur', function (viewValue) {
+                scope.$apply(function () {
+                    if ((regex.PASSWORD).test(viewValue.target.value)) {
+                        //it is valid
+                        ctrl.$setValidity("passwordValidate", true);
+                        return viewValue;
+                    } else {
+                        //it is invalid, return undefined - no model update
+                        ctrl.$setValidity("passwordValidate", false);
+                        return undefined;
+                    }
+                });
+            });
+        }
+    };
+}]);
+
+bltApp.directive('sameAs', ['$parse', function ($parse) {
+    return {
+        require: 'ngModel',
+        restrict: 'A',
+        link: function (scope, elm, attrs, ctrl) {
+            elm.unbind('keydown').unbind('change');
+            elm.bind('blur', function (viewValue) {
+                scope.$watch(function () {
+                    return $parse(attrs.sameAs)(scope) === ctrl.$modelValue;
+                }, function (currentValue) {
+                    ctrl.$setValidity('passwordMismatch', currentValue);
+                });
+            });
+        }
+    };
+}]);
 
 bltApp.config(function ($stateProvider, $urlRouterProvider, $httpProvider) {
 

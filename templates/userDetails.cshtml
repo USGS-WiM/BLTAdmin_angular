@@ -5,7 +5,7 @@
 
         <div class="partsTitle" style="padding-bottom:0">
             <div style="float:left">
-                <a href="#/users">All Users</a> | User: {{user[0].FNAME}} {{user[0].LNAME}}&nbsp;&nbsp;</div>
+                <a href="#/users">All Users</a> | User: {{user[0].fname}} {{user[0].lname}}&nbsp;&nbsp;</div>
             <div>
                 <a class="BLTButton blue" href="" ng-click="delete()">Delete</a>
             </div>
@@ -24,22 +24,22 @@
 
                 <div>
                     <span class="bold ui-label-a"><label for="First_Name:">First Name:</label></span>
-                    <label class="inline">{{user[0].FNAME}}</label>
+                    <label class="inline">{{user[0].fname}}</label>
                 </div>
 
                 <div>
                     <span class="bold ui-label-a"><label for="Last_Name:">Last Name:</label></span>
-                    <label class="inline">{{user[0].LNAME}}</label>
+                    <label class="inline">{{user[0].lname}}</label>
                 </div>
 
                 <div>
                     <span class="bold ui-label-a"><label for="User_Name:">User Name:</label></span>
-                    <label class="inline">{{user[0].USERNAME}}</label>
+                    <label class="inline">{{user[0].username}}</label>
                 </div>
 
                 <div>
                     <span class="bold ui-label-a"><label for="Organization:">Organization:</label></span>
-                    <label class="inline">{{organizations[user[0].ORGANIZATION_ID].NAME}}</label>
+                    <label class="inline">{{organizations[user[0].organization_id].name}}</label>
                 </div>
 
                 <div>
@@ -49,17 +49,17 @@
 
                 <div>
                     <span class="bold ui-label-a"><label for="Role:">Role:</label></span>
-                    <label class="inline">{{roles[user[0].ROLE_ID].ROLE_NAME}}</label>
+                    <label class="inline">{{roles[user[0].role_id].role_name}}</label>
                 </div>
 
                 <div>
                     <span class="bold ui-label-a"><label for="Phone:">Phone:</label></span>
-                    <label class="inline">{{user[0].PHONE}}</label>
+                    <label class="inline">{{user[0].phone}}</label>
                 </div>
 
                 <div>
                     <span class="bold ui-label-a"><label for="Email:">Email:</label></span>
-                    <label class="inline">{{user[0].EMAIL}}</label>
+                    <label class="inline">{{user[0].email}}</label>
                 </div>
 
             </div>
@@ -68,37 +68,37 @@
 
                 <div data-role="fieldcontain">
                     <span class="bold ui-label-a"><label for="First_Name:">First Name:</label></span>
-                    <input type="text" class="margin" name="FNAME" data-mini="true" ng-model="user[0].FNAME">
+                    <input type="text" class="margin" name="fname" data-mini="true" ng-model="user[0].fname">
                 </div>
 
                 <div data-role="fieldcontain">
                     <span class="bold ui-label-a"><label for="Last_Name:">Last Name:</label></span>
-                    <input type="text" class="margin" name="LNAME" data-mini="true" ng-model="user[0].LNAME">
+                    <input type="text" class="margin" name="lname" data-mini="true" ng-model="user[0].lname">
                 </div>
 
                 <div data-role="fieldcontain">
                     <span class="bold ui-label-a"><label for="User_Name:">User Name:</label></span>
-                    <input type="text" class="margin" name="USERNAME" data-mini="true" ng-model="user[0].USERNAME">
+                    <input type="text" class="margin" name="username" data-mini="true" ng-model="user[0].username">
                 </div>
 
                 <div data-role="fieldcontain">
                     <span class="bold ui-label-a"><label for="Organization:">Organization:</label></span>
-                    <select id="selectAgencyId" class="margin" name="ORGANIZATION_ID" data-native-menu="false" data-mini="true" ng-model="organizations[user[0].ORGANIZATION_ID]">
-                        <option ng-repeat="org in organizations" value="{{org.ORGANIZATION_ID}}">{{org.NAME}}</option>
+                    <select id="selectAgencyId" class="margin" name="organization_id" data-native-menu="false" data-mini="true" ng-model="organizations[user[0].organization_id]">
+                        <option ng-repeat="org in organizations" value="{{org.organization_id}}">{{org.NAME}}</option>
                     </select>
                     <br>
                 </div>
                 <div data-role="fieldcontain">
                     <span class="bold ui-label-a"><label for="Division:">Division:</label></span>
-                    <select id="selectRoleId" class="margin" name="DIVISION_ID" data-native-menu="false" data-mini="true">
+                    <select id="selectRoleId" class="margin" name="division_id" data-native-menu="false" data-mini="true">
                         <option value="0"></option>
                     </select>
                     <br>
                 </div>
                 <div data-role="fieldcontain">
                     <span class="bold ui-label-a"><label for="Role:">Role:</label></span>
-                    <select id="selectDivId" class="margin" name="ROLE_ID" data-native-menu="false" data-mini="true" ng-model="roles[user[0].ROLE_ID]">
-                        <option ng-repeat="role in roles" value="{{role.ROLE_ID}}">{{role.ROLE_NAME}}</option>
+                    <select id="selectDivId" class="margin" name="role_id" data-native-menu="false" data-mini="true" ng-model="roles[user[0].role_id]">
+                        <option ng-repeat="role in roles" value="{{role.role_id}}">{{role.role_name}}</option>
                     </select>
                     <br>
                 </div>
@@ -106,12 +106,12 @@
 
                 <div data-role="fieldcontain">
                     <span class="bold ui-label-a"><label for="Phone:">Phone:</label></span>
-                    <input type="text" class="margin" name="PHONE" data-mini="true" value="" ng-model="user[0].PHONE">
+                    <input type="text" class="margin" name="phone" data-mini="true" value="" ng-model="user[0].phone">
                 </div>
 
                 <div data-role="fieldcontain">
                     <span class="bold ui-label-a"><label for="Email:">Email:</label></span>
-                    <input type="text" class="margin" name="EMAIL" data-mini="true" ng-model="user[0].EMAIL">
+                    <input type="text" class="margin" name="email" data-mini="true" ng-model="user[0].email">
                 </div>
 
             </div>

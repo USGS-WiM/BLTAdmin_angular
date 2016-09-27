@@ -10,7 +10,7 @@
                 <tr>
                     <td>Event:</td>
                     <td>
-                        <select ng-model="mPulaDetails.data.event" class="form-control" ng-options="ev as ev.NAME for ev in ui.events">
+                        <select ng-model="mPulaDetails.data.event" class="form-control" ng-options="ev as ev.name for ev in ui.events">
                             <option value=""></option>
                         </select>
                     </td>
@@ -93,21 +93,21 @@
                 <tr>
                     <td>Base Data:</td>
                     <td>
-                        <textarea ng-model="mPulaDetails.BASE_DATA"></textarea>
+                        <textarea ng-model="mPulaDetails.base_data"></textarea>
                     </td>
                 </tr>
                 <!--Base Data Modifiers-->
                 <tr>
                     <td>Base Data Modifiers:</td>
                     <td>
-                        <textarea ng-model="mPulaDetails.BASE_DATA_MODIFIERS"></textarea>
+                        <textarea ng-model="mPulaDetails.base_data_modifiers"></textarea>
                     </td>
                 </tr>
                 <!--Additional Information-->
                 <tr>
                     <td>Additional Information:</td>
                     <td>
-                        <textarea ng-model="mPulaDetails.ADDITIONAL_INFORMATION"></textarea>
+                        <textarea ng-model="mPulaDetails.additional_information"></textarea>
                     </td>
                 </tr>
             </table>
@@ -120,7 +120,7 @@
                 <tr>
                     <td>Active Ingredient: </td>
                     <td>
-                        <select ng-model="mPulaDetails.data.activeIngredient" class="form-control" ng-options="ai as ai.INGREDIENT_NAME.substring(0, 50) for ai in ui.aiList" ng-change="getProductList()">
+                        <select ng-model="mPulaDetails.data.activeIngredient" class="form-control" ng-options="ai as ai.ingredient_name.substring(0, 50) for ai in ui.aiList" ng-change="getProductList()">
                             <option value=""></option>
                         </select>
                     </td>
@@ -128,7 +128,7 @@
                 <tr>
                     <td>Product: </td>
                     <td>
-                        <select ng-model="mPulaDetails.data.product" class="form-control" ng-options="pr as pr.PRODUCT_NAME.substring(0,50) for pr in  productList">
+                        <select ng-model="mPulaDetails.data.product" class="form-control" ng-options="pr as pr.product_name.substring(0,50) for pr in  productList">
                             <option value=""></option>
                         </select>
                     </td>
@@ -145,26 +145,26 @@
                 <tr>
                     <!--Crop Use-->
                     <td>
-                        <select ng-model="mPulaDetails.data.cropUse" class="form-control" ng-options="crop as crop.USE for crop in ui.cropUseList">
+                        <select ng-model="mPulaDetails.data.cropUse" class="form-control" ng-options="crop as crop.use for crop in ui.cropUseList">
                             <option value=""></option>
                         </select>
                     </td>
                     <!--Application Method-->
                     <td>
-                        <select ng-model="mPulaDetails.data.applicationMethod" class="form-control" ng-options="am as am.METHOD for am in ui.applicationMethodList">
+                        <select ng-model="mPulaDetails.data.applicationMethod" class="form-control" ng-options="am as am.method for am in ui.applicationMethodList">
                             <option value=""></option>
                         </select>
 
                     </td>
                     <!--Formulation-->
                     <td>
-                        <select ng-model="mPulaDetails.data.formulation" class="form-control" ng-options="form as form.FORM for form in ui.formulationList">
+                        <select ng-model="mPulaDetails.data.formulation" class="form-control" ng-options="form as form.form for form in ui.formulationList">
                             <option value=""></option>
                         </select>
                     </td>
                     <!--Code-->
                     <td>
-                        <select ng-model="mPulaDetails.data.limitation" class="form-control" ng-options="limit as limit.CODE for limit in ui.limitationCodeList">
+                        <select ng-model="mPulaDetails.data.limitation" class="form-control" ng-options="limit as limit.code for limit in ui.limitationCodeList">
                             <option value=""></option>
                         </select>
                     </td>
@@ -281,9 +281,9 @@
                     <h4>General Information</h4>
                     <div class="row">
                         <div class="col-xs-4 col-sm-4 col-md-4"><b>Event:</b></div>
-                        <div class="col-xs-8 col-sm-8 col-md-4">{{mPulaDetails.data.event.NAME}}</div>
+                        <div class="col-xs-8 col-sm-8 col-md-4">{{mPulaDetails.data.event.name}}</div>
                     </div>
-                    <div class="row">
+                    <div class="row" ng-show="mPulaDetails.data.effectiveDate">
                         <div class="col-xs-4 col-sm-4 col-md-4"><b>Effective Date:</b></div>
                         <div class="col-xs-8 col-sm-8 col-md-4">{{mPulaDetails.data.effectiveDate.month}}/01/{{mPulaDetails.data.effectiveDate.year}}</div>
                     </div>
@@ -301,70 +301,70 @@
                     </div>
                     <h4>Justification</h4>
                     <!--Other-->
-                    <div class="row" ng-if="mPulaDetails.OTHER_JUSTIFICATION">
+                    <div class="row" ng-if="mPulaDetails.other_justification">
                         <div class="col-xs-4 col-sm-4 col-md-4"><b>Other:</b></div>
-                        <div class="col-xs-8 col-sm-8 col-md-4">{{mPulaDetails.OTHER_JUSTIFICATION}}</div>
+                        <div class="col-xs-8 col-sm-8 col-md-4">{{mPulaDetails.other_justification}}</div>
                     </div>
                     <!--Litigation-->
-                    <div class="row" ng-if="mPulaDetails.BIOLOGICAL_OPINION_LIT">
+                    <div class="row" ng-if="mPulaDetails.biological_opinion_lit">
                         <div class="col-xs-4 col-sm-4 col-md-4"><b>Litigation, Biological Opinion:</b></div>
-                        <div class="col-xs-8 col-sm-8 col-md-4">{{mPulaDetails.BIOLOGICAL_OPINION_LIT}}</div>
+                        <div class="col-xs-8 col-sm-8 col-md-4">{{mPulaDetails.biological_opinion_lit}}</div>
                     </div>
                     <!--Registration Review-->
-                    <div class="row" ng-if="mPulaDetails.FOCUS_MEETING">
+                    <div class="row" ng-if="mPulaDetails.focus_meeting">
                         <div class="col-xs-4 col-sm-4 col-md-4"><b>Registration Review, Focus Meeting:</b></div>
-                        <div class="col-xs-8 col-sm-8 col-md-4">{{mPulaDetails.FOCUS_MEETING}}</div>
+                        <div class="col-xs-8 col-sm-8 col-md-4">{{mPulaDetails.focus_meeting}}</div>
                     </div>
-                    <div class="row" ng-if="mPulaDetails.BIOLOGICAL_OPINION_REGREVIEW">
+                    <div class="row" ng-if="mPulaDetails.biological_opinion_regreview">
                         <div class="col-xs-4 col-sm-4 col-md-4"><b>Registration Review, Biological Opinion:</b></div>
-                        <div class="col-xs-8 col-sm-8 col-md-4">{{mPulaDetails.BIOLOGICAL_OPINION_REGREVIEW}}</div>
+                        <div class="col-xs-8 col-sm-8 col-md-4">{{mPulaDetails.biological_opinion_regreview}}</div>
                     </div>
-                    <div class="row" ng-if="mPulaDetails.PROPOSED_DECISION">
+                    <div class="row" ng-if="mPulaDetails.proposed_decision">
                         <div class="col-xs-4 col-sm-4 col-md-4"><b>Registration Review, Proposed Decision:</b></div>
-                        <div class="col-xs-8 col-sm-8 col-md-4">{{mPulaDetails.PROPOSED_DECISION}}</div>
+                        <div class="col-xs-8 col-sm-8 col-md-4">{{mPulaDetails.proposed_decision}}</div>
                     </div>
-                    <div class="row" ng-if="mPulaDetails.INTERIM_DECISION">
+                    <div class="row" ng-if="mPulaDetails.interim_decision">
                         <div class="col-xs-4 col-sm-4 col-md-4"><b>Registration Review, Interim Decision:</b></div>
-                        <div class="col-xs-8 col-sm-8 col-md-4">{{mPulaDetails.INTERIM_DECISION}}</div>
+                        <div class="col-xs-8 col-sm-8 col-md-4">{{mPulaDetails.interim_decision}}</div>
                     </div>
-                    <div class="row" ng-if="mPulaDetails.FINAL_DECISION">
+                    <div class="row" ng-if="mPulaDetails.final_decision">
                         <div class="col-xs-4 col-sm-4 col-md-4"><b>Registration Review, Final Decision:</b></div>
-                        <div class="col-xs-8 col-sm-8 col-md-4">{{mPulaDetails.FINAL_DECISION}}</div>
+                        <div class="col-xs-8 col-sm-8 col-md-4">{{mPulaDetails.final_decision}}</div>
                     </div>
-                    <div class="row" ng-if="mPulaDetails.INTERIM_PROPOSED_DECISION">
+                    <div class="row" ng-if="mPulaDetails.interim_proposed_decision">
                         <div class="col-xs-4 col-sm-4 col-md-4"><b>Registration Review, Proposed Interim Decision:</b></div>
-                        <div class="col-xs-8 col-sm-8 col-md-4">{{mPulaDetails.INTERIM_PROPOSED_DECISION}}</div>
+                        <div class="col-xs-8 col-sm-8 col-md-4">{{mPulaDetails.interim_proposed_decision}}</div>
                     </div>
                     <!--Registration Action-->
-                    <div class="row" ng-if="mPulaDetails.SEC3_NEWCHEM">
+                    <div class="row" ng-if="mPulaDetails.sec3_newchem">
                         <div class="col-xs-4 col-sm-4 col-md-4"><b>Registration Action, Section 3 New Chem:</b></div>
-                        <div class="col-xs-8 col-sm-8 col-md-4">{{mPulaDetails.SEC3_NEWCHEM}}</div>
+                        <div class="col-xs-8 col-sm-8 col-md-4">{{mPulaDetails.sec3_newchem}}</div>
                     </div>
-                    <div class="row" ng-if="mPulaDetails.SEC3_NEWUSE">
+                    <div class="row" ng-if="mPulaDetails.sec3_newuse">
                         <div class="col-xs-4 col-sm-4 col-md-4"><b>Registration Action, Section 3 New Use:</b></div>
-                        <div class="col-xs-8 col-sm-8 col-md-4">{{mPulaDetails.SEC3_NEWUSE}}</div>
+                        <div class="col-xs-8 col-sm-8 col-md-4">{{mPulaDetails.sec3_newuse}}</div>
                     </div>
-                    <div class="row" ng-if="mPulaDetails.SEC24">
+                    <div class="row" ng-if="mPulaDetails.sec24">
                         <div class="col-xs-4 col-sm-4 col-md-4"><b>Registration Action, Section 24 (c):</b></div>
-                        <div class="col-xs-8 col-sm-8 col-md-4">{{mPulaDetails.SEC24}}</div>
+                        <div class="col-xs-8 col-sm-8 col-md-4">{{mPulaDetails.sec24}}</div>
                     </div>
-                    <div class="row" ng-if="mPulaDetails.SEC18">
+                    <div class="row" ng-if="mPulaDetails.sec18">
                         <div class="col-xs-4 col-sm-4 col-md-4"><b>Registration Action, Section 18 (c):</b></div>
-                        <div class="col-xs-8 col-sm-8 col-md-4">{{mPulaDetails.SEC18}}</div>
+                        <div class="col-xs-8 col-sm-8 col-md-4">{{mPulaDetails.sec18}}</div>
                     </div>
                     <!--Base data-->
                     <div class="row">
                         <div class="col-xs-4 col-sm-4 col-md-4"><b>Base Data:</b></div>
-                        <div class="col-xs-8 col-sm-8 col-md-4">{{mPulaDetails.BASE_DATA}}</div>
+                        <div class="col-xs-8 col-sm-8 col-md-4">{{mPulaDetails.base_data}}</div>
                     </div>
                     <div class="row">
                         <div class="col-xs-4 col-sm-4 col-md-4"><b>Base Data Modifiers:</b></div>
-                        <div class="col-xs-8 col-sm-8 col-md-4">{{mPulaDetails.BASE_DATA_MODIFIERS}}</div>
+                        <div class="col-xs-8 col-sm-8 col-md-4">{{mPulaDetails.base_data_modifiers}}</div>
                     </div>
                     <!--additioanl info-->
                     <div class="row">
                         <div class="col-xs-4 col-sm-4 col-md-4"><b>Additional Information:</b></div>
-                        <div class="col-xs-8 col-sm-8 col-md-4">{{mPulaDetails.ADDITIONAL_INFORMATION}}</div>
+                        <div class="col-xs-8 col-sm-8 col-md-4">{{mPulaDetails.additional_information}}</div>
                     </div>
                     <!--limitations-->
                     <h4>Limitations</h4>
@@ -423,7 +423,7 @@
                     </div>
                     <hr>
                     <!--Save PULA-->
-                    <div ng-show="role.ROLE_ID <= 2">
+                    <div ng-show="role.role_id <= 2">
                         <button class="btn btn-primary" ng-click="savePULA()">Save Changes</button>
                     </div>
                 </div>

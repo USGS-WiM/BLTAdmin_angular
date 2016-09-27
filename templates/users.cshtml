@@ -1,6 +1,6 @@
 <div>
     <div class="container-fluid">
-        <button class="btn btn-primary" ng-click="editUser(-1)" ng-if="role.ROLE_NAME == 'ADMIN'"><span class="glyphicon glyphicon-plus"></span> New User</button>
+        <button class="btn btn-primary" ng-click="editUser(-1)" ng-if="role.role_name == 'ADMIN'"><span class="glyphicon glyphicon-plus"></span> New User</button>
         <br/>
         <br/>
 
@@ -13,22 +13,22 @@
                         <th scope="col">Role</th>
                         <th scope="col">Phone</th>
                         <th scope="col">Email</th>
-                        <th ng-if="role.ROLE_NAME == 'ADMIN'">Edit</th>
-                        <th ng-if="role.ROLE_NAME == 'ADMIN'">Delete</th>
+                        <th ng-if="role.role_name == 'ADMIN'">Edit</th>
+                        <th ng-if="role.role_name == 'ADMIN'">Delete</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr ng-repeat="user in users">
-                        <td>{{user.FNAME}} {{user.LNAME}}</td>
-                        <td>{{organizations[user.ORGANIZATION_ID].NAME}}</td>
-                        <td>{{roles[user.ROLE_ID].ROLE_NAME}}</td>
-                        <td>{{user.PHONE}}</td>
-                        <td>{{user.EMAIL}}</td>
-                        <td ng-if="role.ROLE_NAME == 'ADMIN'">
-                            <button class="btn btn-primary btn-xs"><span class="glyphicon glyphicon-pencil" ng-click="editUser($index)"></span></button>
+                        <td>{{user.fname}} {{user.lname}}</td>
+                        <td>{{organizations[user.organization_id].name}}</td>
+                        <td>{{roles[user.role_id].role_name}}</td>
+                        <td>{{user.phone}}</td>
+                        <td>{{user.email}}</td>
+                        <td ng-if="role.role_name == 'ADMIN'">
+                            <button class="btn btn-primary btn-xs" ng-click="editUser($index)"><span class="glyphicon glyphicon-pencil"></span></button>
 
                         </td>
-                        <td ng-if="role.ROLE_NAME == 'ADMIN'">
+                        <td ng-if="role.role_name == 'ADMIN'">
                             <button class="btn btn-danger btn-xs" ng-click="deleteUser($index)"><span class="glyphicon glyphicon-trash"></span></button>
 
                         </td>
@@ -37,9 +37,9 @@
                 </tbody>
             </table>
         </div>
-
     </div>
 </div>
+
 <!--edit template-->
 <div>
     <script type="text/ng-template" id="user.cshtml">
@@ -51,96 +51,162 @@
             <form class="form-horizontal" name="userForm">
                 <!--first name-->
                 <div class="form-group">
-                    <label for="inputPassword" class="col-sm-2 control-label">First Name</label>
-                    <div class="col-sm-10">
-                        <input type="text" class="form-control" id="inputPassword" placeholder="First Name" ng-model="user.FNAME">
+                    <label for="fname" class="col-sm-2 control-label">First Name</label>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control" placeholder="First Name" ng-model="user.fname">
                     </div>
                 </div>
                 <!--last name-->
                 <div class="form-group">
-                    <label for="inputPassword" class="col-sm-2 control-label">Last Name</label>
-                    <div class="col-sm-10">
-                        <input type="text" class="form-control" id="inputPassword" placeholder="Last Name" ng-model="user.LNAME">
+                    <label for="lname" class="col-sm-2 control-label">Last Name</label>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control" placeholder="Last Name" ng-model="user.lname">
                     </div>
                 </div>
                 <!--user name-->
-                <div class="form-group" ng-class="{ 'has-error' : editForm.submited && userForm.username.$invalid  }" ng-hide="user.USERNAME && action == 'edit'">
-                    <label for="inputPassword" class="col-sm-2 control-label">User Name*</label>
-                    <div class="col-sm-10">
-                        <input type="text" class="form-control" id="inputPassword" placeholder="User Name" name="username" ng-model="user.USERNAME" required="">
+                <div class="form-group" ng-class="{ 'has-error' : editForm.submited && userForm.username.$invalid  }" ><!--ng-hide="user.username && action == 'edit'">-->
+                    <label for="username" class="col-sm-2 control-label">User Name*</label>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control" placeholder="User Name" name="username" ng-model="user.username" required="">
                         <p ng-show="submited && userForm.username.$invalid " class="help-block">Username is required.</p>
                     </div>
 
-                </div>
-                <div class="form-group" ng-show="user.USERNAME && action == 'edit'">
-                    <label for="inputPassword" class="col-sm-2 control-label">User Name</label>
-                    <div class="col-sm-10">
-                        <p>{{user.USERNAME}}</p>
-                    </div>
-                </div>
+                </div>                
                 <!--organization-->
                 <div class="form-group">
-                    <label for="inputPassword" class="col-sm-2 control-label">Organization</label>
-                    <div class="col-sm-10">
-                        <select class="form-control" ng-model="data.organization" ng-options="org.NAME for org in organizations" ng-change="user.ORGANIZATION_ID = org.ORGANIZATION_ID">
+                    <label for="organization" class="col-sm-2 control-label">Organization</label>
+                    <div class="col-sm-9">
+                        <select class="form-control" ng-model="data.organization" ng-options="org.name for org in organizations" ng-change="user.organization_id = org.organization_id">
                             <option value="">Select Organization</option>
                         </select>
                     </div>
                 </div>
                 <!--division-->
                 <div class="form-group">
-                    <label for="inputPassword" class="col-sm-2 control-label">Division</label>
-                    <div class="col-sm-10">
-                        <select class="form-control" ng-model="data.division" ng-options="division.DIVISION_NAME for division in divisions" ng-change="user.DIVISION_ID = division.DIVISION_ID">
+                    <label for="division" class="col-sm-2 control-label">Division</label>
+                    <div class="col-sm-9">
+                        <select class="form-control" ng-model="data.division" ng-options="division.division_name for division in divisions" ng-change="user.division_id = division.division_id">
                             <option value="">Select Division</option>
                         </select>
                     </div>
                 </div>
                 <!--role-->
-                <div class="form-group" ng-class="{ 'has-error' : editForm.submited && userForm.role.$invalid }" ng-hide="user.ROLE_ID">
-                    <label for="inputPassword" class="col-sm-2 control-label">Role*</label>
-                    <div class="col-sm-10">
-                        <select class="form-control" name="role" ng-model="data.role" ng-options="role.ROLE_NAME for role in roles" ng-change="user.ROLE_ID = role.ROLE_ID" required="">
+                <div class="form-group" ng-class="{ 'has-error' : editForm.submited && userForm.role.$invalid }">
+                    <label for="role" class="col-sm-2 control-label">Role*</label>
+                    <div class="col-sm-9">
+                        <select class="form-control" name="role" ng-model="data.role" ng-options="role.role_name for role in roles" ng-change="user.role_id = role.role_id" required="">
                             <option value="">Select Role</option>
                         </select>
                         <p ng-show="submited && userForm.role.$invalid" class="help-block">Role is required.</p>
                     </div>
                 </div>
-                <div class="form-group" ng-show="user.ROLE_ID">
-                    <label for="inputPassword" class="col-sm-2 control-label">Role</label>
-                    <div class="col-sm-10">
-                        <p>{{data.role.ROLE_NAME}}</p>
-                    </div>
-                </div>
+                
                 <!--phone-->
                 <div class="form-group">
-                    <label for="inputPassword" class="col-sm-2 control-label">Phone</label>
-                    <div class="col-sm-10">
-                        <input type="text" class="form-control" id="inputPassword" placeholder="Phone" ng-model="user.PHONE">
+                    <label for="phone" class="col-sm-2 control-label">Phone</label>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control" placeholder="Phone" ng-model="user.phone">
                     </div>
                 </div>
                 <!--email-->
                 <div class="form-group">
-                    <label for="inputPassword" class="col-sm-2 control-label">Email</label>
-                    <div class="col-sm-10">
-                        <input type="text" class="form-control" id="inputPassword" placeholder="Email" ng-model="user.EMAIL">
+                    <label for="email" class="col-sm-2 control-label">Email</label>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control" placeholder="Email" ng-model="user.email">
                     </div>
                 </div>
-            </form>
-        </div>
-        <div class="modal-footer">
-            <button class="btn btn-primary" type="submit" ng-click="save(userForm.$valid)">OK</button>
-            <button class="btn btn-default" type="button" ng-click="cancel()">Cancel</button>
-        </div>
-    </script>
-    <!--delete templates-->
-    <script type="text/ng-template" id="delete.cshtml">
-        <div class="modal-header">
-            <h3 class="modal-title">Are you sure you want to delete '{{user.USERNAME}}'?</h3>
-        </div>
-        <div class="modal-footer">
-            <button class="btn btn-primary" type="button" ng-click="delete()">OK</button>
-            <button class="btn btn-default" type="button" ng-click="cancelDelete()">Cancel</button>
-        </div>
-    </script>
+                <!--NEW user password-->
+                <div class="form-group" ng-class="{ 'has-error' : userForm.nCreatePassword.$invalid && userform.nCreatePassword.$dirty }" ng-if="user.user_id == undefined">
+                    <label for="nCreatePassword" class="col-sm-2 control-label">Password*</label>
+                    <div class="col-sm-9">
+                        <input type="password" class="form-control" id="nCreatePassword" placeholder="Password" ng-model="pass.newP" name="nCreatePassword" id="nCreatePassword" password-validate required>
+                        <span class="ui-state-error h5-message" ng-show="(userForm.nCreatePassword.$error.passwordValidate)">
+                            <span class="h5-arrow"></span>
+                            <span class="h5-content">For password requirement, hover over the '?' icon.</span>
+                        </span>
+                    </div>&nbsp;
+                    <button type="button" class="borderLess" tooltip-placement="left" tooltip-append-to-body="false" uib-tooltip="Password must be at least 8 characters long, contain at least 1 uppercase, 1 lowercase and 1 numeric. Passwords may contain any of these special characters ONLY: '_', '$', '#'">
+                        <span class="glyphicon glyphicon-question-sign"></span>
+                    </button>
+                </div>
+                <!--NEW user confirm password-->
+                <div class="form-group" ng-class="{ 'has-error' : userForm.cCreatepassword.$invalid  && userform.cCreatepassword.$dirty }"" ng-if="user.user_id == undefined">
+                    <label for="cCreatepassword" class="col-sm-2 control-label">Confirm Password*</label>
+                    <div class="col-sm-9">
+                        <input type="password" class="form-control" id="cCreatepassword" placeholder="Confirm Password" ng-model="pass.confirmP" name="cCreatepassword" id="cCreatepassword" password-validate same-as="pass.newP" required>
+                        <span class="ui-state-error h5-message" ng-show="(userForm.cCreatepassword.$error.passwordValidate)">
+                            <span class="h5-arrow"></span>
+                            <span class="h5-content">For password requirement, hover over the '?' icon.</span>
+                        </span>
+                        <span class="ui-state-error h5-message" ng-show="(userForm.cCreatepassword.$error.passwordMismatch)">
+                        <span class="h5-arrow"></span><span class="h5-conent">Mismatch password</span></span>                    
+                    </div>
+                </div>
+
+                <!-- EXISTING user Change Password-->
+                <!-- button to toggle password fields -->
+                <div class="form-group" ng-hide="user.user_id == undefined">
+                    <label class="col-sm-2 control-label"></label>
+                    <div class="col-sm-9">
+                        <button ng-show="!changePass" type="button" ng-click="changeMyPassBtn($event)">
+                            Change Password
+                        </button>
+                    </div>
+                </div>
+
+                <!-- password fields for existing user-->
+                <div class="col-sm-12" ng-show="changePass">
+                    <div class="form-group">
+                        <label class="col-md-2 control-label" for="nEditpassword">New Password:</label>
+                        <div class="col-md-9">
+                            <input class="form-control" ng-model="pass.newP" name="nEditpassword" type="password" password-validate />
+                            <span class="ui-state-error h5-message" ng-show="(userForm.nEditpassword.$error.passwordValidate)">
+                                <span class="h5-arrow"></span>
+                                <span style="display:inline-block" class="h5-content">For password requirement, click the '?' icon.</span>
+                            </span>
+                        </div>&nbsp;
+                        <button type="button" class="borderLess" tooltip-placement="left" tooltip-append-to-body="false" uib-tooltip="Password must be at least 8 characters long, contain at least 1 uppercase, 1 lowercase and 1 numeric. Passwords may contain any of these special characters ONLY: '_', '$', '#'">
+                            <span class="glyphicon glyphicon-question-sign"></span>
+                        </button>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-2 control-label" for="cEditpassword">Confirm Password:</label>
+                        <div class="col-md-9">
+                            <input class="form-control" name="cEditpassword" type="password" placeholder="" password-validate same-as="pass.newP" ng-model="pass.confirmP" />
+                        </div>
+                        <span class="ui-state-error h5-message" ng-show="(userForm.cEditpassword.$error.passwordValidate)">
+                            <span class="h5-arrow"></span>
+                            <span class="h5-content">For password requirement, hover over the '?' icon.</span></span>
+                            <span class="ui-state-error h5-message" ng-show="(userForm.cEditpassword.$error.passwordMismatch)"><span class="h5-arrow"></span>
+                            <span class="h5-conent">Mismatch password</span>
+                        </span>
+                    </div>
+                </div>
+                <!--END new password inputs-->
+                <!--START update/cancel button-->
+                <div class="form-group">
+                    <div class="col-md-12" style="margin-top:7px">
+                        <span><button type="button" class="btn btn-primary" style="margin-right:10px" ng-click="DontChangePass()">Cancel change password</button></span>
+                    </div>
+                </div>
+                <!--END update/cancel button-->
+            </div>
+            <br clear="all"/>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" type="submit" ng-click="save(userForm.$valid)">OK</button>
+        <button class="btn btn-default" type="button" ng-click="cancel()">Cancel</button>
+    </div>
+</script>
+<!--delete templates-->
+<script type="text/ng-template" id="delete.cshtml">
+    <div class="modal-header">
+        <h3 class="modal-title">Are you sure you want to delete '{{user.username}}'?</h3>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" type="button" ng-click="delete()">OK</button>
+        <button class="btn btn-default" type="button" ng-click="cancelDelete()">Cancel</button>
+    </div>
+</script>
 </div>

@@ -65,11 +65,11 @@
                                 <tr dir-paginate="part in parts|orderBy:selectedPart.display.orderBy|filter:search.term|itemsPerPage:10" current-page="currentPage">
                                     <td ng-repeat="col in selectedPart.display.columns">{{part[col.name]}}</td>
                                     <td ng-if="isAdmin">
-                                        <button class="btn btn-primary btn-xs"><span class="glyphicon glyphicon-pencil" ng-click="editPart($index,part)"></span></button>
+                                        <button class="btn btn-primary btn-xs" ng-click="editPart($index,part)"><span class="glyphicon glyphicon-pencil"></span></button>
 
                                     </td>
                                     <td ng-if="isAdmin && selectedPart.copy" ng-if="isAdmin">
-                                        <button class="btn btn-success btn-xs"><span class="glyphicon glyphicon glyphicon-copy" ng-click="editPart(-1,part,true)"></span></button>
+                                        <button class="btn btn-success btn-xs" ng-click="editPart(-1,part,true)"><span class="glyphicon glyphicon glyphicon-copy"></span></button>
 
                                     </td>
                                     <td ng-hide="selectedPart.enableDelete == false" ng-if="isAdmin">

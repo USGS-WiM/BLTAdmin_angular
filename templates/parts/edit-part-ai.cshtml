@@ -9,15 +9,15 @@
         <div class="row form-group">
             <label class="col-sm-2 control-label">AI Name </label>
             <div class="col-sm-10">
-                <input type="text" name="INGREDIENT_NAME" class="form-control" ng-model="part.INGREDIENT_NAME" ng-required="false">
+                <input type="text" name="ingredient_name" class="form-control" ng-model="part.ingredient_name" ng-required="false">
             </div>
         </div>
         <!--PC Code-->
         <div class="row form-group">
             <label class="col-sm-2 control-label">PC Code * </label>
             <div class="col-sm-10">
-                <input type="text" name="PC_CODE" class="form-control" ng-model="part.PC_CODE" ng-required="true">
-                <p ng-show="editForm.submited && partForm.PC_CODE.$invalid " class="text-danger">* PC Code is required.</p>
+                <input type="text" name="pc_code" class="form-control" ng-model="part.pc_code" ng-required="true">
+                <p ng-show="editForm.submited && partForm.pc_code.$invalid " class="text-danger">* PC Code is required.</p>
             </div>
         </div>
 
@@ -25,7 +25,7 @@
         <div class="row form-group">
             <label class="col-sm-2 control-label">CAS Number </label>
             <div class="col-sm-10">
-                <input type="text" name="CAS_NUMBER" class="form-control" ng-model="part.CAS_NUMBER" ng-required="false">
+                <input type="text" name="cas_number" class="form-control" ng-model="part.cas_number" ng-required="false">
             </div>
         </div>
 
@@ -35,7 +35,7 @@
             <div class="col-sm-10">
                 <div class="form-inline">
                     <div class="form-group">
-                        <select class="form-control" ng-model="activeAIClass" ng-options="option.AI_CLASS_NAME for option in aiClasses">
+                        <select class="form-control" ng-model="activeAIClass" ng-options="option.ai_class_name for option in aiClasses">
                         </select>
                     </div>
                     <div class="form-group">
@@ -53,9 +53,9 @@
                             </tr>
                         </thead>
                         <tr ng-repeat="item in classList" ng-hide="item.status=='delete'">
-                            <td>{{item.AI_CLASS_NAME}}</td>
+                            <td>{{item.ai_class_name}}</td>
                             <td>
-                                <button class="btn btn-danger btn-xs"><span class="glyphicon glyphicon-remove" ng-click="removeClass(item.AI_CLASS_NAME)"></span></button>
+                                <button class="btn btn-danger btn-xs"><span class="glyphicon glyphicon-remove" ng-click="removeClass(item.ai_class_name)"></span></button>
 
                             </td>
                         </tr>
@@ -92,10 +92,10 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr dir-paginate="product in products|orderBy:PRODUCT_NAME|filter:search.product.term|itemsPerPage:5" current-page="currentProductPage" pagination-id="product">
-                                <td>{{product.PRODUCT_NAME}}</td>
+                            <tr dir-paginate="product in products|orderBy:product_name|filter:search.product.term|itemsPerPage:5" current-page="currentProductPage" pagination-id="product">
+                                <td>{{product.product_name}}</td>
                                 <td>
-                                    <button class="btn btn-xs"><span class="glyphicon glyphicon-plus" ng-click="addProductToAI(product)"></span></button>
+                                    <button class="btn btn-xs" ng-click="addProductToAI(product)"><span class="glyphicon glyphicon-plus"></span></button>
 
                                 </td>
                             </tr>
@@ -116,15 +116,15 @@
                             </tr>
                         </thead>
                         <tr ng-repeat="item in productList" ng-hide="item.status=='delete'">
-                            <td>{{item.PRODUCT_NAME}}</td>
+                            <td>{{item.product_name}}</td>
                             <td>
-                                <button class="btn btn-danger btn-xs"><span class="glyphicon glyphicon-remove" ng-click="removeProduct(item.PRODUCT_NAME)"></span></button>
+                                <button class="btn btn-danger btn-xs"><span class="glyphicon glyphicon-remove" ng-click="removeProduct(item.product_name)"></span></button>
 
                             </td>
                             <!--
                             <td>
                                 <a class="text-danger">
-                                    <span class="glyphicon glyphicon-remove" ng-click="removeProduct(item.PRODUCT_NAME)">
+                                    <span class="glyphicon glyphicon-remove" ng-click="removeProduct(item.product_name)">
                                 </a>                                    
                             </td>
 -->

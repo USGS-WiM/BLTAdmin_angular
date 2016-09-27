@@ -48,8 +48,8 @@ bltApp.factory('AuthService', function ($cookies) {
 bltApp.factory('UserService', ['$resource', function ($resource) {
     return $resource(config.rootURL + '/users/:id', {}, {
         query: {
-            isArray: false,
-            url: config.rootURL + '/users'
+            //isArray: false//,
+            //url: config.rootURL + '/users'
         },
         getAll: {
             method: 'GET',
@@ -84,7 +84,7 @@ bltApp.factory('OrganizationService', ['$resource', function ($resource) {
             method: 'GET',
             cache: true,
             transformResponse: function (data, headers) {
-                return _.indexBy(JSON.parse(data), 'ORGANIZATION_ID');
+                return _.indexBy(JSON.parse(data), 'organization_id');
             }
         },
         save: {
@@ -110,7 +110,7 @@ bltApp.factory('RoleService', ['$resource', function ($resource) {
             method: 'GET',
             cache: true,
             transformResponse: function (data, headers) {
-                return _.indexBy(JSON.parse(data), 'ROLE_ID');
+                return _.indexBy(JSON.parse(data), 'role_id');
             }
         },
         save: {
@@ -136,7 +136,7 @@ bltApp.factory('DivisionService', ['$resource', function ($resource) {
             method: 'GET',
             cache: true,
             transformResponse: function (data, headers) {
-                return _.indexBy(JSON.parse(data), 'DIVISION_ID');
+                return _.indexBy(JSON.parse(data), 'division_id');
             }
         },
         save: {
@@ -198,10 +198,10 @@ bltApp.factory('PULAService', function ($http, $q, VersionService, LimitationsSe
                     for (var i = 0; i < pulaList.length; i++) {
 
                         //get version information
-                        promises.push(VersionService.get(pulaList[i].VERSION_ID));
+                        promises.push(VersionService.get(pulaList[i].version_id));
 
                         //get limitations
-                        limitationPromises.push(LimitationsService.getSimpleLimitations(pulaList[i].PULA_ID, params.date));
+                        limitationPromises.push(LimitationsService.getSimpleLimitations(pulaList[i].pula_id, params.date));
                     }
                     $q.all(promises).then(function (versionList) {
                         for (var i = 0; i < pulaList.length; i++) {
@@ -228,7 +228,7 @@ bltApp.factory('PULAService', function ($http, $q, VersionService, LimitationsSe
                         pula = {};
                         shapeId = arcGISPulas[i].attributes["PULA_111015.PULASHAPEI"];
                         match = _.find(dbPulas, {
-                            "PULA_SHAPE_ID": shapeId
+                            "pula_shape_id": shapeId
                         });
                         if (match) {
                             pula = match;
@@ -260,14 +260,14 @@ bltApp.factory('PULAPOIService', function ($http) {
             return $http.get(config.rootURL + "/PULAs/" + id + "/updateStatus?status=PUBLISHED");
         },
         update: function (details) {
-            return $http.put(config.rootURL + "/PULAs/" + details.ID, details);
+            return $http.put(config.rootURL + "/PULAs/" + details.id, details);
         },
         addComment: function (pula, comment) {
             var comment = "[" + comment.name + "|" + comment.org + "|" + comment.text + "]";
             delete pula.comments;
-            pula.COMMENTS = comment;
-            return $http.put(config.rootURL + "/PULAs/" + pula.ID + "/AddComments.json", {
-                COMMENTS: comment
+            pula.comments = comment;
+            return $http.put(config.rootURL + "/PULAs/" + pula.id + "/AddComments.json", {
+                comments: comment
             });
         },
         post: function (details) {
@@ -289,7 +289,7 @@ bltApp.factory('VersionService', function ($http) {
 bltApp.factory('SpeciesService', function ($http, $q) {
     return {
         get: function (pulaDetails) {
-            return $http.get(config.rootURL + "/ActiveIngredientPULA/" + pulaDetails.PULA_ID + "/Species");
+            return $http.get(config.rootURL + "/ActiveIngredientPULA/" + pulaDetails.pula_id + "/Species");
         },
         getAll: function () {
             return $http.get(config.rootURL + "/SimpleSpecies");
@@ -350,13 +350,13 @@ bltApp.factory('LimitationsService', function ($http, $q) {
                 //product names
                 for (var i = 0; i < limitations.length; i++) {
                     limit = limitations[i];
-                    promises.push(getProducts(limit.PRODUCT_ID));
+                    promises.push(getProducts(limit.product_id));
                 }
                 $q.all(promises).then(function (products) {
                     for (var i = 0; i < products.length; i++) {
                         if (products[i]) {
-                            limitations[i].PRODUCT_NAME = products[i].data[0].PRODUCT_NAME;
-                            limitations[i].PRODUCT_REGISTRATION_NUMBER = products[i].data[0].PRODUCT_REGISTRATION_NUMBER;
+                            limitations[i].product_name = products[i].data[0].product_name;
+                            limitations[i].product_registration_number = products[i].data[0].product_registration_number;
                         }
                     }
                     success(limitations);
@@ -366,13 +366,13 @@ bltApp.factory('LimitationsService', function ($http, $q) {
         },
         getCodes: function (limitationList, date, success) {
             var getCode = function (limitation) {
-                return $http.get(config.rootURL + "/Limitations/" + limitation.LIMITATION_ID + "?publishedDate=" + date.month + "/01/" + date.year);
+                return $http.get(config.rootURL + "/Limitations/" + limitation.limitation_id + "?publishedDate=" + date.month + "/01/" + date.year);
             };
             var promises = [];
             var processedLimitations = {};
             var id;
             limitationList.forEach(function (limitation) {
-                id = limitation.LIMITATION_ID;
+                id = limitation.limitation_id;
                 if (!processedLimitations[id]) {
                     processedLimitations[id] = true;
                     promises.push(getCode(limitation));
@@ -390,7 +390,7 @@ bltApp.factory('LimitationsService', function ($http, $q) {
             };
             //remove
             var removeLimitation = function (limitation) {
-                return $http.delete(config.rootURL + "/PULALimitation/" + limitation.PULA_LIMITATION_ID);
+                return $http.delete(config.rootURL + "/PULALimitations/" + limitation.pula_limitation_id);
             };
             var promises = [];
             limitationList.forEach(function (limitation) {
@@ -420,7 +420,7 @@ bltApp.factory('AIClassService', function ($http, $q) {
             return $http.post(config.rootURL + "/AIClasses/" + aiClassId + "/AddAIClass", ai);
         },
         removeFromAI: function (aiClassId, ai) {
-            return $http.delete(config.rootURL + "/AIClasses/" + aiClassId + "/RemoveAIClassFromAI?activeIngredientID=" + ai.ID, ai);
+            return $http.delete(config.rootURL + "/AIClasses/" + aiClassId + "/RemoveAIClassFromAI?activeIngredientID=" + ai.id, ai);
         },
         addMultipleToAI: function (aiClassList, ai, success) {
             var addToAI = this.addToAI;
@@ -430,7 +430,7 @@ bltApp.factory('AIClassService', function ($http, $q) {
             }
             angular.forEach(aiClassList, function (aiClass) {
                 if (aiClass.status != "delete") {
-                    promises.push(addToAI(aiClass.ID, ai));
+                    promises.push(addToAI(aiClass.id, ai));
                 }
             });
             $q.all(promises).then(function (results) {
@@ -446,9 +446,9 @@ bltApp.factory('AIClassService', function ($http, $q) {
             }
             angular.forEach(aiClassList, function (aiClass) {
                 if (aiClass.status == "delete") {
-                    promises.push(removeFromAI(aiClass.ID, ai));
+                    promises.push(removeFromAI(aiClass.id, ai));
                 } else if (aiClass.status == "new") {
-                    promises.push(addToAI(aiClass.ID, ai));
+                    promises.push(addToAI(aiClass.id, ai));
                 }
             });
             $q.all(promises).then(function (results) {
@@ -469,7 +469,7 @@ bltApp.factory('ProductService', function ($http, $q) {
             return $http.post(config.rootURL + "/Products/" + prodID + "/AddProductToAI", ai);
         },
         removeFromAI: function (prodID, ai) {
-            return $http.delete(config.rootURL + "/Products/" + prodID + "/RemoveProductFromAI?activeIngredientID=" + ai.ACTIVE_INGREDIENT_ID);
+            return $http.delete(config.rootURL + "/Products/" + prodID + "/RemoveProductFromAI?activeIngredientID=" + ai.active_ingredient_id);
         },
         addMultipleToAI: function (aiProductList, ai, success) {
             var addToAI = this.addToAI;
@@ -479,7 +479,7 @@ bltApp.factory('ProductService', function ($http, $q) {
             }
             angular.forEach(aiProductList, function (aiProduct) {
                 if (aiProduct.status != "delete") {
-                    promises.push(addToAI(aiProduct.PRODUCT_ID, ai));
+                    promises.push(addToAI(aiProduct.product_id, ai));
                 }
             });
             $q.all(promises).then(function (results) {
@@ -495,9 +495,9 @@ bltApp.factory('ProductService', function ($http, $q) {
             }
             angular.forEach(aiProductList, function (aiProduct) {
                 if (aiProduct.status == "delete") {
-                    promises.push(removeFromAI(aiProduct.PRODUCT_ID, ai));
+                    promises.push(removeFromAI(aiProduct.product_id, ai));
                 } else if (aiProduct.status == "new") {
-                    promises.push(addToAI(aiProduct.PRODUCT_ID, ai));
+                    promises.push(addToAI(aiProduct.product_id, ai));
                 }
             });
             $q.all(promises).then(function (results) {

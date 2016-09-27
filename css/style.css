@@ -118,7 +118,10 @@ body {
     padding: 10px;
 }
 
-
+.borderLess {
+    background: none;
+    border: none;
+}
 /*map*/
 
 .angular-leaflet-map {
