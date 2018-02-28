@@ -10,7 +10,7 @@ Log in based web application in angularJS to access Bulletins Live Two Data.
 ## Authors
 
 * **[Veni Kunchi](https://www.usgs.gov/staff-profiles/veni-kunche)**  - *Lead Developer* - [USGS Web Informatics & Mapping](https://wim.usgs.gov/)
-* **[Tonia Roddick](https://www.usgs.gov/staff-profiles/tonia-m-roddick)** - *Developer* -  [USGS Web Informatics & Mapping](https://wim.usgs.gov/)
+* **[Tonia Roddick](https://github.com/troddick)** - *Developer* 
 
 See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
 
